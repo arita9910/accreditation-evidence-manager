@@ -26,6 +26,7 @@ El repositorio actualmente contiene el README inicial y planes de implementació
 6. **Aislar el prototipo DOCX del módulo de informes.** El prototipo se ubicará en el área de informes del backend y producirá un documento de prueba con el formato de la especificación. La prueba en Word o LibreOffice y su resultado se registrarán en el avance del incremento; no se incluirá generación de informes de negocio.
 7. **Tratar el contenido fuente de decisiones como requisito de trazabilidad.** Las fichas D-01 a D-18 se basarán en la sección 5 de `docs/condiciones-incremento-0(seccion 5).md`; las alternativas, decisiones y estados seguirán esa fuente, sin ampliar su contenido mediante suposiciones.
 8. **Fijar las versiones del entorno local de desarrollo.** El entorno usa Python 3.12.16, Node v24.22.1, npm 11.19.1 y Git 2.56.0. El entorno virtual se llama `.venv` y se crea con `uv venv --python 3.12`. Se registran estas versiones y el comando para que la instalación documentada y verificada sea reproducible.
+9. **Aplicar D-14 a la validación del incremento 0.** SQLite es el entorno de desarrollo y el gestor para migraciones y pruebas backend de este incremento. PostgreSQL se utiliza en producción, al instalar el sistema en el servidor del cliente. La verificación contra PostgreSQL real queda para cuando haya una instancia del cliente o una instalación local disponible; no es requisito para cerrar este incremento y no se registra como ejecutada antes de realizarla.
 
 ## Risks / Trade-offs
 
@@ -34,10 +35,11 @@ El repositorio actualmente contiene el README inicial y planes de implementació
 - [El modelo de usuario se registre después de la primera migración] → Crear y registrar `cuentas.Usuario` y configurar `AUTH_USER_MODEL` antes de generar o ejecutar la migración inicial; comprobar en pruebas que el modelo aparece en esa migración.
 - [El entorno de ejecución puede diferir de las versiones fijadas] → Comprobar las versiones de Python, Node.js, npm y Git durante la instalación y anotar discrepancias en el avance en vez de afirmar una validación no ejecutada.
 - [La fuente CSV puede contener texto con codificación mal interpretada] → Validar su codificación antes de transformar los datos; si no se puede recuperar con certeza el texto correcto, documentar la discrepancia y no corregirlo por conjetura.
+- [SQLite es más permisivo que PostgreSQL] → Las migraciones y restricciones que pasan en SQLite pueden fallar al desplegar en PostgreSQL. La verificación contra PostgreSQL real queda pendiente hasta disponer de una instancia del cliente o local; registrar cualquier resultado solo después de ejecutarla.
 
 ## Migration Plan
 
-No hay migración de datos ni despliegue de una aplicación existente. Implementar por etapas: crear primero la estructura y el entorno de desarrollo; añadir después la configuración por entorno y los archivos de dependencias; validar instalación y arranque desde cero y sin red; ejecutar las pruebas de backend en SQLite y PostgreSQL según D-14; finalmente probar el prototipo DOCX y registrar los resultados. Si una etapa rompe el arranque, corregirla antes de continuar; no se requiere una estrategia de reversión de datos.
+No hay migración de datos ni despliegue de una aplicación existente. Implementar por etapas: crear primero la estructura y el entorno de desarrollo; añadir después la configuración por entorno y los archivos de dependencias; validar instalación y arranque desde cero y sin red; ejecutar las migraciones iniciales y pruebas backend en SQLite; la verificación contra PostgreSQL real queda pendiente hasta disponer de una instancia y no bloquea el cierre de este incremento. No registrar esa verificación como ejecutada si no se hizo; finalmente probar el prototipo DOCX y registrar los resultados. Si una etapa rompe el arranque, corregirla antes de continuar; no se requiere una estrategia de reversión de datos.
 
 ## Open Questions
 
