@@ -34,15 +34,37 @@ criterios y el texto del prototipo. La automatización COM de esta sesión
 no estuvo disponible (`CO_E_SERVER_EXEC_FAILURE` y `MK_E_UNAVAILABLE`); la
 comprobación visual se realizó en Word por la usuaria.
 
-## Configuración de producción e integración pendiente
+## Configuración de producción
 
 `python manage.py check --deploy` terminó con código 0 usando valores de prueba
 para la configuración de producción y señaló cuatro advertencias relacionadas
 con HSTS/HTTPS y cookies seguras. No se fijó una política TLS sin información
 del servidor de despliegue.
 
-No se encontraron `psql`, `pg_isready` ni un servicio PostgreSQL local. No se
-ejecutaron migraciones ni pruebas contra PostgreSQL. La integración de 8.1 queda
-pendiente hasta disponer de una instancia PostgreSQL conforme a D-14. Las
-pruebas SQLite, Vitest, migraciones y comprobación HTTP sí se ejecutaron; no se
-declaran resultados para pasos no realizados.
+## Verificación de integración (tarea 8.1)
+
+Las siguientes comprobaciones se ejecutaron desde una copia limpia temporal
+del repositorio en Windows, con `.venv` y `node_modules` creados desde cero:
+
+- `uv venv --python 3.12`, `python -m ensurepip --upgrade`,
+  `python -m pip install -r sistema/backend/requirements.txt` y `npm ci`
+  finalizaron correctamente.
+- `python manage.py migrate --noinput` aplicó las migraciones iniciales con los
+  ajustes de desarrollo (SQLite).
+- `python manage.py test` aprobó las 7 pruebas backend en SQLite.
+- `npm run test:run -- --pool=vmThreads --maxWorkers=1` aprobó 1 prueba Vitest.
+- Con `DJANGO_SETTINGS_MODULE=config.ajustes.produccion` y valores de prueba
+  ficticios para las variables requeridas, `python manage.py check --deploy`
+  terminó con código 0 y cuatro advertencias: `security.W004`, `security.W008`,
+  `security.W012` y `security.W016`, relacionadas con HSTS, redirección HTTPS y
+  cookies seguras. No se conectó a PostgreSQL durante esta comprobación.
+- Django iniciado con
+  `python manage.py runserver 127.0.0.1:18081 --noreload` respondió HTTP 200 en
+  `/admin/login/`; Vite iniciado con
+  `node node_modules/vite/bin/vite.js --host 127.0.0.1 --port 15173 --strictPort`
+  respondió HTTP 200 en `/`. Ambos procesos temporales se detuvieron al acabar.
+
+La verificación de migraciones y pruebas contra una instancia real de PostgreSQL
+queda pendiente hasta disponer del servidor del cliente o de una instalación
+local. Conforme a D-14, no bloquea el cierre de este incremento y no se registra
+como ejecutada.

@@ -40,4 +40,4 @@
 
 ## 8. Verificar la integración de la base
 
-- [ ] 8.1 Desde una instalación limpia, ejecutar las migraciones iniciales y las pruebas backend en SQLite; ejecutar Vitest; arrancar backend y Vite por separado y comprobar `check --deploy` con los ajustes de producción y valores de prueba, sin conectarse a PostgreSQL. Registrar los comandos y resultados efectivamente obtenidos en el avance del incremento. Indicar explícitamente que la verificación contra una instancia real de PostgreSQL queda pendiente y no registrarla como ejecutada.
+- [x] 8.1 Desde una instalación limpia, ejecutar las migraciones iniciales y las pruebas backend en SQLite; ejecutar Vitest; arrancar backend y Vite por separado y comprobar `check --deploy` con los ajustes de producción y valores de prueba, sin conectarse a PostgreSQL. Registrar los comandos y resultados efectivamente obtenidos en el avance del incremento. Indicar explícitamente que la verificación contra una instancia real de PostgreSQL queda pendiente y no registrarla como ejecutada.
