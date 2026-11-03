@@ -1,0 +1,360 @@
+{
+  "version": "SEA-CU 2025 v3",
+  "estado": "parcial",
+  "fuentes": [
+    "docs/origin-plans/01-modelo-de-datos.md",
+    "docs/origin-plans/03-modulo-estructura.md",
+    "docs/origin-plans/09-modulo-cuantitativos.md",
+    "docs/Catálogo SEA-CU 2025 — criterios, evidencias y valoración v3 - Untitled.csv"
+  ],
+  "resumen": {
+    "modelos": 11,
+    "identificadores_confirmados": 11,
+    "nombres_pendientes": 11,
+    "celdas_pendientes": 11
+  },
+  "nota": "El Manual (Anexo 6) y la plantilla Excel vacía no están disponibles en las fuentes del repositorio. Se conservan las referencias de modelos del catálogo; los nombres, números RM36 y celdas no disponibles quedan pendientes, sin inferir valores.",
+  "modelos": [
+    {
+      "codigo": "M1",
+      "numero": 1,
+      "estado": "parcial",
+      "nombre": {
+        "valor": null,
+        "estado": "pendiente"
+      },
+      "numero_rm36": {
+        "valor": null,
+        "estado": "pendiente"
+      },
+      "criterios_referenciados": {
+        "valores": [
+          "2.2.1",
+          "2.2.3"
+        ],
+        "estado": "confirmado",
+        "fuente": "docs/Catálogo SEA-CU 2025 — criterios, evidencias y valoración v3 - Untitled.csv"
+      },
+      "celdas": {
+        "estado": "pendiente",
+        "items": [],
+        "campos_definidos_por_el_plan": [
+          "fila",
+          "columna",
+          "tipo_valor",
+          "orden"
+        ]
+      }
+    },
+    {
+      "codigo": "M2",
+      "numero": 2,
+      "estado": "parcial",
+      "nombre": {
+        "valor": null,
+        "estado": "pendiente"
+      },
+      "numero_rm36": {
+        "valor": null,
+        "estado": "pendiente"
+      },
+      "criterios_referenciados": {
+        "valores": [
+          "2.4.1",
+          "6.3.2"
+        ],
+        "estado": "confirmado",
+        "fuente": "docs/Catálogo SEA-CU 2025 — criterios, evidencias y valoración v3 - Untitled.csv"
+      },
+      "celdas": {
+        "estado": "pendiente",
+        "items": [],
+        "campos_definidos_por_el_plan": [
+          "fila",
+          "columna",
+          "tipo_valor",
+          "orden"
+        ]
+      }
+    },
+    {
+      "codigo": "M3",
+      "numero": 3,
+      "estado": "parcial",
+      "nombre": {
+        "valor": null,
+        "estado": "pendiente"
+      },
+      "numero_rm36": {
+        "valor": null,
+        "estado": "pendiente"
+      },
+      "criterios_referenciados": {
+        "valores": [
+          "2.4.2"
+        ],
+        "estado": "confirmado",
+        "fuente": "docs/Catálogo SEA-CU 2025 — criterios, evidencias y valoración v3 - Untitled.csv"
+      },
+      "celdas": {
+        "estado": "pendiente",
+        "items": [],
+        "campos_definidos_por_el_plan": [
+          "fila",
+          "columna",
+          "tipo_valor",
+          "orden"
+        ]
+      }
+    },
+    {
+      "codigo": "M4",
+      "numero": 4,
+      "estado": "parcial",
+      "nombre": {
+        "valor": null,
+        "estado": "pendiente"
+      },
+      "numero_rm36": {
+        "valor": null,
+        "estado": "pendiente"
+      },
+      "criterios_referenciados": {
+        "valores": [
+          "1.2.1",
+          "2.3.1"
+        ],
+        "estado": "confirmado",
+        "fuente": "docs/Catálogo SEA-CU 2025 — criterios, evidencias y valoración v3 - Untitled.csv"
+      },
+      "celdas": {
+        "estado": "pendiente",
+        "items": [],
+        "campos_definidos_por_el_plan": [
+          "fila",
+          "columna",
+          "tipo_valor",
+          "orden"
+        ]
+      }
+    },
+    {
+      "codigo": "M5",
+      "numero": 5,
+      "estado": "parcial",
+      "nombre": {
+        "valor": null,
+        "estado": "pendiente"
+      },
+      "numero_rm36": {
+        "valor": null,
+        "estado": "pendiente"
+      },
+      "criterios_referenciados": {
+        "valores": [
+          "1.2.1",
+          "2.3.1",
+          "3.4.1"
+        ],
+        "estado": "confirmado",
+        "fuente": "docs/Catálogo SEA-CU 2025 — criterios, evidencias y valoración v3 - Untitled.csv"
+      },
+      "celdas": {
+        "estado": "pendiente",
+        "items": [],
+        "campos_definidos_por_el_plan": [
+          "fila",
+          "columna",
+          "tipo_valor",
+          "orden"
+        ]
+      }
+    },
+    {
+      "codigo": "M6",
+      "numero": 6,
+      "estado": "parcial",
+      "nombre": {
+        "valor": null,
+        "estado": "pendiente"
+      },
+      "numero_rm36": {
+        "valor": null,
+        "estado": "pendiente"
+      },
+      "criterios_referenciados": {
+        "valores": [
+          "1.1.3",
+          "3.1.3"
+        ],
+        "estado": "confirmado",
+        "fuente": "docs/Catálogo SEA-CU 2025 — criterios, evidencias y valoración v3 - Untitled.csv"
+      },
+      "celdas": {
+        "estado": "pendiente",
+        "items": [],
+        "campos_definidos_por_el_plan": [
+          "fila",
+          "columna",
+          "tipo_valor",
+          "orden"
+        ]
+      }
+    },
+    {
+      "codigo": "M7",
+      "numero": 7,
+      "estado": "parcial",
+      "nombre": {
+        "valor": null,
+        "estado": "pendiente"
+      },
+      "numero_rm36": {
+        "valor": null,
+        "estado": "pendiente"
+      },
+      "criterios_referenciados": {
+        "valores": [
+          "2.6.1",
+          "3.3.3",
+          "6.3.1"
+        ],
+        "estado": "confirmado",
+        "fuente": "docs/Catálogo SEA-CU 2025 — criterios, evidencias y valoración v3 - Untitled.csv"
+      },
+      "celdas": {
+        "estado": "pendiente",
+        "items": [],
+        "campos_definidos_por_el_plan": [
+          "fila",
+          "columna",
+          "tipo_valor",
+          "orden"
+        ]
+      }
+    },
+    {
+      "codigo": "M8",
+      "numero": 8,
+      "estado": "parcial",
+      "nombre": {
+        "valor": null,
+        "estado": "pendiente"
+      },
+      "numero_rm36": {
+        "valor": null,
+        "estado": "pendiente"
+      },
+      "criterios_referenciados": {
+        "valores": [
+          "1.3.2",
+          "2.3.3"
+        ],
+        "estado": "confirmado",
+        "fuente": "docs/Catálogo SEA-CU 2025 — criterios, evidencias y valoración v3 - Untitled.csv"
+      },
+      "celdas": {
+        "estado": "pendiente",
+        "items": [],
+        "campos_definidos_por_el_plan": [
+          "fila",
+          "columna",
+          "tipo_valor",
+          "orden"
+        ]
+      }
+    },
+    {
+      "codigo": "M9",
+      "numero": 9,
+      "estado": "parcial",
+      "nombre": {
+        "valor": null,
+        "estado": "pendiente"
+      },
+      "numero_rm36": {
+        "valor": null,
+        "estado": "pendiente"
+      },
+      "criterios_referenciados": {
+        "valores": [
+          "2.3.4"
+        ],
+        "estado": "confirmado",
+        "fuente": "docs/Catálogo SEA-CU 2025 — criterios, evidencias y valoración v3 - Untitled.csv"
+      },
+      "celdas": {
+        "estado": "pendiente",
+        "items": [],
+        "campos_definidos_por_el_plan": [
+          "fila",
+          "columna",
+          "tipo_valor",
+          "orden"
+        ]
+      }
+    },
+    {
+      "codigo": "M10",
+      "numero": 10,
+      "estado": "parcial",
+      "nombre": {
+        "valor": null,
+        "estado": "pendiente"
+      },
+      "numero_rm36": {
+        "valor": null,
+        "estado": "pendiente"
+      },
+      "criterios_referenciados": {
+        "valores": [
+          "3.2.3"
+        ],
+        "estado": "confirmado",
+        "fuente": "docs/Catálogo SEA-CU 2025 — criterios, evidencias y valoración v3 - Untitled.csv"
+      },
+      "celdas": {
+        "estado": "pendiente",
+        "items": [],
+        "campos_definidos_por_el_plan": [
+          "fila",
+          "columna",
+          "tipo_valor",
+          "orden"
+        ]
+      }
+    },
+    {
+      "codigo": "M11",
+      "numero": 11,
+      "estado": "parcial",
+      "nombre": {
+        "valor": null,
+        "estado": "pendiente"
+      },
+      "numero_rm36": {
+        "valor": null,
+        "estado": "pendiente"
+      },
+      "criterios_referenciados": {
+        "valores": [
+          "1.3.1",
+          "3.2.1",
+          "3.2.4"
+        ],
+        "estado": "confirmado",
+        "fuente": "docs/Catálogo SEA-CU 2025 — criterios, evidencias y valoración v3 - Untitled.csv"
+      },
+      "celdas": {
+        "estado": "pendiente",
+        "items": [],
+        "campos_definidos_por_el_plan": [
+          "fila",
+          "columna",
+          "tipo_valor",
+          "orden"
+        ]
+      }
+    }
+  ]
+}
