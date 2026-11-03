@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyd
+*.so
+.Python
+.venv/
+venv/
+ENV/
+
+# Django and local databases
+*.sqlite3
+*.db
+media/
+logs/
+sistema/backend/informes/prototipo.docx
+
+# Node.js
+node_modules/
+dist/
+coverage/
+npm-debug.log*
+
+# Local environment and offline packages
+.env
+.env.*
+!.env.ejemplo
+sistema/almacen/
+
+# Editors and operating systems
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+~$*
+.~lock.*#
