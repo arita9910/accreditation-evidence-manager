@@ -31,5 +31,7 @@ Ninguna. El directorio `openspec/specs/` no contiene capacidades existentes.
 
 - Nuevos directorios y archivos bajo `sistema/` según el plan de origen, junto con scripts de PowerShell y shell, dependencias de Python/Node y documentación.
 - Configuración Django, registro de las apps previstas y modelo propio de usuario inicial; no se añaden todavía endpoints, gestión de roles ni otros comportamientos de negocio.
-- La fuente indicada para el contenido completo de las decisiones («Condiciones para iniciar el incremento 0», sección 5) no está presente en la documentación disponible. Durante la implementación habrá que localizarla; no se deben inventar alternativas o consecuencias que no estén en la fuente.
-- La disponibilidad de Python, Node.js, npm y Git en el portátil no se ha verificado. La instalación debe comprobarse en el entorno objetivo y dejar constancia de cualquier diferencia.
+- El modelo `Usuario` se incluye en el incremento 0 para que exista en la migración inicial, aunque el plan de origen lo asigna al plan 05; la autenticación y la gestión de roles siguen fuera de alcance.
+- Las decisiones D-01 a D-18 se documentarán a partir de la sección 5 de `docs/condiciones-incremento-0(seccion 5).md`; el catálogo SEA-CU 2025 v3 se tomará de `docs/Catálogo SEA-CU 2025 — criterios, evidencias y valoración v3 - Untitled.csv`. El CSV presenta caracteres acentuados que parecen mal decodificados; su codificación debe validarse antes de transformar los datos, sin corregir texto por conjetura. Sus recuentos observados son 6 dimensiones, 24 indicadores y 65 criterios.
+- El entorno indicado es Python 3.12.16, Node v24.22.1, npm 11.19.1 y Git 2.56.0. El entorno virtual será `.venv`, creado con `uv venv --python 3.12`; el README debe documentar y permitir verificar su preparación.
+- La verificación de backend incluirá pruebas en SQLite y PostgreSQL conforme a D-14; no se está afirmando que dichas pruebas ya se hayan ejecutado.
