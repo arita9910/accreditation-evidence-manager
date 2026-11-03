@@ -94,4 +94,4 @@ Total: 32 entidades (cinco son tablas de unión N:M: CriterioModelo, Clasificaci
 Lógica de negocio, API y pantallas (planes 02 a 12). Datos del catálogo (plan 03).
 
 ## Definición de terminado (por oleada)
-  Modelos y migraciones aplicadas en SQLite; pruebas de cada restricción en verde en SQLite; diagrama actualizado; avance en `docs/avance/01-modelo-de-datos.md`. La verificación en PostgreSQL queda pendiente y se registra como tal.
+   Modelos y migraciones aplicadas en SQLite; pruebas de cada restricción en verde en SQLite; diagrama actualizado; avance en `docs/avance/01-modelo-de-datos.md`. La verificación en PostgreSQL queda pendiente y se registra como tal.
