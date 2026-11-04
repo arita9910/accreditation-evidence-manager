@@ -1,5 +1,4 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
-import './App.css'
 import { Cargando, Diseno, Mensaje } from './componentes'
 
 function RutaProtegida({ children, habilitada = false }) {

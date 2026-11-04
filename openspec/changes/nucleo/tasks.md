@@ -19,24 +19,24 @@
 
 - [x] 3.1 Configurar paginación `PageNumberPagination` con tamaño de página configurable y añadir pruebas de la forma y navegación de la respuesta.
 - [x] 3.2 Implementar el manejador común de excepciones DRF con `codigo`, `mensaje` y `detalle` en español; cubrirlo con pruebas para errores gestionados.
-- [ ] 3.3 Añadir `GET /api/salud/` sin autenticación que responda `{"estado": "ok"}` y probar la respuesta anónima.
-- [ ] 3.4 Instalar y fijar `drf-spectacular` en `sistema/backend/requirements.txt`, actualizar el almacén/procedimiento offline si corresponde, configurar el esquema OpenAPI y habilitar `/api/esquema/` solo en desarrollo; probar que no se registra en producción.
+- [x] 3.3 Añadir `GET /api/salud/` sin autenticación que responda `{"estado": "ok"}` y probar la respuesta anónima.
+- [x] 3.4 Instalar y fijar `drf-spectacular` en `sistema/backend/requirements.txt`, actualizar el almacén/procedimiento offline si corresponde, configurar el esquema OpenAPI y habilitar `/api/esquema/` solo en desarrollo; probar que no se registra en producción.
 
 ## 4. Crear el cliente y la plantilla frontend
 
-- [ ] 4.1 Crear `sistema/frontend/src/api/cliente.js` con `fetch`, `credentials: 'same-origin'`, lectura de `csrftoken`, cabecera `X-CSRFToken` en solicitudes de escritura y manejo central de errores del formato común.
-- [ ] 4.2 Configurar el proxy de Vite para reenviar `/api` a `http://localhost:8000`.
-- [ ] 4.3 Crear `Diseno`, `Mensaje` y `Cargando` bajo `sistema/frontend/src/componentes/`, y reemplazar la plantilla inicial por un enrutador React Router con rutas protegidas preparadas pero sin activar la comprobación de sesión hasta que exista `/api/cuentas/yo/`.
-- [ ] 4.4 Usar `react-router-dom` y Bootstrap local ya declarados en `package.json`; no volver a agregar React Router ni Bootstrap como dependencias.
-- [ ] 4.5 Añadir pruebas Vitest para el envío de CSRF en POST y la presentación de errores mediante `Mensaje`; ejecutar build y lint del frontend.
+- [x] 4.1 Crear `sistema/frontend/src/api/cliente.js` con `fetch`, `credentials: 'same-origin'`, lectura de `csrftoken`, cabecera `X-CSRFToken` en solicitudes de escritura y manejo central de errores del formato común.
+- [x] 4.2 Configurar el proxy de Vite para reenviar `/api` a `http://localhost:8000`.
+- [x] 4.3 Crear `Diseno`, `Mensaje` y `Cargando` bajo `sistema/frontend/src/componentes/`, y reemplazar la plantilla inicial por un enrutador React Router con rutas protegidas preparadas pero sin activar la comprobación de sesión hasta que exista `/api/cuentas/yo/`.
+- [x] 4.4 Usar `react-router-dom` y Bootstrap local ya declarados en `package.json`; no volver a agregar React Router ni Bootstrap como dependencias.
+- [x] 4.5 Añadir pruebas Vitest para el envío de CSRF en POST y la presentación de errores mediante `Mensaje`; ejecutar build y lint del frontend.
 
 ## 5. Documentar la decisión pendiente y el avance
 
-- [ ] 5.1 Crear `sistema/docs/decisiones/nucleo.md` con la pregunta abierta: ¿debe `cuentas.Usuario` heredar de `ModeloBase`? Registrar que no se decide ni implementa esa herencia en este cambio.
-- [ ] 5.2 Crear `sistema/docs/avance/02-nucleo.md` con las comprobaciones backend y frontend realmente ejecutadas, incidencias y decisiones pendientes; no afirmar resultados no verificados.
+- [x] 5.1 Crear `sistema/docs/decisiones/nucleo.md` con la pregunta abierta: ¿debe `cuentas.Usuario` heredar de `ModeloBase`? Registrar que no se decide ni implementa esa herencia en este cambio.
+- [x] 5.2 Crear `sistema/docs/avance/02-nucleo.md` con las comprobaciones backend y frontend realmente ejecutadas, incidencias y decisiones pendientes; no afirmar resultados no verificados.
 
 ## 6. Verificar el núcleo integrado
 
-- [ ] 6.1 Ejecutar migraciones y pruebas backend en SQLite; comprobar la salud, el formato de errores, la paginación, el esquema en desarrollo y su ausencia en producción.
-- [ ] 6.2 Ejecutar Vitest y el build frontend; confirmar que el proxy `/api` y el comportamiento CSRF cumplen las pruebas.
-- [ ] 6.3 Revisar que no se crearon modelos de estructura, que se reutiliza `cuentas.Usuario` y `EVIDENCIAS_ROOT`, y que las raíces privadas y públicas permanecen separadas; registrar los resultados en el avance.
+- [x] 6.1 Ejecutar migraciones y pruebas backend en SQLite; comprobar la salud, el formato de errores, la paginación, el esquema en desarrollo y su ausencia en producción.
+- [x] 6.2 Ejecutar Vitest y el build frontend; confirmar que el proxy `/api` y el comportamiento CSRF cumplen las pruebas.
+- [x] 6.3 Revisar que no se crearon modelos de estructura, que se reutiliza `cuentas.Usuario` y `EVIDENCIAS_ROOT`, y que las raíces privadas y públicas permanecen separadas; registrar los resultados en el avance.
