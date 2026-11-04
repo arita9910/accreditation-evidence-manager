@@ -32,6 +32,6 @@ Dentro del incremento 1, el orden de trabajo es **ciclos → auditoría → cuen
 4. Al terminar cada plan, dejar un párrafo de avance para el capítulo 2 de la tesis en `sistema/docs/avance/<plan>.md` (qué se hizo, decisiones, qué falta).
 
 ## Puntos abiertos que afectan a varios planes
-- D-14: interpretación pendiente de confirmar (SQLite en desarrollo, PostgreSQL en producción). Se implementa con configuración por variables de entorno.
-- Entorno del portátil de Arianne (Python, Node, npm, Git) por comprobar.
+- D-14: confirmada; consecuencia modificada el 2 nov (SQLite en desarrollo y para las pruebas; PostgreSQL en producción, con verificación pendiente en el servidor del cliente o en una instalación local). Se implementa con configuración por variables de entorno.
+- Entorno del portátil de Arianne comprobado: Python 3.12.16 (instalado con uv), Node v24.22.1, npm 11.19.1, Git 2.56.0.
 - Entrevistas: los planes 07 a 10 usan requisitos propuestos que se validan con ellas antes del incremento 2.

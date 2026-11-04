@@ -128,7 +128,7 @@ Los campos se reproducen solo cuando están respaldados por esa fuente. La frase
 - **Decisión:** Desarrollo con SQLite por ahora; PostgreSQL como gestor de producción, que se usa al instalar el sistema en el servidor del cliente.
 - **Justificación:** No especificado en la fuente.
 - **Consecuencias:** No usar SQL propio de un gestor fuera del servicio de búsqueda; en desarrollo, probar restricciones y migraciones en SQLite; ejecutar las pruebas sobre PostgreSQL en el servidor del cliente, o en una instalación local de PostgreSQL cuando haya una disponible. Ya no se exige ejecutarlas antes de cerrar cada incremento.
-- **Estado:** Confirmada (26 oct); consecuencia modificada el 2 nov; interpretación pendiente de confirmar.
+- **Estado:** Confirmada (26 oct); consecuencia modificada el 2 nov.
 
 ## D-15 — Herramientas del frontend
 

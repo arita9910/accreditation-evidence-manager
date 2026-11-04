@@ -88,10 +88,10 @@ Total: 32 entidades (cinco son tablas de unión N:M: CriterioModelo, Clasificaci
 - **T3 (oleada C):** evidencias y valoración; restricciones 5, 6, 9; pruebas.
 - **T4 (oleada D):** cuantitativos y mejora; restricciones 2, 7, 8, 9; pruebas.
 - **T5 (oleada E):** informes.
-- **T6:** tras cada oleada, regenerar `docs/modelo-de-datos/` (diagramas Mermaid ER y de clases; fuentes en las Condiciones, anexos A y B) y ejecutar las migraciones y pruebas **también sobre PostgreSQL** antes de cerrar el incremento.
+- **T6:** tras cada oleada, regenerar `docs/modelo-de-datos/` (diagramas Mermaid ER y de clases; fuentes en las Condiciones, anexos A y B) y ejecutar las migraciones y pruebas sobre SQLite. La verificación sobre PostgreSQL queda pendiente hasta disponer del servidor del cliente o de una instalación local (D-14, modificada el 2 nov) y no bloquea el cierre.
 
 ## Fuera de alcance
 Lógica de negocio, API y pantallas (planes 02 a 12). Datos del catálogo (plan 03).
 
 ## Definición de terminado (por oleada)
-Modelos y migraciones aplicadas en SQLite y PostgreSQL; pruebas de cada restricción en verde; diagrama actualizado; avance en `docs/avance/01-modelo-de-datos.md`.
+     Modelos y migraciones aplicadas en SQLite; pruebas de cada restricción en verde en SQLite; diagrama actualizado; avance en `sistema/docs/avance/01-modelo-de-datos.md`. La verificación en PostgreSQL queda pendiente y se registra como tal.

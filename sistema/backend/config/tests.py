@@ -1,4 +1,5 @@
 import importlib
+import json
 import logging
 from logging.handlers import RotatingFileHandler
 import os
@@ -7,12 +8,44 @@ from tempfile import TemporaryDirectory
 from unittest.mock import patch
 
 from django.conf import settings
-from django.test import SimpleTestCase
+from django.test import SimpleTestCase, override_settings
+from django.urls import Resolver404, clear_url_caches, resolve
 
 from .ajustes import base
 
 
 class RuntimeConfigurationTests(SimpleTestCase):
+    def test_health_endpoint_is_public_and_returns_ok(self):
+        response = self.client.get("/api/salud/")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json(), {"estado": "ok"})
+
+    def test_openapi_schema_is_available_only_in_development(self):
+        from . import urls
+
+        try:
+            with override_settings(DEBUG=True):
+                importlib.reload(urls)
+                clear_url_caches()
+                response = self.client.get("/api/esquema/?format=json")
+                self.assertEqual(response.status_code, 200)
+                self.assertIn("application/vnd.oai.openapi", response["Content-Type"])
+                self.assertEqual(resolve("/api/esquema/").url_name, "schema")
+                self.assertIn(
+                    "/api/salud/",
+                    json.loads(response.content)["paths"],
+                )
+
+            with override_settings(DEBUG=False):
+                importlib.reload(urls)
+                clear_url_caches()
+                with self.assertRaises(Resolver404):
+                    resolve("/api/esquema/")
+        finally:
+            importlib.reload(urls)
+            clear_url_caches()
+
     def test_development_uses_sqlite(self):
         development = importlib.import_module("config.ajustes.desarrollo")
 
@@ -73,9 +106,14 @@ class RuntimeConfigurationTests(SimpleTestCase):
             self.assertTrue(Path(f"{log_path}.1").exists())
 
     def test_evidence_storage_is_private_and_configurable(self):
-        self.assertEqual(settings.MEDIA_ROOT, settings.EVIDENCIAS_ROOT)
+        self.assertNotEqual(settings.MEDIA_ROOT, settings.EVIDENCIAS_ROOT)
+        self.assertFalse(
+            settings.EVIDENCIAS_ROOT.is_relative_to(settings.MEDIA_ROOT)
+            or settings.MEDIA_ROOT.is_relative_to(settings.EVIDENCIAS_ROOT)
+        )
         self.assertFalse(
             settings.EVIDENCIAS_ROOT.is_relative_to(settings.STATIC_ROOT)
+            or settings.STATIC_ROOT.is_relative_to(settings.EVIDENCIAS_ROOT)
         )
         with patch.dict(os.environ, {"EVIDENCIAS_ROOT": "private-evidence"}):
             configured_path = base._configured_path(
