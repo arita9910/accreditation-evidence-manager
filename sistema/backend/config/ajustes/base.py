@@ -15,16 +15,19 @@ def _configured_path(environment_variable, default):
     return path.resolve()
 
 
+def _paths_overlap(first, second):
+    return first == second or first in second.parents or second in first.parents
+
+
 EVIDENCIAS_ROOT = _configured_path(
     "EVIDENCIAS_ROOT",
     BASE_DIR.parent / "almacen" / "evidencias",
 )
-if (
-    EVIDENCIAS_ROOT == STATIC_ROOT.resolve()
-    or STATIC_ROOT.resolve() in EVIDENCIAS_ROOT.parents
-):
+MEDIA_ROOT = _configured_path("MEDIA_ROOT", BASE_DIR / "media")
+if _paths_overlap(EVIDENCIAS_ROOT, STATIC_ROOT.resolve()):
     raise ImproperlyConfigured("EVIDENCIAS_ROOT debe estar fuera de STATIC_ROOT.")
-MEDIA_ROOT = EVIDENCIAS_ROOT
+if _paths_overlap(EVIDENCIAS_ROOT, MEDIA_ROOT):
+    raise ImproperlyConfigured("EVIDENCIAS_ROOT debe estar separado de MEDIA_ROOT.")
 
 LOG_DIR = _configured_path("LOG_DIR", BASE_DIR / "logs")
 LOG_DIR.mkdir(parents=True, exist_ok=True)
@@ -90,6 +93,20 @@ AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
+
+REST_FRAMEWORK = {
+    "DEFAULT_PAGINATION_CLASS": "nucleo.paginacion.PaginacionEstandar",
+    "EXCEPTION_HANDLER": "nucleo.excepciones.manejador_excepciones",
+    "PAGE_SIZE": 20,
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+}
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "Acreditación Evidencia Manager",
+    "DESCRIPTION": "API del sistema de acreditación",
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
+}
 
 LANGUAGE_CODE = "es"
 TIME_ZONE = "America/Havana"

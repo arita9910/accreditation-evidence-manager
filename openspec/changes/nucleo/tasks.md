@@ -2,23 +2,23 @@
 
 ## 1. Crear la base abstracta y la atribución
 
-- [ ] 1.1 Implementar `ModeloBase` en `sistema/backend/nucleo/modelos.py` con `creado_en`, `modificado_en`, `creado_por` y `modificado_por`; usar timestamps automáticos y referencias anulables con `on_delete=PROTECT` a `settings.AUTH_USER_MODEL`.
-- [ ] 1.2 Añadir el puente de importación requerido por Django en `sistema/backend/nucleo/models.py` para que las clases definidas en `modelos.py` se registren al cargar la app.
-- [ ] 1.3 Crear un helper o mixin reutilizable para que los serializadores asignen `creado_por` en altas y `modificado_por` en altas y cambios desde `request.user`, manteniendo referencias nulas cuando no hay usuario autenticado.
-- [ ] 1.4 Probar con un modelo concreto temporal los cuatro campos, la actualización automática de fechas, la nulabilidad y la protección de las referencias; probar también la asignación y preservación de los campos de autoría en altas y cambios.
-- [ ] 1.5 No modificar `cuentas.Usuario` ni añadir modelos de estructura o dominio; mantener abierta la decisión de herencia descrita en `design.md`.
+- [x] 1.1 Implementar `ModeloBase` en `sistema/backend/nucleo/modelos.py` con `creado_en`, `modificado_en`, `creado_por` y `modificado_por`; usar timestamps automáticos y referencias anulables con `on_delete=PROTECT` a `settings.AUTH_USER_MODEL`.
+- [x] 1.2 Añadir el puente de importación requerido por Django en `sistema/backend/nucleo/models.py` para que las clases definidas en `modelos.py` se registren al cargar la app.
+- [x] 1.3 Crear un helper o mixin reutilizable para que los serializadores asignen `creado_por` en altas y `modificado_por` en altas y cambios desde `request.user`, manteniendo referencias nulas cuando no hay usuario autenticado.
+- [x] 1.4 Probar con un modelo concreto temporal los cuatro campos, la actualización automática de fechas, la nulabilidad y la protección de las referencias; probar también la asignación y preservación de los campos de autoría en altas y cambios.
+- [x] 1.5 No modificar `cuentas.Usuario` ni añadir modelos de estructura o dominio; mantener abierta la decisión de herencia descrita en `design.md`.
 
 ## 2. Implementar el almacenamiento privado de ficheros
 
-- [ ] 2.1 Implementar en `sistema/backend/nucleo/almacenamiento.py` `guardar_fichero(archivo, subcarpeta)` para crear un nombre UUID con extensión saneada, guardar bajo `EVIDENCIAS_ROOT` y devolver `nombre_interno`, `ruta_relativa`, `tamano` y `sha256`, calculando la huella por bloques.
-- [ ] 2.2 Implementar `abrir_fichero`, `calcular_sha256`, `verificar_huella` y `borrar_fichero`; limitar el borrado a pruebas y limpieza explícita de huérfanos.
-- [ ] 2.3 Separar `MEDIA_ROOT` de `EVIDENCIAS_ROOT` en los ajustes sin cambiar el contrato de configuración de `EVIDENCIAS_ROOT`; asegurar que las rutas de archivos públicos no exponen el almacenamiento privado.
-- [ ] 2.4 Probar nombres únicos para cargas repetidas, hash contra `hashlib.sha256`, tamaño, contención de la ruta resuelta, separación frente a `STATIC_ROOT` y `MEDIA_ROOT`, rechazo de rutas absolutas y traversal, y detección de contenido alterado.
+- [x] 2.1 Implementar en `sistema/backend/nucleo/almacenamiento.py` `guardar_fichero(archivo, subcarpeta)` para crear un nombre UUID con extensión saneada, guardar bajo `EVIDENCIAS_ROOT` y devolver `nombre_interno`, `ruta_relativa`, `tamano` y `sha256`, calculando la huella por bloques.
+- [x] 2.2 Implementar `abrir_fichero`, `calcular_sha256`, `verificar_huella` y `borrar_fichero`; limitar el borrado a pruebas y limpieza explícita de huérfanos.
+- [x] 2.3 Separar `MEDIA_ROOT` de `EVIDENCIAS_ROOT` en los ajustes sin cambiar el contrato de configuración de `EVIDENCIAS_ROOT`; asegurar que las rutas de archivos públicos no exponen el almacenamiento privado.
+- [x] 2.4 Probar nombres únicos para cargas repetidas, hash contra `hashlib.sha256`, tamaño, contención de la ruta resuelta, separación frente a `STATIC_ROOT` y `MEDIA_ROOT`, rechazo de rutas absolutas y traversal, y detección de contenido alterado.
 
 ## 3. Añadir las utilidades backend de API
 
-- [ ] 3.1 Configurar paginación `PageNumberPagination` con tamaño de página configurable y añadir pruebas de la forma y navegación de la respuesta.
-- [ ] 3.2 Implementar el manejador común de excepciones DRF con `codigo`, `mensaje` y `detalle` en español; cubrirlo con pruebas para errores gestionados.
+- [x] 3.1 Configurar paginación `PageNumberPagination` con tamaño de página configurable y añadir pruebas de la forma y navegación de la respuesta.
+- [x] 3.2 Implementar el manejador común de excepciones DRF con `codigo`, `mensaje` y `detalle` en español; cubrirlo con pruebas para errores gestionados.
 - [ ] 3.3 Añadir `GET /api/salud/` sin autenticación que responda `{"estado": "ok"}` y probar la respuesta anónima.
 - [ ] 3.4 Instalar y fijar `drf-spectacular` en `sistema/backend/requirements.txt`, actualizar el almacén/procedimiento offline si corresponde, configurar el esquema OpenAPI y habilitar `/api/esquema/` solo en desarrollo; probar que no se registra en producción.
 

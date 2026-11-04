@@ -73,9 +73,14 @@ class RuntimeConfigurationTests(SimpleTestCase):
             self.assertTrue(Path(f"{log_path}.1").exists())
 
     def test_evidence_storage_is_private_and_configurable(self):
-        self.assertEqual(settings.MEDIA_ROOT, settings.EVIDENCIAS_ROOT)
+        self.assertNotEqual(settings.MEDIA_ROOT, settings.EVIDENCIAS_ROOT)
+        self.assertFalse(
+            settings.EVIDENCIAS_ROOT.is_relative_to(settings.MEDIA_ROOT)
+            or settings.MEDIA_ROOT.is_relative_to(settings.EVIDENCIAS_ROOT)
+        )
         self.assertFalse(
             settings.EVIDENCIAS_ROOT.is_relative_to(settings.STATIC_ROOT)
+            or settings.STATIC_ROOT.is_relative_to(settings.EVIDENCIAS_ROOT)
         )
         with patch.dict(os.environ, {"EVIDENCIAS_ROOT": "private-evidence"}):
             configured_path = base._configured_path(

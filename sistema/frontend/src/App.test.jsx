@@ -1,15 +1,23 @@
 // @vitest-environment jsdom
 
-import { fireEvent, render, screen } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
+import { Mensaje } from './componentes'
 import App from './App.jsx'
 
 describe('App', () => {
-  it('renders the starter page and increments its counter', () => {
+  it('renderiza la plantilla base del sistema', () => {
     render(<App />)
-
-    expect(screen.getByRole('heading', { name: 'Get started' })).toBeTruthy()
-    fireEvent.click(screen.getByRole('button', { name: 'Count is 0' }))
-    expect(screen.getByRole('button', { name: 'Count is 1' })).toBeTruthy()
+    expect(screen.getByText('Sistema en preparación.')).toBeTruthy()
   }, 30000)
+})
+
+describe('Mensaje', () => {
+  it('muestra mensajes de error con el estilo adecuado', () => {
+    render(<Mensaje tipo="error" titulo="Error">No se pudo guardar</Mensaje>)
+
+    const alert = screen.getAllByRole('alert').at(-1)
+    expect(alert).toHaveTextContent('Error')
+    expect(alert).toHaveTextContent('No se pudo guardar')
+  })
 })
