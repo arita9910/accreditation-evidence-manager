@@ -14,9 +14,20 @@ afterEach(() => {
 })
 
 describe('App', () => {
-  it('renderiza la plantilla base del sistema', () => {
+  it('muestra el catálogo normativo', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
+      ok: true,
+      text: async () => JSON.stringify({
+        version: { nombre: 'SEA-CU 2025' },
+        dimensiones: [],
+      }),
+    }))
+
     render(<App />)
-    expect(screen.getByText('Sistema en preparación.')).toBeTruthy()
+
+    expect(await screen.findByRole('heading', {
+      name: 'Catálogo normativo SEA-CU 2025',
+    })).toBeTruthy()
   }, 30000)
 })
 

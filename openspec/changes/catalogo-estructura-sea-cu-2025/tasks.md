@@ -14,8 +14,8 @@
 
 ## 3. Interfaz de consulta
 
-- [ ] 3.1 Implementar el árbol colapsable con búsqueda por código o texto y marcas de tipo de dato/solo en la Guía, consumiendo la API mediante `src/api/cliente.js`; verificar con Vitest el árbol de seis dimensiones, búsqueda y marca de 3.2.4.
-- [ ] 3.2 Implementar la ruta y ficha de criterio con evidencias, requisitos por categoría como referencia, aviso de que no se calcula la categoría, nota y modelos relacionados; verificar con Vitest la navegación y los estados de carga/error.
+- [x] 3.1 Implementar el árbol colapsable con búsqueda por código o texto y marcas de tipo de dato/solo en la Guía, consumiendo la API mediante `src/api/cliente.js`; verificar con Vitest el árbol de seis dimensiones, búsqueda y marca de 3.2.4.
+- [x] 3.2 Implementar la ruta y ficha de criterio con evidencias, requisitos por categoría como referencia, aviso de que no se calcula la categoría, nota y modelos relacionados; verificar con Vitest la navegación y los estados de carga/error.
 
 ## 4. T4 — Cotejo del catálogo
 
