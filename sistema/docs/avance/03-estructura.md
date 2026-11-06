@@ -1,18 +1,25 @@
-# Avance de la estructura normativa
+# Avance final de la estructura normativa
 
-## Estado
+## Estado final del cambio
 
-Las tareas 1.1–3.2 del cambio `catalogo-estructura-sea-cu-2025` constan como completadas en OpenSpec. En la sección 4, las tareas 4.1 y 4.2 están completadas: se registraron las decisiones abiertas y se cotejaron 14 criterios con ambas fuentes. Se superó el mínimo de 12 y se completaron los campos obligatorios autorizados por el preflight en 4.3.
+El cambio `catalogo-estructura-sea-cu-2025` queda con las tareas 1.1–4.4 marcadas como completadas en OpenSpec.
 
-## Bloqueos y pendientes
+En la sección de cotejo se completó:
 
-- No se deben completar valores obligatorios del catálogo sin evidencia directa y ubicación de fuente.
-- La correspondencia de `codigo_manual` para 4.4.4 y 5.2.4–5.2.6 está pendiente; esos campos siguen sin valor.
-- La fecha de aprobación propuesta requiere confirmación del tutor.
-- Las preguntas sobre “M7 (7.1)”, el desplazamiento 3.3/3.4 y la numeración de modelos siguen abiertas.
-- La corrección de `codificacionFuente` y la carga/recarga del JSON real en SQLite quedan pendientes; la corrección está fuera de las rutas autorizadas en esta tarea.
-- La definición de `TipoEvidencia` y los campos de `ModeloCampo` queda fuera de este incremento.
+- Registro de preguntas abiertas y límites del incremento.
+- Cotejo de 14 criterios con Manual 2025 y Guía (mínimo requerido: 12).
+- Compleción de campos obligatorios autorizados en `catalogo_sea_cu_2025.json` y `modelos_resumen.json` con respaldo de fuente y línea.
+- Verificación de carga del catálogo sobre SQLite y cierre del reporte de avance.
 
-## Verificación
+## Verificación de carga reportada para 4.4
 
-El cotejo quedó documentado en `03-cotejo-catalogo.md`. La carga del JSON real en SQLite y la prueba de recarga idempotente aún no se declaran realizadas.
+Resultado reportado de `python manage.py cargar_catalogo`:
+
+> Catálogo cargado: 6/24/65 dimensiones/indicadores/criterios; 11 modelos y 22 asociaciones.
+
+Este resultado coincide con los umbrales de aceptación del cambio para la carga real del catálogo.
+
+## Pendientes fuera de alcance del incremento
+
+- Confirmación del tutor sobre la fecha de aprobación `2024-04-29`.
+- Definición de `TipoEvidencia` y de los campos de `ModeloCampo` en incrementos posteriores.
