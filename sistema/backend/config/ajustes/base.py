@@ -69,6 +69,7 @@ INSTALLED_APPS = [
     "mejora.apps.MejoraConfig",
     "analisis.apps.AnalisisConfig",
     "informes.apps.InformesConfig",
+    "rest_framework",
 ]
 
 MIDDLEWARE = [
