@@ -2,15 +2,15 @@
 
 ## 1. Carga y validación del catálogo
 
-- [ ] 1.1 Implementar un lector del JSON existente que valide sus claves anidadas, extraiga el código/orden de las dimensiones solo si coincide con el prefijo observado y compruebe 6/24/65; verificar con pruebas del formato real y fixtures de estructura/totales inválidos.
-- [ ] 1.2 Implementar `cargar_catalogo` para cargar o actualizar por claves naturales, preservar referencias de versión de ciclos existentes y ejecutar la escritura en una transacción; verificar en SQLite con una fixture fuente-completa que dos cargas no duplican y que un error revierte la operación.
-- [ ] 1.3 Mapear únicamente valores respaldados por el JSON y `modelos_resumen.json`, incluidas evidencias, requisitos y referencias de modelo; verificar en SQLite, con una fixture completa, que 3.2.4 queda marcado solo en la Guía y se crean las asociaciones de modelo esperadas (20 criterios con modelo y 22 asociaciones). Aclarar y verificar que en este incremento no se crean `TipoEvidencia` ni `ModeloCampo`.
-- [ ] 1.4 Con una fixture del catálogo a la que le falten campos obligatorios (no el JSON real, que quedará completo tras 4.3), verificar que el comando informa qué campos faltan y se detiene sin crear registros; comprobar también que `TipoEvidencia` y `ModeloCampo` no se crean.
+- [x] 1.1 Implementar un lector del JSON existente que valide sus claves anidadas, extraiga el código/orden de las dimensiones solo si coincide con el prefijo observado y compruebe 6/24/65; verificar con pruebas del formato real y fixtures de estructura/totales inválidos.
+- [x] 1.2 Implementar `cargar_catalogo` para cargar o actualizar por claves naturales, preservar referencias de versión de ciclos existentes y ejecutar la escritura en una transacción; verificar en SQLite con una fixture fuente-completa que dos cargas no duplican y que un error revierte la operación.
+- [x] 1.3 Mapear únicamente valores respaldados por el JSON y `modelos_resumen.json`, incluidas evidencias, requisitos y referencias de modelo; verificar en SQLite, con una fixture completa, que 3.2.4 queda marcado solo en la Guía y se crean las asociaciones de modelo esperadas (20 criterios con modelo y 22 asociaciones). Aclarar y verificar que en este incremento no se crean `TipoEvidencia` ni `ModeloCampo`.
+- [x] 1.4 Con una fixture del catálogo a la que le falten campos obligatorios (no el JSON real, que quedará completo tras 4.3), verificar que el comando informa qué campos faltan y se detiene sin crear registros; comprobar también que `TipoEvidencia` y `ModeloCampo` no se crean.
 
 ## 2. API de consulta
 
-- [ ] 2.1 Añadir los servicios, serializadores y rutas de solo lectura para árbol, ficha de criterio, modelos y versiones; verificar con pruebas SQLite que la respuesta del árbol contiene 6/24/65 y que la ficha devuelve 404 estándar para un código inexistente y los datos de referencia para uno existente.
-- [ ] 2.2 Restringir la exposición al ajuste de desarrollo, apagado por defecto y rechazado en producción; verificar que la configuración por defecto no expone el catálogo, que el desarrollo habilitado permite GET y que las escrituras devuelven 405.
+- [x] 2.1 Añadir los servicios, serializadores y rutas de solo lectura para árbol, ficha de criterio, modelos y versiones; verificar con pruebas SQLite que la respuesta del árbol contiene 6/24/65 y que la ficha devuelve 404 estándar para un código inexistente y los datos de referencia para uno existente.
+- [x] 2.2 Restringir la exposición al ajuste de desarrollo, apagado por defecto y rechazado en producción; verificar que la configuración por defecto no expone el catálogo, que el desarrollo habilitado permite GET y que las escrituras devuelven 405.
 
 ## 3. Interfaz de consulta
 

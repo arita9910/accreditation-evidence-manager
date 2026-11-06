@@ -19,6 +19,20 @@ def _paths_overlap(first, second):
     return first == second or first in second.parents or second in first.parents
 
 
+def _configured_boolean(environment_variable, default=False):
+    value = os.environ.get(environment_variable)
+    if value is None:
+        return default
+    normalized = value.strip().casefold()
+    if normalized in {"1", "true", "yes", "sí", "si"}:
+        return True
+    if normalized in {"0", "false", "no"}:
+        return False
+    raise ImproperlyConfigured(
+        f"La variable de entorno {environment_variable} debe ser booleana."
+    )
+
+
 EVIDENCIAS_ROOT = _configured_path(
     "EVIDENCIAS_ROOT",
     BASE_DIR.parent / "almacen" / "evidencias",
@@ -35,6 +49,7 @@ LOG_DIR.mkdir(parents=True, exist_ok=True)
 SECRET_KEY = "development-only-not-for-production"
 DEBUG = False
 ALLOWED_HOSTS = []
+CATALOGO_API_DESARROLLO = _configured_boolean("CATALOGO_API_DESARROLLO")
 
 INSTALLED_APPS = [
     "django.contrib.admin",

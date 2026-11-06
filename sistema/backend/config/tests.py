@@ -8,6 +8,7 @@ from tempfile import TemporaryDirectory
 from unittest.mock import patch
 
 from django.conf import settings
+from django.core.exceptions import ImproperlyConfigured
 from django.test import SimpleTestCase, override_settings
 from django.urls import Resolver404, clear_url_caches, resolve
 
@@ -15,6 +16,12 @@ from .ajustes import base
 
 
 class RuntimeConfigurationTests(SimpleTestCase):
+    def test_catalog_api_is_disabled_by_default(self):
+        self.assertFalse(settings.CATALOGO_API_DESARROLLO)
+
+    def test_catalog_api_is_disabled_by_default(self):
+        self.assertFalse(settings.CATALOGO_API_DESARROLLO)
+
     def test_health_endpoint_is_public_and_returns_ok(self):
         response = self.client.get("/api/salud/")
 
@@ -75,6 +82,27 @@ class RuntimeConfigurationTests(SimpleTestCase):
         self.assertEqual(production.DATABASES["default"]["NAME"], "sea_cu")
         self.assertEqual(production.DATABASES["default"]["PORT"], "5433")
         self.assertEqual(production.ALLOWED_HOSTS, ["example.test", "localhost"])
+
+    def test_production_rejects_catalog_api_development_flag(self):
+        try:
+            with patch.dict(
+                os.environ,
+                {
+                    "SECRET_KEY": "test-only-secret-key",
+                    "DB_NAME": "sea_cu",
+                    "DB_USER": "sea_cu_user",
+                    "DB_PASSWORD": "test-only-password",
+                    "DB_HOST": "db.example.test",
+                    "CATALOGO_API_DESARROLLO": "1",
+                },
+            ):
+                importlib.reload(base)
+                with self.assertRaisesRegex(
+                    ImproperlyConfigured, "no puede habilitarse"
+                ):
+                    importlib.import_module("config.ajustes.produccion")
+        finally:
+            importlib.reload(base)
 
     def test_error_logs_rotate(self):
         configured_handler = settings.LOGGING["handlers"]["archivo_errores"]
