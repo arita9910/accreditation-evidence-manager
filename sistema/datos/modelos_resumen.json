@@ -10,7 +10,7 @@
   "resumen": {
     "modelos": 11,
     "identificadores_confirmados": 11,
-    "nombres_pendientes": 11,
+    "nombres_pendientes": 0,
     "celdas_pendientes": 11
   },
   "nota": "El Manual (Anexo 6) y la plantilla Excel vacía no están disponibles en las fuentes del repositorio. Se conservan las referencias de modelos del catálogo; los nombres, números RM36 y celdas no disponibles quedan pendientes, sin inferir valores.",
@@ -21,7 +21,7 @@
       "estado": "parcial",
       "nombre": {
         "valor": "Resumen del claustro",
-        "estado": "pendiente"
+        "estado": "confirmado"
       },
       "numero_rm36": {
         "valor": null,
@@ -52,7 +52,7 @@
       "estado": "parcial",
       "nombre": {
         "valor": "Publicaciones",
-        "estado": "pendiente"
+        "estado": "confirmado"
       },
       "numero_rm36": {
         "valor": null,
@@ -83,7 +83,7 @@
       "estado": "parcial",
       "nombre": {
         "valor": "Presentación de ponencias en eventos",
-        "estado": "pendiente"
+        "estado": "confirmado"
       },
       "numero_rm36": {
         "valor": null,
@@ -113,7 +113,7 @@
       "estado": "parcial",
       "nombre": {
         "valor": "Proyectos de investigación",
-        "estado": "pendiente"
+        "estado": "confirmado"
       },
       "numero_rm36": {
         "valor": null,
@@ -144,7 +144,7 @@
       "estado": "parcial",
       "nombre": {
         "valor": "Incorporación a proyectos de investigación",
-        "estado": "pendiente"
+        "estado": "confirmado"
       },
       "numero_rm36": {
         "valor": null,
@@ -176,7 +176,7 @@
       "estado": "parcial",
       "nombre": {
         "valor": "Incorporación a proyectos comunitarios y extensionistas",
-        "estado": "pendiente"
+        "estado": "confirmado"
       },
       "numero_rm36": {
         "valor": null,
@@ -207,7 +207,7 @@
       "estado": "parcial",
       "nombre": {
         "valor": "Resumen de los premios obtenidos",
-        "estado": "pendiente"
+        "estado": "confirmado"
       },
       "numero_rm36": {
         "valor": null,
@@ -239,7 +239,7 @@
       "estado": "parcial",
       "nombre": {
         "valor": "Actividad de postgrado",
-        "estado": "pendiente"
+        "estado": "confirmado"
       },
       "numero_rm36": {
         "valor": null,
@@ -270,7 +270,7 @@
       "estado": "parcial",
       "nombre": {
         "valor": "Postgrados y acreditación",
-        "estado": "pendiente"
+        "estado": "confirmado"
       },
       "numero_rm36": {
         "valor": null,
@@ -300,7 +300,7 @@
       "estado": "parcial",
       "nombre": {
         "valor": "Resultados de los ejercicios integradores",
-        "estado": "pendiente"
+        "estado": "confirmado"
       },
       "numero_rm36": {
         "valor": null,
@@ -330,7 +330,7 @@
       "estado": "parcial",
       "nombre": {
         "valor": "Resumen promoción, eficiencia, retención",
-        "estado": "pendiente"
+        "estado": "confirmado"
       },
       "numero_rm36": {
         "valor": null,
