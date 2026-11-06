@@ -20,7 +20,7 @@
       "numero": 1,
       "estado": "parcial",
       "nombre": {
-        "valor": null,
+        "valor": "Resumen del claustro",
         "estado": "pendiente"
       },
       "numero_rm36": {
@@ -51,7 +51,7 @@
       "numero": 2,
       "estado": "parcial",
       "nombre": {
-        "valor": null,
+        "valor": "Publicaciones",
         "estado": "pendiente"
       },
       "numero_rm36": {
@@ -82,7 +82,7 @@
       "numero": 3,
       "estado": "parcial",
       "nombre": {
-        "valor": null,
+        "valor": "Presentación de ponencias en eventos",
         "estado": "pendiente"
       },
       "numero_rm36": {
@@ -112,7 +112,7 @@
       "numero": 4,
       "estado": "parcial",
       "nombre": {
-        "valor": null,
+        "valor": "Proyectos de investigación",
         "estado": "pendiente"
       },
       "numero_rm36": {
@@ -143,7 +143,7 @@
       "numero": 5,
       "estado": "parcial",
       "nombre": {
-        "valor": null,
+        "valor": "Incorporación a proyectos de investigación",
         "estado": "pendiente"
       },
       "numero_rm36": {
@@ -175,7 +175,7 @@
       "numero": 6,
       "estado": "parcial",
       "nombre": {
-        "valor": null,
+        "valor": "Incorporación a proyectos comunitarios y extensionistas",
         "estado": "pendiente"
       },
       "numero_rm36": {
@@ -206,7 +206,7 @@
       "numero": 7,
       "estado": "parcial",
       "nombre": {
-        "valor": null,
+        "valor": "Resumen de los premios obtenidos",
         "estado": "pendiente"
       },
       "numero_rm36": {
@@ -238,7 +238,7 @@
       "numero": 8,
       "estado": "parcial",
       "nombre": {
-        "valor": null,
+        "valor": "Actividad de postgrado",
         "estado": "pendiente"
       },
       "numero_rm36": {
@@ -269,7 +269,7 @@
       "numero": 9,
       "estado": "parcial",
       "nombre": {
-        "valor": null,
+        "valor": "Postgrados y acreditación",
         "estado": "pendiente"
       },
       "numero_rm36": {
@@ -299,7 +299,7 @@
       "numero": 10,
       "estado": "parcial",
       "nombre": {
-        "valor": null,
+        "valor": "Resultados de los ejercicios integradores",
         "estado": "pendiente"
       },
       "numero_rm36": {
@@ -329,7 +329,7 @@
       "numero": 11,
       "estado": "parcial",
       "nombre": {
-        "valor": null,
+        "valor": "Resumen promoción, eficiencia, retención",
         "estado": "pendiente"
       },
       "numero_rm36": {
