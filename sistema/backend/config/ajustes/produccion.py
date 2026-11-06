@@ -4,6 +4,11 @@ from django.core.exceptions import ImproperlyConfigured
 
 from .base import *
 
+if CATALOGO_API_DESARROLLO:
+    raise ImproperlyConfigured(
+        "CATALOGO_API_DESARROLLO no puede habilitarse en producción."
+    )
+
 
 def _required_environment_variable(name):
     value = os.environ.get(name)

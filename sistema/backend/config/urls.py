@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.urls import path
+from django.urls import include, path
 from drf_spectacular.utils import extend_schema, inline_serializer
 from rest_framework import serializers
 from rest_framework.decorators import api_view, permission_classes
@@ -22,6 +22,11 @@ def salud(request):
 urlpatterns = [
     path("api/salud/", salud, name="salud"),
 ]
+
+if settings.CATALOGO_API_DESARROLLO:
+    urlpatterns += [
+        path("api/catalogo/", include("estructura.urls")),
+    ]
 
 if settings.DEBUG:
     from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView

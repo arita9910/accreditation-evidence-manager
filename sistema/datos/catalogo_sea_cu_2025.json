@@ -1,6 +1,7 @@
 {
   "catalogo": "SEA-CU 2025",
   "version": "v3",
+  "fecha_aprobacion": "2024-04-29",
   "fuente": "docs\\Catálogo SEA-CU 2025 — criterios, evidencias y valoración v3 - Untitled.csv",
   "codificacionFuente": "UTF-8 sin BOM; decodificaci?n estricta",
   "resumen": {
@@ -14,6 +15,7 @@
       "indicadores": [
         {
           "codigo": "1.1",
+          "texto": "Proyección de la educación política e ideológica manifestada en:",
           "criterios": [
             {
               "criterio": "1.1.1",
@@ -64,6 +66,7 @@
         },
         {
           "codigo": "1.2",
+          "texto": "La proyección territorial, nacional e internacional de la carrera se refleja en:",
           "criterios": [
             {
               "criterio": "1.2.1",
@@ -114,6 +117,7 @@
         },
         {
           "codigo": "1.3",
+          "texto": "La proyección del ingreso, permanencia, egreso y seguimiento al graduado se manifiesta en:",
           "criterios": [
             {
               "criterio": "1.3.1",
@@ -169,6 +173,7 @@
       "indicadores": [
         {
           "codigo": "2.1",
+          "texto": "Cualidades del educador expresadas en:",
           "criterios": [
             {
               "criterio": "2.1.1",
@@ -189,6 +194,7 @@
         },
         {
           "codigo": "2.2",
+          "texto": "La composición del claustro y su sostenibilidad se expresa en:",
           "criterios": [
             {
               "criterio": "2.2.1",
@@ -239,6 +245,7 @@
         },
         {
           "codigo": "2.3",
+          "texto": "Contribución de la carrera a la pirámide científica y la calidad de la formación continua se manifiesta en:",
           "criterios": [
             {
               "criterio": "2.3.1",
@@ -304,6 +311,7 @@
         },
         {
           "codigo": "2.4",
+          "texto": "La producción científica del claustro se expresa en:",
           "criterios": [
             {
               "criterio": "2.4.1",
@@ -354,6 +362,7 @@
         },
         {
           "codigo": "2.5",
+          "texto": "Preparación y desempeño del personal de apoyo a la docencia expresados en:",
           "criterios": [
             {
               "criterio": "2.5.1",
@@ -404,6 +413,7 @@
         },
         {
           "codigo": "2.6",
+          "texto": "Premios obtenidos por el claustro expresados en:",
           "criterios": [
             {
               "criterio": "2.6.1",
@@ -429,6 +439,7 @@
       "indicadores": [
         {
           "codigo": "3.1",
+          "texto": "El Protagonismo estudiantil en su proceso de formación integral se expresa en:",
           "criterios": [
             {
               "criterio": "3.1.1",
@@ -479,6 +490,7 @@
         },
         {
           "codigo": "3.2",
+          "texto": "Dominio de los modos de actuación según los objetivos de años expresado en:",
           "criterios": [
             {
               "criterio": "3.2.1",
@@ -544,6 +556,7 @@
         },
         {
           "codigo": "3.3",
+          "texto": "Participación estudiantil en otras actividades de la formación profesional evidenciadas en:",
           "criterios": [
             {
               "criterio": "3.3.1",
@@ -594,6 +607,7 @@
         },
         {
           "codigo": "3.4",
+          "texto": "La incorporación de estudiantes en proyectos de investigación se manifiesta en:",
           "criterios": [
             {
               "criterio": "3.4.1",
@@ -634,6 +648,7 @@
       "indicadores": [
         {
           "codigo": "4.1",
+          "texto": "Aseguramiento material de la formación representado en:",
           "criterios": [
             {
               "criterio": "4.1.1",
@@ -669,6 +684,7 @@
         },
         {
           "codigo": "4.2",
+          "texto": "El soporte material en el área de conocimiento de la carrera se concreta en:",
           "criterios": [
             {
               "criterio": "4.2.1",
@@ -704,6 +720,7 @@
         },
         {
           "codigo": "4.3",
+          "texto": "La calidad de las instalaciones que aseguran la formación se materializa en:",
           "criterios": [
             {
               "criterio": "4.3.1",
@@ -739,6 +756,7 @@
         },
         {
           "codigo": "4.4",
+          "texto": "El aseguramiento de las TICs al proceso de formación se manifiesta en:",
           "criterios": [
             {
               "criterio": "4.4.1",
@@ -809,6 +827,7 @@
       "indicadores": [
         {
           "codigo": "5.1",
+          "texto": "La gestión curricular se evidencia en:",
           "criterios": [
             {
               "criterio": "5.1.1",
@@ -829,6 +848,7 @@
         },
         {
           "codigo": "5.2",
+          "texto": "Trabajo metodológico y funcionamiento de colectivos pedagógicos expresado en:",
           "criterios": [
             {
               "criterio": "5.2.1",
@@ -924,6 +944,7 @@
         },
         {
           "codigo": "5.3",
+          "texto": "Integración de la actividad científica, laboral y el posgrado reflejada en:",
           "criterios": [
             {
               "criterio": "5.3.1",
@@ -944,6 +965,7 @@
         },
         {
           "codigo": "5.4",
+          "texto": "Estrategias Educativa y estrategias curriculares de la carrera manifestación en:",
           "criterios": [
             {
               "criterio": "5.4.1",
@@ -999,6 +1021,7 @@
       "indicadores": [
         {
           "codigo": "6.1",
+          "texto": "El seguimiento sistemático del impacto se expresa en:",
           "criterios": [
             {
               "criterio": "6.1.1",
@@ -1019,6 +1042,7 @@
         },
         {
           "codigo": "6.2",
+          "texto": "El impacto de los resultados de la carrera se refleja en:",
           "criterios": [
             {
               "criterio": "6.2.1",
@@ -1084,6 +1108,7 @@
         },
         {
           "codigo": "6.3",
+          "texto": "Visibilidad de la carrera",
           "criterios": [
             {
               "criterio": "6.3.1",
