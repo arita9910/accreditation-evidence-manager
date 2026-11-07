@@ -9,12 +9,12 @@
 
 ## 2. T2 — Servicios
 
-- [ ] 2.1 Implementar `crear_facultad` y `crear_carrera` con validaciones de dominio.
-- [ ] 2.2 Implementar `abrir_ciclo(carrera, tipo, anio_base, curso_inicial, version_normativa, ciclo_anterior=None)` con la validación de no duplicados, mismo ciclo anterior y regla de cinco cursos.
-- [ ] 2.3 Implementar `cerrar_ciclo(ciclo, categoria_obtenida=None, vigencia_anios=None)` con cierre de fecha y validación de 5/7/9/nulo.
-- [ ] 2.4 Implementar `asignar_dimension(ciclo, usuario, dimension)` y `quitar_asignacion` con validación de ciclo abierto y usuario miembro de la carrera.
-- [ ] 2.5 Definir `exigir_ciclo_abierto(ciclo)` como helper reutilizable para otros módulos.
-- [ ] 2.6 Verificar que las pruebas de aceptación cubran: dos ciclos abiertos, ciclo anterior incorrecto, cierre con fechas, ciclo cerrado no editable, vigencia válida y asignación duplicada rechazada.
+- [x] 2.1 Implementar `crear_facultad` y `crear_carrera` con validaciones de dominio.
+- [x] 2.2 Implementar `abrir_ciclo(carrera, tipo, anio_base, curso_inicial, version_normativa, ciclo_anterior=None)` con la validación de no duplicados, mismo ciclo anterior y regla de cinco cursos.
+- [x] 2.3 Implementar `cerrar_ciclo(ciclo, categoria_obtenida=None, vigencia_anios=None)` con cierre de fecha y validación de 5/7/9/nulo.
+- [x] 2.4 Implementar `asignar_dimension(ciclo, usuario, dimension)` y `quitar_asignacion` con validación de ciclo abierto y usuario miembro de la carrera.
+- [x] 2.5 Definir `exigir_ciclo_abierto(ciclo)` como helper reutilizable para otros módulos.
+- [x] 2.6 Verificar que las pruebas de aceptación cubran: dos ciclos abiertos, ciclo anterior incorrecto, cierre con fechas, ciclo cerrado no editable, vigencia válida y asignación duplicada rechazada.
 
 ## 3. T3 — API
 
