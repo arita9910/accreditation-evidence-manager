@@ -26,11 +26,11 @@
 
 ## 4. T4 — Pantallas React
 
-- [ ] 4.1 Crear la lista de carreras y sus ciclos con estado visible.
-- [ ] 4.2 Implementar el formulario de apertura con validación de los campos y aviso de cinco cursos.
-- [ ] 4.3 Implementar la acción de cierre con categoría y vigencia opcionales.
-- [ ] 4.4 Diseñar la tabla dimensión × usuario para la asignación de miembros a la comisión.
-- [ ] 4.5 Verificar los tests de Vitest para validación del formulario y render del tablero de asignación.
+- [x] 4.1 Crear la lista de carreras y sus ciclos con estado visible.
+- [x] 4.2 Implementar el formulario de apertura con validación de los campos y aviso de cinco cursos.
+- [x] 4.3 Implementar la acción de cierre con categoría y vigencia opcionales.
+- [x] 4.4 Diseñar la tabla dimensión × usuario para la asignación de miembros a la comisión.
+- [x] 4.5 Verificar los tests de Vitest para validación del formulario y render del tablero de asignación.
 
 ## 5. T5 — Conexión con cuentas y auditoría
 

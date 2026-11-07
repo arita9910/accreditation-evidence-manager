@@ -1,6 +1,7 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { Cargando, Diseno } from './componentes'
 import Catalogo from './paginas/Catalogo.jsx'
+import Ciclos from './paginas/Ciclos.jsx'
 import FichaCriterio from './paginas/FichaCriterio.jsx'
 
 function RutaProtegida({ children, habilitada = false }) {
@@ -19,6 +20,7 @@ function App() {
       <Diseno>
         <Routes>
           <Route path="/" element={<Catalogo />} />
+          <Route path="/ciclos" element={<Ciclos />} />
           <Route path="/criterios/:codigo" element={<FichaCriterio />} />
           <Route
             path="/protegido"
