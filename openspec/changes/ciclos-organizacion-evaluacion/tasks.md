@@ -2,10 +2,10 @@
 
 ## 1. T1 — Modelos y migraciones (oleada B parcial)
 
-- [ ] 1.1 Definir y documentar `Facultad`, `Carrera`, `Ciclo` y `AsignacionDimension` con sus campos y relaciones.
-- [ ] 1.2 Añadir migraciones y restricciones de integridad: FK, unicidad por `(ciclo, usuario, dimension)` y validaciones de negocio básicas.
-- [ ] 1.3 Garantizar la regla de un solo ciclo abierto por carrera y la cadena de `ciclo_anterior` por carrera.
-- [ ] 1.4 Incluir pruebas para apertura, cierre, cierre de solo lectura, vigencia y asignación duplicada.
+- [x] 1.1 Definir y documentar `Facultad`, `Carrera`, `Ciclo` y `AsignacionDimension` con sus campos y relaciones.
+- [x] 1.2 Añadir migraciones y restricciones de integridad: FK, unicidad por `(ciclo, usuario, dimension)` y validaciones de negocio básicas.
+- [x] 1.3 Garantizar la regla de un solo ciclo abierto por carrera y la cadena de `ciclo_anterior` por carrera.
+- [x] 1.4 Incluir pruebas para apertura, cierre, cierre de solo lectura, vigencia y asignación duplicada.
 
 ## 2. T2 — Servicios
 
