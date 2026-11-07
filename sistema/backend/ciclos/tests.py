@@ -266,3 +266,151 @@ class ServiciosCiclosTests(TestCase):
 
         with self.assertRaises(ValidationError):
             asignar_dimension(ciclo_cerrado, self.usuario, self.dimension)
+
+
+class ApiCiclosTests(TestCase):
+    def setUp(self):
+        self.usuario = get_user_model().objects.create_user(
+            "api-miembro",
+            "clave-segura-789",
+            nombre="Miembro",
+            apellidos="API",
+            email="api-miembro@example.com",
+        )
+        self.facultad = Facultad.objects.create(nombre="Tecnologías")
+        self.carrera = Carrera.objects.create(
+            facultad=self.facultad,
+            nombre="Ingeniería de Software",
+            activa=True,
+        )
+        self.version = VersionNormativa.objects.create(
+            nombre="SEA-CU 2026",
+            fecha_aprobacion=date(2026, 1, 1),
+            fuentes="Fuente API",
+            activa=True,
+        )
+        self.dimension = Dimension.objects.create(
+            version=self.version,
+            codigo="3",
+            nombre="Impacto",
+            orden=3,
+        )
+
+    def test_facultades_get_y_post(self):
+        respuesta_get = self.client.get("/api/facultades/")
+        self.assertEqual(respuesta_get.status_code, 200)
+        datos_get = respuesta_get.json()
+        self.assertIn("results", datos_get)
+        self.assertIn("count", datos_get)
+
+        respuesta_post = self.client.post(
+            "/api/facultades/",
+            data={"nombre": "Ciencias Sociales"},
+            content_type="application/json",
+        )
+        self.assertEqual(respuesta_post.status_code, 201)
+        self.assertEqual(respuesta_post.json()["nombre"], "Ciencias Sociales")
+
+    def test_carreras_get_post_y_patch(self):
+        respuesta_post = self.client.post(
+            "/api/carreras/",
+            data={
+                "facultad": self.facultad.pk,
+                "nombre": "Ciencia de Datos",
+                "activa": True,
+            },
+            content_type="application/json",
+        )
+        self.assertEqual(respuesta_post.status_code, 201)
+        carrera_id = respuesta_post.json()["id"]
+
+        respuesta_get = self.client.get("/api/carreras/")
+        self.assertEqual(respuesta_get.status_code, 200)
+        self.assertIn("results", respuesta_get.json())
+
+        respuesta_patch = self.client.patch(
+            f"/api/carreras/{carrera_id}/",
+            data={"activa": False},
+            content_type="application/json",
+        )
+        self.assertEqual(respuesta_patch.status_code, 200)
+        self.assertFalse(respuesta_patch.json()["activa"])
+
+    def test_ciclos_endpoints_y_filtros(self):
+        respuesta_apertura = self.client.post(
+            "/api/ciclos/",
+            data={
+                "carrera": self.carrera.pk,
+                "version_normativa": self.version.pk,
+                "tipo": "ordinario",
+                "anio_base": 2026,
+                "curso_inicial": 2021,
+            },
+            content_type="application/json",
+        )
+        self.assertEqual(respuesta_apertura.status_code, 201)
+        ciclo_id = respuesta_apertura.json()["id"]
+
+        respuesta_lista = self.client.get(f"/api/ciclos/?carrera={self.carrera.pk}&estado=abierto")
+        self.assertEqual(respuesta_lista.status_code, 200)
+        self.assertEqual(respuesta_lista.json()["count"], 1)
+
+        respuesta_detalle = self.client.get(f"/api/ciclos/{ciclo_id}/")
+        self.assertEqual(respuesta_detalle.status_code, 200)
+        self.assertEqual(respuesta_detalle.json()["estado"], "abierto")
+
+        respuesta_cierre = self.client.post(
+            f"/api/ciclos/{ciclo_id}/cerrar/",
+            data={"categoria_obtenida": "Acreditada", "vigencia_anios": 7},
+            content_type="application/json",
+        )
+        self.assertEqual(respuesta_cierre.status_code, 200)
+        self.assertEqual(respuesta_cierre.json()["estado"], "cerrado")
+
+    def test_asignaciones_get_post_delete(self):
+        ciclo = abrir_ciclo(
+            self.carrera,
+            "ordinario",
+            2026,
+            2021,
+            self.version,
+        )
+        respuesta_post = self.client.post(
+            f"/api/ciclos/{ciclo.pk}/asignaciones/",
+            data={"usuario": self.usuario.pk, "dimension": self.dimension.pk},
+            content_type="application/json",
+        )
+        self.assertEqual(respuesta_post.status_code, 201)
+
+        respuesta_get = self.client.get(f"/api/ciclos/{ciclo.pk}/asignaciones/")
+        self.assertEqual(respuesta_get.status_code, 200)
+        self.assertEqual(respuesta_get.json()["count"], 1)
+
+        respuesta_delete = self.client.delete(
+            f"/api/ciclos/{ciclo.pk}/asignaciones/",
+            data={"usuario": self.usuario.pk, "dimension": self.dimension.pk},
+            content_type="application/json",
+        )
+        self.assertEqual(respuesta_delete.status_code, 204)
+
+    def test_errores_estandar_en_espanol(self):
+        respuesta_invalida = self.client.post(
+            "/api/ciclos/",
+            data={
+                "carrera": self.carrera.pk,
+                "version_normativa": self.version.pk,
+                "tipo": "ordinario",
+                "anio_base": 2026,
+            },
+            content_type="application/json",
+        )
+        self.assertEqual(respuesta_invalida.status_code, 400)
+        self.assertEqual(respuesta_invalida.json()["codigo"], "invalid")
+        self.assertEqual(
+            respuesta_invalida.json()["mensaje"],
+            "La solicitud contiene datos no válidos.",
+        )
+
+        respuesta_no_encontrada = self.client.get("/api/ciclos/999999/")
+        self.assertEqual(respuesta_no_encontrada.status_code, 404)
+        self.assertEqual(respuesta_no_encontrada.json()["codigo"], "not_found")

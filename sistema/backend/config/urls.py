@@ -21,6 +21,7 @@ def salud(request):
 
 urlpatterns = [
     path("api/salud/", salud, name="salud"),
+    path("api/", include("ciclos.urls")),
 ]
 
 if settings.CATALOGO_API_DESARROLLO:

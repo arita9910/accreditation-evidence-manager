@@ -18,11 +18,11 @@
 
 ## 3. T3 — API
 
-- [ ] 3.1 Exponer `GET/POST /api/facultades/` y `GET/POST/PATCH /api/carreras/` con el patrón estándar del proyecto.
-- [ ] 3.2 Exponer `GET /api/ciclos/` con filtros por carrera y estado, `POST /api/ciclos/` para apertura, `GET /api/ciclos/{id}/` y `POST /api/ciclos/{id}/cerrar/`.
-- [ ] 3.3 Exponer `GET/POST/DELETE /api/ciclos/{id}/asignaciones/` para gestionar la comisión y las dimensiones.
-- [ ] 3.4 Aplicar paginación y forma estándar de errores en español.
-- [ ] 3.5 Añadir pruebas de la API con validación de códigos de error y la respuesta esperada.
+- [x] 3.1 Exponer `GET/POST /api/facultades/` y `GET/POST/PATCH /api/carreras/` con el patrón estándar del proyecto.
+- [x] 3.2 Exponer `GET /api/ciclos/` con filtros por carrera y estado, `POST /api/ciclos/` para apertura, `GET /api/ciclos/{id}/` y `POST /api/ciclos/{id}/cerrar/`.
+- [x] 3.3 Exponer `GET/POST/DELETE /api/ciclos/{id}/asignaciones/` para gestionar la comisión y las dimensiones.
+- [x] 3.4 Aplicar paginación y forma estándar de errores en español.
+- [x] 3.5 Añadir pruebas de la API con validación de códigos de error y la respuesta esperada.
 
 ## 4. T4 — Pantallas React
 
