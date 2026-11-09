@@ -2,10 +2,10 @@
 
 ## 1. Modelo y migración
 
-- [ ] 1.1 Definir el modelo de auditoría de solo inserción con campos de usuario, fecha, acción, entidad, detalle, resultado e IP, y verificar que la migración sqlite queda lista para la app `auditoria`.
-- [ ] 1.2 Reforzar `save()` y `delete()` para impedir edición y borrado en la entidad de auditoría, y verificar que una actualización sobre una fila existente falla con la prueba del módulo.
-- [ ] 1.3 Rechazar `QuerySet.update()`/`delete()` y el borrado masivo del modelo de auditoría, y comprobar la prueba de integridad del bloque.
-- [ ] 1.4 Documentar el contrato de la tabla y la estrategia de inmutabilidad, y comprobar que la documentación del bloque queda alineada con D-07 y el plan 06.
+- [x] 1.1 Definir el modelo de auditoría de solo inserción con campos de usuario, fecha, acción, entidad, detalle, resultado e IP, y verificar que la migración sqlite queda lista para la app `auditoria`.
+- [x] 1.2 Reforzar `save()` y `delete()` para impedir edición y borrado en la entidad de auditoría, y verificar que una actualización sobre una fila existente falla con la prueba del módulo.
+- [x] 1.3 Rechazar `QuerySet.update()`/`delete()` y el borrado masivo del modelo de auditoría, y comprobar la prueba de integridad del bloque.
+- [x] 1.4 Documentar el contrato de la tabla y la estrategia de inmutabilidad, y comprobar que la documentación del bloque queda alineada con D-07 y el plan 06.
 
 ## 2. Servicio registrar y reemplazo del stub
 
