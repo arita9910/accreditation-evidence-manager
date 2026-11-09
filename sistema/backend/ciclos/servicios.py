@@ -1,23 +1,49 @@
 from django.core.exceptions import ValidationError
 from django.utils import timezone
 
+from auditoria.servicios import registrar
+from cuentas.permisos import puede
+
 from .models import AsignacionDimension, Carrera, Ciclo, Facultad
 
 
-def crear_facultad(nombre):
+def _requerir_permiso(accion, actor):
+    if actor is None:
+        return
+    if not puede(actor, accion):
+        raise ValidationError("No tiene permiso para realizar esta acción.")
+
+
+def crear_facultad(nombre, usuario=None):
+    _requerir_permiso("crear_facultad", usuario)
     nombre = (nombre or "").strip()
     if not nombre:
         raise ValidationError("El nombre de la facultad es obligatorio.")
-    return Facultad.objects.create(nombre=nombre)
+    facultad = Facultad.objects.create(nombre=nombre)
+    registrar(
+        "crear_facultad",
+        usuario=usuario,
+        entidad="Facultad",
+        detalle={"id": facultad.pk, "nombre": facultad.nombre},
+    )
+    return facultad
 
 
-def crear_carrera(facultad, nombre, activa=True):
+def crear_carrera(facultad, nombre, activa=True, usuario=None):
+    _requerir_permiso("crear_carrera", usuario)
     if facultad is None:
         raise ValidationError("Debe indicarse una facultad válida.")
     nombre = (nombre or "").strip()
     if not nombre:
         raise ValidationError("El nombre de la carrera es obligatorio.")
-    return Carrera.objects.create(facultad=facultad, nombre=nombre, activa=activa)
+    carrera = Carrera.objects.create(facultad=facultad, nombre=nombre, activa=activa)
+    registrar(
+        "crear_carrera",
+        usuario=usuario,
+        entidad="Carrera",
+        detalle={"id": carrera.pk, "nombre": carrera.nombre, "facultad_id": facultad.pk},
+    )
+    return carrera
 
 
 def exigir_ciclo_abierto(ciclo):
@@ -35,7 +61,9 @@ def abrir_ciclo(
     curso_inicial,
     version_normativa,
     ciclo_anterior=None,
+    usuario=None,
 ):
+    _requerir_permiso("abrir_ciclo", usuario)
     if carrera is None:
         raise ValidationError("Debe indicarse una carrera válida.")
     if version_normativa is None:
@@ -70,10 +98,17 @@ def abrir_ciclo(
     )
     ciclo.full_clean()
     ciclo.save()
+    registrar(
+        "abrir_ciclo",
+        usuario=usuario,
+        entidad="Ciclo",
+        detalle={"id": ciclo.pk, "carrera_id": carrera.pk, "tipo": ciclo.tipo},
+    )
     return ciclo
 
 
-def cerrar_ciclo(ciclo, categoria_obtenida=None, vigencia_anios=None):
+def cerrar_ciclo(ciclo, categoria_obtenida=None, vigencia_anios=None, usuario=None):
+    _requerir_permiso("cerrar_ciclo", usuario)
     if ciclo is None:
         raise ValidationError("Debe indicar un ciclo válido.")
     if ciclo.estado == Ciclo.Estado.CERRADO:
@@ -89,10 +124,17 @@ def cerrar_ciclo(ciclo, categoria_obtenida=None, vigencia_anios=None):
         ciclo.vigencia_anios = vigencia_anios
     ciclo.full_clean()
     ciclo.save()
+    registrar(
+        "cerrar_ciclo",
+        usuario=usuario,
+        entidad="Ciclo",
+        detalle={"id": ciclo.pk, "categoria_obtenida": ciclo.categoria_obtenida, "vigencia_anios": ciclo.vigencia_anios},
+    )
     return ciclo
 
 
-def asignar_dimension(ciclo, usuario, dimension):
+def asignar_dimension(ciclo, usuario, dimension, actor=None):
+    _requerir_permiso("asignar_dimension", actor)
     exigir_ciclo_abierto(ciclo)
     if usuario is None:
         raise ValidationError("Debe indicarse un usuario válido.")
@@ -114,14 +156,22 @@ def asignar_dimension(ciclo, usuario, dimension):
     ).exists():
         raise ValidationError("La asignación ya existe para este usuario y dimensión.")
 
-    return AsignacionDimension.objects.create(
+    asignacion = AsignacionDimension.objects.create(
         ciclo=ciclo,
         usuario=usuario,
         dimension=dimension,
     )
+    registrar(
+        "asignar_dimension",
+        usuario=actor or usuario,
+        entidad="AsignacionDimension",
+        detalle={"id": asignacion.pk, "ciclo_id": ciclo.pk, "usuario_id": usuario.pk, "dimension_id": dimension.pk},
+    )
+    return asignacion
 
 
-def quitar_asignacion(ciclo, usuario, dimension):
+def quitar_asignacion(ciclo, usuario, dimension, actor=None):
+    _requerir_permiso("quitar_asignacion", actor)
     exigir_ciclo_abierto(ciclo)
     if usuario is None:
         raise ValidationError("Debe indicarse un usuario válido.")
@@ -136,7 +186,14 @@ def quitar_asignacion(ciclo, usuario, dimension):
     if not registros.exists():
         return 0
 
-    return registros.delete()[0]
+    total = registros.delete()[0]
+    registrar(
+        "quitar_asignacion",
+        usuario=actor or usuario,
+        entidad="AsignacionDimension",
+        detalle={"ciclo_id": ciclo.pk, "usuario_id": usuario.pk, "dimension_id": dimension.pk, "eliminados": total},
+    )
+    return total
 
 
 __all__ = [

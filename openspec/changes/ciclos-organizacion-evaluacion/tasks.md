@@ -34,10 +34,10 @@
 
 ## 5. T5 — Conexión con cuentas y auditoría
 
-- [ ] 5.1 Cuando estén disponibles los planes 05 y 06, aplicar `puede(...)` a todas las vistas y servicios del módulo.
-- [ ] 5.2 Restringir apertura/cierre/asignación al director de su carrera y la creación de facultad/carrera al administrador técnico.
-- [ ] 5.3 Invocar `registrar(...)` en cada operación relevante del módulo.
-- [ ] 5.4 Añadir pruebas negativas de permisos y auditoría según la matriz de permisos correspondiente.
+- [x] 5.1 Cuando estén disponibles los planes 05 y 06, aplicar `puede(...)` a todas las vistas y servicios del módulo.
+- [x] 5.2 Restringir apertura/cierre/asignación al director de su carrera y la creación de facultad/carrera al administrador técnico.
+- [x] 5.3 Invocar `registrar(...)` en cada operación relevante del módulo.
+- [x] 5.4 Añadir pruebas negativas de permisos y auditoría según la matriz de permisos correspondiente.
 
 ## Workflow follow-up
 

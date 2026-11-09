@@ -1,10 +1,13 @@
 from datetime import date
+from types import SimpleNamespace
 
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError, transaction
 from django.test import TestCase
 
+from auditoria.servicios import limpiar_registros, obtener_registros
+from cuentas.permisos import puede
 from estructura.models import Dimension, VersionNormativa
 
 from .models import AsignacionDimension, Carrera, Ciclo, Facultad
@@ -266,6 +269,41 @@ class ServiciosCiclosTests(TestCase):
 
         with self.assertRaises(ValidationError):
             asignar_dimension(ciclo_cerrado, self.usuario, self.dimension)
+
+    def test_t5_permisos_y_auditoria_stub(self):
+        limpiar_registros()
+        director = SimpleNamespace(rol="director_carrera")
+        tecnico = SimpleNamespace(rol="administrador_tecnico")
+        miembro = SimpleNamespace(rol="miembro")
+
+        self.assertTrue(puede(tecnico, "crear_facultad"))
+        self.assertTrue(puede(director, "abrir_ciclo"))
+        self.assertFalse(puede(miembro, "crear_facultad"))
+        self.assertFalse(puede(miembro, "cerrar_ciclo"))
+
+        with self.assertRaises(ValidationError):
+            crear_facultad("Facultad bloqueada", usuario=miembro)
+
+        facultad = crear_facultad("Facultad técnica", usuario=tecnico)
+        carrera = crear_carrera(facultad, "Carrera técnica", usuario=tecnico)
+        ciclo = abrir_ciclo(
+            carrera,
+            "ordinario",
+            2027,
+            2022,
+            self.version,
+            usuario=director,
+        )
+
+        with self.assertRaises(ValidationError):
+            cerrar_ciclo(ciclo, vigencia_anios=7, usuario=miembro)
+
+        asignar_dimension(ciclo, self.usuario, self.dimension, actor=director)
+        eventos = {evento["accion"] for evento in obtener_registros()}
+
+        self.assertTrue(
+            {"crear_facultad", "crear_carrera", "abrir_ciclo", "asignar_dimension"}.issubset(eventos)
+        )
 
 
 class ApiCiclosTests(TestCase):
