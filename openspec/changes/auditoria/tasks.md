@@ -9,10 +9,10 @@
 
 ## 2. Servicio registrar y reemplazo del stub
 
-- [ ] 2.1 Implementar `registrar(accion, *, usuario=None, entidad=None, detalle=None, contexto=None, **kwargs)` con la firma actual y la serialización del detalle, y verificar que la prueba del servicio crea el evento con la forma esperada.
-- [ ] 2.2 Sustituir el stub in-memory por la implementación real de persistencia en la base de datos, conservando la misma firma y el comportamiento de los módulos consumidoras, y verificar que los eventos se guardan con la estructura existente.
-- [ ] 2.3 Reemplazar las llamadas del stub en `ciclos/servicios.py` para `abrir_ciclo`, `cerrar_ciclo` y `asignar_dimension`, y comprobar que las pruebas del módulo de ciclos siguen pasando sin cambios funcionales.
-- [ ] 2.4 Definir la política de transacción para la operación principal y el registro, y verificar la prueba de coherencia para asegurar que no haya éxito sin rastro.
+- [x] 2.1 Implementar `registrar(accion, *, usuario=None, entidad=None, detalle=None, contexto=None, **kwargs)` con la firma actual y la serialización del detalle, y verificar que la prueba del servicio crea el evento con la forma esperada.
+- [x] 2.2 Sustituir el stub in-memory por la implementación real de persistencia en la base de datos, conservando la misma firma y el comportamiento de los módulos consumidoras, y verificar que los eventos se guardan con la estructura existente.
+- [x] 2.3 Reemplazar las llamadas del stub en `ciclos/servicios.py` para `abrir_ciclo`, `cerrar_ciclo` y `asignar_dimension`, y comprobar que las pruebas del módulo de ciclos siguen pasando sin cambios funcionales.
+- [x] 2.4 Definir la política de transacción para la operación principal y el registro, y verificar la prueba de coherencia para asegurar que no haya éxito sin rastro.
 
 ## 3. API de consulta
 

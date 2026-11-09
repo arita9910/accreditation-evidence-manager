@@ -1,4 +1,5 @@
 from django.core.exceptions import ValidationError
+from django.db import transaction
 from django.utils import timezone
 
 from auditoria.servicios import registrar
@@ -19,13 +20,14 @@ def crear_facultad(nombre, usuario=None):
     nombre = (nombre or "").strip()
     if not nombre:
         raise ValidationError("El nombre de la facultad es obligatorio.")
-    facultad = Facultad.objects.create(nombre=nombre)
-    registrar(
-        "crear_facultad",
-        usuario=usuario,
-        entidad="Facultad",
-        detalle={"id": facultad.pk, "nombre": facultad.nombre},
-    )
+    with transaction.atomic():
+        facultad = Facultad.objects.create(nombre=nombre)
+        registrar(
+            "crear_facultad",
+            usuario=usuario,
+            entidad="Facultad",
+            detalle={"id": facultad.pk, "nombre": facultad.nombre},
+        )
     return facultad
 
 
@@ -36,13 +38,14 @@ def crear_carrera(facultad, nombre, activa=True, usuario=None):
     nombre = (nombre or "").strip()
     if not nombre:
         raise ValidationError("El nombre de la carrera es obligatorio.")
-    carrera = Carrera.objects.create(facultad=facultad, nombre=nombre, activa=activa)
-    registrar(
-        "crear_carrera",
-        usuario=usuario,
-        entidad="Carrera",
-        detalle={"id": carrera.pk, "nombre": carrera.nombre, "facultad_id": facultad.pk},
-    )
+    with transaction.atomic():
+        carrera = Carrera.objects.create(facultad=facultad, nombre=nombre, activa=activa)
+        registrar(
+            "crear_carrera",
+            usuario=usuario,
+            entidad="Carrera",
+            detalle={"id": carrera.pk, "nombre": carrera.nombre, "facultad_id": facultad.pk},
+        )
     return carrera
 
 
@@ -85,25 +88,26 @@ def abrir_ciclo(
             raise ValidationError("El ciclo anterior debe estar cerrado.")
 
     curso_final = curso_inicial + 4
-    ciclo = Ciclo(
-        carrera=carrera,
-        version_normativa=version_normativa,
-        tipo=str(tipo).strip(),
-        anio_base=anio_base,
-        curso_inicial=curso_inicial,
-        curso_final=curso_final,
-        estado=Ciclo.Estado.ABIERTO,
-        ciclo_anterior=ciclo_anterior,
-        fecha_apertura=timezone.localdate(),
-    )
-    ciclo.full_clean()
-    ciclo.save()
-    registrar(
-        "abrir_ciclo",
-        usuario=usuario,
-        entidad="Ciclo",
-        detalle={"id": ciclo.pk, "carrera_id": carrera.pk, "tipo": ciclo.tipo},
-    )
+    with transaction.atomic():
+        ciclo = Ciclo(
+            carrera=carrera,
+            version_normativa=version_normativa,
+            tipo=str(tipo).strip(),
+            anio_base=anio_base,
+            curso_inicial=curso_inicial,
+            curso_final=curso_final,
+            estado=Ciclo.Estado.ABIERTO,
+            ciclo_anterior=ciclo_anterior,
+            fecha_apertura=timezone.localdate(),
+        )
+        ciclo.full_clean()
+        ciclo.save()
+        registrar(
+            "abrir_ciclo",
+            usuario=usuario,
+            entidad="Ciclo",
+            detalle={"id": ciclo.pk, "carrera_id": carrera.pk, "tipo": ciclo.tipo},
+        )
     return ciclo
 
 
@@ -116,20 +120,21 @@ def cerrar_ciclo(ciclo, categoria_obtenida=None, vigencia_anios=None, usuario=No
     if vigencia_anios is not None and vigencia_anios not in (5, 7, 9):
         raise ValidationError("La vigencia debe ser 5, 7, 9 o nula.")
 
-    ciclo.estado = Ciclo.Estado.CERRADO
-    ciclo.fecha_cierre = timezone.localdate()
-    if categoria_obtenida is not None:
-        ciclo.categoria_obtenida = str(categoria_obtenida).strip() or None
-    if vigencia_anios is not None:
-        ciclo.vigencia_anios = vigencia_anios
-    ciclo.full_clean()
-    ciclo.save()
-    registrar(
-        "cerrar_ciclo",
-        usuario=usuario,
-        entidad="Ciclo",
-        detalle={"id": ciclo.pk, "categoria_obtenida": ciclo.categoria_obtenida, "vigencia_anios": ciclo.vigencia_anios},
-    )
+    with transaction.atomic():
+        ciclo.estado = Ciclo.Estado.CERRADO
+        ciclo.fecha_cierre = timezone.localdate()
+        if categoria_obtenida is not None:
+            ciclo.categoria_obtenida = str(categoria_obtenida).strip() or None
+        if vigencia_anios is not None:
+            ciclo.vigencia_anios = vigencia_anios
+        ciclo.full_clean()
+        ciclo.save()
+        registrar(
+            "cerrar_ciclo",
+            usuario=usuario,
+            entidad="Ciclo",
+            detalle={"id": ciclo.pk, "categoria_obtenida": ciclo.categoria_obtenida, "vigencia_anios": ciclo.vigencia_anios},
+        )
     return ciclo
 
 
@@ -156,17 +161,18 @@ def asignar_dimension(ciclo, usuario, dimension, actor=None):
     ).exists():
         raise ValidationError("La asignación ya existe para este usuario y dimensión.")
 
-    asignacion = AsignacionDimension.objects.create(
-        ciclo=ciclo,
-        usuario=usuario,
-        dimension=dimension,
-    )
-    registrar(
-        "asignar_dimension",
-        usuario=actor or usuario,
-        entidad="AsignacionDimension",
-        detalle={"id": asignacion.pk, "ciclo_id": ciclo.pk, "usuario_id": usuario.pk, "dimension_id": dimension.pk},
-    )
+    with transaction.atomic():
+        asignacion = AsignacionDimension.objects.create(
+            ciclo=ciclo,
+            usuario=usuario,
+            dimension=dimension,
+        )
+        registrar(
+            "asignar_dimension",
+            usuario=actor or usuario,
+            entidad="AsignacionDimension",
+            detalle={"id": asignacion.pk, "ciclo_id": ciclo.pk, "usuario_id": usuario.pk, "dimension_id": dimension.pk},
+        )
     return asignacion
 
 
@@ -186,13 +192,14 @@ def quitar_asignacion(ciclo, usuario, dimension, actor=None):
     if not registros.exists():
         return 0
 
-    total = registros.delete()[0]
-    registrar(
-        "quitar_asignacion",
-        usuario=actor or usuario,
-        entidad="AsignacionDimension",
-        detalle={"ciclo_id": ciclo.pk, "usuario_id": usuario.pk, "dimension_id": dimension.pk, "eliminados": total},
-    )
+    with transaction.atomic():
+        total = registros.delete()[0]
+        registrar(
+            "quitar_asignacion",
+            usuario=actor or usuario,
+            entidad="AsignacionDimension",
+            detalle={"ciclo_id": ciclo.pk, "usuario_id": usuario.pk, "dimension_id": dimension.pk, "eliminados": total},
+        )
     return total
 
 
