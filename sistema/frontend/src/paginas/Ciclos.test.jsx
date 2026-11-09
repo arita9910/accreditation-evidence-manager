@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 
-import { cleanup, fireEvent, render, screen, within } from '@testing-library/react'
+import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import Ciclos from './Ciclos.jsx'
@@ -71,6 +71,38 @@ describe('Pantallas de ciclos', () => {
     expect(screen.getByText('Debe indicar el año base.')).toBeTruthy()
     expect(screen.getByText('Debe indicar el curso inicial.')).toBeTruthy()
     expect(screen.getByText('Debe indicar la versión normativa.')).toBeTruthy()
+  })
+
+  it('normaliza el curso inicial a un año y lo envía como entero al backend', async () => {
+    const fetchMock = prepararFetch({
+      carreras: [{ id: 1, nombre: 'Ingeniería de Software', activa: true }],
+      ciclos: [],
+      versiones: [{ id: 7, nombre: 'SEA-CU 2026' }],
+    })
+
+    render(
+      <MemoryRouter>
+        <Ciclos />
+      </MemoryRouter>,
+    )
+
+    expect(await screen.findByRole('heading', { name: 'Abrir ciclo' })).toBeTruthy()
+
+    fireEvent.change(screen.getByLabelText('Carrera'), { target: { value: '1' } })
+    fireEvent.change(screen.getByLabelText('Tipo'), { target: { value: 'acreditación' } })
+    fireEvent.change(screen.getByLabelText('Año base'), { target: { value: '2026' } })
+    fireEvent.change(screen.getByLabelText('Curso inicial'), { target: { value: '2024-2025' } })
+    fireEvent.change(screen.getByLabelText('Versión normativa'), { target: { value: '7' } })
+    fireEvent.click(screen.getByRole('button', { name: 'Abrir ciclo' }))
+
+    await waitFor(() => {
+      const llamada = fetchMock.mock.calls.find(([url, opciones = {}]) => url === '/api/ciclos/' && opciones.method === 'POST')
+      expect(llamada).toBeTruthy()
+      const [, opciones] = llamada
+      const cuerpo = JSON.parse(opciones.body)
+      expect(cuerpo.curso_inicial).toBe(2024)
+      expect(Number.isInteger(cuerpo.curso_inicial)).toBe(true)
+    })
   })
 
   it('renderiza la tabla dimensión x usuario con los datos de asignaciones', async () => {

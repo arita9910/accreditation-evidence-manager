@@ -16,6 +16,20 @@ function ordenarNumeros(valores) {
   return [...valores].sort((a, b) => Number(a) - Number(b))
 }
 
+function normalizarCursoInicial(valor) {
+  if (valor === null || valor === undefined) {
+    return ''
+  }
+
+  const texto = String(valor).trim()
+  if (!texto) {
+    return ''
+  }
+
+  const [primerFragmento] = texto.split('-')
+  return primerFragmento.replace(/\D/g, '')
+}
+
 function Ciclos() {
   const [carreras, setCarreras] = useState([])
   const [ciclos, setCiclos] = useState([])
@@ -112,8 +126,8 @@ function Ciclos() {
     [ciclos],
   )
 
-  const cursoInicial = Number(formApertura.curso_inicial)
-  const cursoFinalSugerido = Number.isNaN(cursoInicial) ? '' : cursoInicial + 4
+  const cursoInicial = formApertura.curso_inicial === '' ? '' : Number(formApertura.curso_inicial)
+  const cursoFinalSugerido = cursoInicial === '' || Number.isNaN(cursoInicial) ? '' : cursoInicial + 4
 
   const cargarAsignaciones = async (cicloId) => {
     if (!cicloId) {
@@ -136,6 +150,7 @@ function Ciclos() {
 
   const validarApertura = () => {
     const errores = []
+    const cursoInicialNumero = Number(formApertura.curso_inicial)
 
     if (!formApertura.carrera) {
       errores.push('Debe seleccionar una carrera.')
@@ -146,7 +161,7 @@ function Ciclos() {
     if (!formApertura.anio_base) {
       errores.push('Debe indicar el año base.')
     }
-    if (!formApertura.curso_inicial) {
+    if (!formApertura.curso_inicial || !Number.isInteger(cursoInicialNumero) || cursoInicialNumero <= 0) {
       errores.push('Debe indicar el curso inicial.')
     }
     if (!formApertura.version_normativa) {
@@ -174,11 +189,17 @@ function Ciclos() {
       return
     }
 
+    const cursoInicialNumero = Number(formApertura.curso_inicial)
+    if (!Number.isInteger(cursoInicialNumero) || cursoInicialNumero <= 0) {
+      setErroresApertura(['Debe indicar un curso inicial válido.'])
+      return
+    }
+
     const cuerpo = {
       carrera: Number(formApertura.carrera),
       tipo: formApertura.tipo.trim(),
       anio_base: Number(formApertura.anio_base),
-      curso_inicial: Number(formApertura.curso_inicial),
+      curso_inicial: cursoInicialNumero,
       version_normativa: Number(formApertura.version_normativa),
     }
     if (formApertura.ciclo_anterior) {
@@ -377,12 +398,17 @@ function Ciclos() {
 
             <div className="col-md-6">
               <label className="form-label" htmlFor="tipo-apertura">Tipo</label>
-              <input
-                className="form-control"
+              <select
+                className="form-select"
                 id="tipo-apertura"
                 value={formApertura.tipo}
                 onChange={(evento) => setFormApertura((previo) => ({ ...previo, tipo: evento.target.value }))}
-              />
+              >
+                <option value="">Seleccione</option>
+                <option value="autoevaluación">autoevaluación</option>
+                <option value="acreditación">acreditación</option>
+                <option value="reacreditación">reacreditación</option>
+              </select>
             </div>
 
             <div className="col-md-4">
@@ -401,9 +427,16 @@ function Ciclos() {
               <input
                 className="form-control"
                 id="curso-inicial-apertura"
+                type="text"
                 inputMode="numeric"
+                maxLength={4}
+                pattern="[0-9]{4}"
+                placeholder="2024"
                 value={formApertura.curso_inicial}
-                onChange={(evento) => setFormApertura((previo) => ({ ...previo, curso_inicial: evento.target.value }))}
+                onChange={(evento) => setFormApertura((previo) => ({
+                  ...previo,
+                  curso_inicial: normalizarCursoInicial(evento.target.value),
+                }))}
               />
             </div>
 

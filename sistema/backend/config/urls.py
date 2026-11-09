@@ -5,6 +5,8 @@ from rest_framework import serializers
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
+from django.contrib import admin
+
 
 
 @extend_schema(
@@ -22,6 +24,7 @@ def salud(request):
 urlpatterns = [
     path("api/salud/", salud, name="salud"),
     path("api/", include("ciclos.urls")),
+    path('admin/', admin.site.urls),
 ]
 
 if settings.CATALOGO_API_DESARROLLO:
