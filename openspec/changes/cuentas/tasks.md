@@ -2,9 +2,9 @@
 
 ## 1. Modelo y migración
 
-- [ ] 1.1 Migrar el modelo `Usuario` para añadir el rol activo y la carrera asociada del usuario, manteniendo `AUTH_USER_MODEL` con `AbstractBaseUser` + `PermissionsMixin` y sin herencia de `ModeloBase`. Verificar la migración SQLite y la alineación con la decisión del núcleo.
-- [ ] 1.2 Definir la regla de negocio de un único rol activo por usuario, con los valores `Administrador Técnico` (acceso global) y `Director de Carrera` (acceso restringido a su carrera mediante `ForeignKey`), y validar que la integridad del modelo impide roles inconsistentes.
-- [ ] 1.3 Validar la compatibilidad de la migración con el registro de auditoría, asegurando que el `rol` y la `carrera` queden disponibles para la trazabilidad y para la función `puede(...)` sin duplicar reglas en otros módulos.
+- [x] 1.1 Migrar el modelo `Usuario` para añadir el rol activo y la carrera asociada del usuario, manteniendo `AUTH_USER_MODEL` con `AbstractBaseUser` + `PermissionsMixin` y sin herencia de `ModeloBase`. Verificar la migración SQLite y la alineación con la decisión del núcleo.
+- [x] 1.2 Definir la regla de negocio de un único rol activo por usuario, con los valores `Administrador Técnico` (acceso global) y `Director de Carrera` (acceso restringido a su carrera mediante `ForeignKey`), y validar que la integridad del modelo impide roles inconsistentes.
+- [x] 1.3 Validar la compatibilidad de la migración con el registro de auditoría, asegurando que el `rol` y la `carrera` queden disponibles para la trazabilidad y para la función `puede(...)` sin duplicar reglas en otros módulos.
 
 ## 2. Lógica de permisos real y reemplazo del stub
 
