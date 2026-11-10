@@ -16,14 +16,14 @@
 
 ## 3. API de consulta
 
-- [ ] 3.1 Crear la API de consulta `GET /api/auditoria/` con filtros por usuario, acción, entidad, fecha y resultado, y verificar el caso de filtros correctos sobre un conjunto de registros.
-- [ ] 3.2 Aplicar el alcance de permisos del director y del administrador técnico, y verificar que un director no vea registros ajenos a su carrera.
-- [ ] 3.3 Añadir ordenación por fecha descendente y paginación, y verificar que la API responde con JSON consistente y mensajes en español.
+- [x] 3.1 Crear la API de consulta `GET /api/auditoria/` con filtros por usuario, acción, entidad, fecha y resultado, y verificar el caso de filtros correctos sobre un conjunto de registros.
+- [x] 3.2 Aplicar el alcance de permisos del director y del administrador técnico, y verificar que un director no vea registros ajenos a su carrera.
+- [x] 3.3 Añadir ordenación por fecha descendente y paginación, y verificar que la API responde con JSON consistente y mensajes en español.
 
 ## 4. Middleware y accesos denegados
 
-- [ ] 4.1 Registrar cada respuesta 403 de acceso en auditoría sin guardar contenidos sensibles, y verificar la prueba del middleware con un usuario no autorizado.
-- [ ] 4.2 Asegurar que el evento de `acceso.denegado` conserva el usuario, la acción y la entidad objetivo, y verificar el caso de la negación con `PermisoSistema`.
+- [x] 4.1 Registrar cada respuesta 403 de acceso en auditoría sin guardar contenidos sensibles, y verificar la prueba del middleware con un usuario no autorizado.
+- [x] 4.2 Asegurar que el evento de `acceso.denegado` conserva el usuario, la acción y la entidad objetivo, y verificar el caso de la negación con `PermisoSistema`.
 
 ## 5. Pantalla de consulta
 

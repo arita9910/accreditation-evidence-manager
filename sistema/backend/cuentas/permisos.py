@@ -2,6 +2,22 @@ from __future__ import annotations
 
 from collections.abc import Iterable
 
+from rest_framework.exceptions import PermissionDenied
+
+
+class PermisoSistema(PermissionDenied):
+    def __init__(
+        self,
+        detalle="No tiene permiso para realizar esta acción.",
+        *,
+        accion=None,
+        entidad=None,
+        **kwargs,
+    ):
+        super().__init__(detalle, **kwargs)
+        self.accion = accion
+        self.entidad = entidad
+
 
 _PERMISOS_POR_ACCION = {
     "crear_facultad": {"administrador_tecnico"},
@@ -12,6 +28,8 @@ _PERMISOS_POR_ACCION = {
     "quitar_asignacion": {"director_carrera", "administrador_tecnico"},
     "listar_facultades": {"administrador_tecnico", "director_carrera"},
     "listar_carreras": {"administrador_tecnico", "director_carrera"},
+    "consultar_auditoria": {"administrador_tecnico", "director_carrera"},
+    "listar_auditoria": {"administrador_tecnico", "director_carrera"},
 }
 
 
@@ -89,4 +107,4 @@ def puede(actor, accion, *, recurso=None, contexto=None):
     return False
 
 
-__all__ = ["puede"]
+__all__ = ["PermisoSistema", "puede"]

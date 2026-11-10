@@ -1,6 +1,11 @@
+from datetime import timedelta
+
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.test import TestCase
+from django.utils import timezone
+
+from cuentas.permisos import PermisoSistema, puede
 
 from .modelos import RegistroAuditoria
 
@@ -67,3 +72,135 @@ class RegistroAuditoriaTests(TestCase):
                 [registro],
                 fields=["accion"],
             )
+
+
+class AuditoriaApiYPermisosTests(TestCase):
+    def setUp(self):
+        self.usuario = get_user_model().objects.create_user(
+            "auditor-api",
+            "clave-segura-123",
+            nombre="Auditor",
+            apellidos="Prueba",
+            email="auditor-api@example.com",
+        )
+        self.director = get_user_model().objects.create_user(
+            "director-carrera",
+            "clave-segura-123",
+            nombre="Director",
+            apellidos="Carrera",
+            email="director@example.com",
+        )
+        self.director.rol = "director_carrera"
+        self.director.carrera_id = 12
+        self.miembro = get_user_model().objects.create_user(
+            "miembro-auditoria",
+            "clave-segura-123",
+            nombre="Miembro",
+            apellidos="Auditoría",
+            email="miembro@example.com",
+        )
+        self.miembro.rol = "miembro"
+        self.tecnico = get_user_model().objects.create_user(
+            "tecnico",
+            "clave-segura-123",
+            nombre="Técnico",
+            apellidos="Admin",
+            email="tecnico@example.com",
+        )
+        self.tecnico.rol = "administrador_tecnico"
+
+        self.director_session = self.client.session
+        self.director_session["rol"] = "director_carrera"
+        self.director_session["carrera_id"] = 12
+        self.director_session.save()
+
+    def test_api_filtra_por_parametros_y_orden_descendente(self):
+        ahora = timezone.now()
+        RegistroAuditoria.objects.create(
+            usuario=self.usuario,
+            accion="usuario.crear",
+            entidad="Usuario",
+            detalle={"carrera_id": 12, "nombre": "Ana"},
+            resultado="correcto",
+            fecha_hora=ahora - timedelta(hours=2),
+        )
+        RegistroAuditoria.objects.create(
+            usuario=self.usuario,
+            accion="ciclo.abrir",
+            entidad="Ciclo",
+            detalle={"carrera_id": 12, "tipo": "ordinario"},
+            resultado="correcto",
+            fecha_hora=ahora - timedelta(hours=1),
+        )
+        RegistroAuditoria.objects.create(
+            usuario=self.director,
+            accion="ciclo.cerrar",
+            entidad="Ciclo",
+            detalle={"carrera_id": 99, "tipo": "extraordinario"},
+            resultado="denegado",
+            fecha_hora=ahora - timedelta(hours=3),
+        )
+
+        self.client.force_login(self.director)
+        session = self.client.session
+        session["rol"] = "director_carrera"
+        session["carrera_id"] = 12
+        session.save()
+        print("DEBUG_TEST_SESSION", self.client.session.get("rol"), self.client.session.get("carrera_id"), self.director.pk)
+        response = self.client.get(
+            "/api/auditoria/?usuario=auditor&accion=ciclo&resultado=correcto&desde={}&hasta={}".format(
+                (ahora - timedelta(hours=5)).isoformat(),
+                (ahora + timedelta(hours=1)).isoformat(),
+            )
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()["count"], 1)
+        self.assertEqual(response.json()["results"][0]["accion"], "ciclo.abrir")
+
+    def test_director_solo_ve_su_carrera(self):
+        RegistroAuditoria.objects.create(
+            usuario=self.usuario,
+            accion="ciclo.abrir",
+            entidad="Ciclo",
+            detalle={"carrera_id": 12},
+            resultado="correcto",
+        )
+        RegistroAuditoria.objects.create(
+            usuario=self.usuario,
+            accion="ciclo.cerrar",
+            entidad="Ciclo",
+            detalle={"carrera_id": 99},
+            resultado="correcto",
+        )
+
+        self.client.force_login(self.director)
+        session = self.client.session
+        session["rol"] = "director_carrera"
+        session["carrera_id"] = 12
+        session.save()
+        response = self.client.get("/api/auditoria/")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()["count"], 1)
+        self.assertEqual(response.json()["results"][0]["detalle"]["carrera_id"], 12)
+
+    def test_acceso_denegado_se_registra_con_usuario_accion_y_entidad(self):
+        self.assertTrue(puede(self.tecnico, "consultar_auditoria"))
+        self.assertFalse(puede(self.miembro, "consultar_auditoria"))
+
+        with self.assertRaises(PermisoSistema):
+            raise PermisoSistema("Sin permiso", accion="consultar_auditoria", entidad="Carrera")
+
+        self.client.force_login(self.miembro)
+        session = self.client.session
+        session["rol"] = "miembro"
+        session.save()
+        response = self.client.get("/api/auditoria/")
+
+        self.assertEqual(response.status_code, 403)
+        registro = RegistroAuditoria.objects.filter(accion="acceso.denegado").latest("fecha_hora")
+        self.assertEqual(registro.usuario, self.miembro)
+        self.assertEqual(registro.resultado, "denegado")
+        self.assertEqual(registro.accion, "acceso.denegado")
+        self.assertIn("auditoria", registro.entidad.lower())

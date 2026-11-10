@@ -1,11 +1,11 @@
 from django.shortcuts import get_object_or_404
 from rest_framework import generics, status
-from rest_framework.exceptions import NotFound, PermissionDenied
+from rest_framework.exceptions import NotFound
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from cuentas.permisos import puede
+from cuentas.permisos import PermisoSistema, puede
 
 from .modelos import AsignacionDimension, Carrera, Ciclo, Facultad
 from .serializadores import (
@@ -19,12 +19,16 @@ from .serializadores import (
 )
 
 
-def _validar_permiso(request, accion):
+def _validar_permiso(request, accion, *, entidad=None):
     usuario = getattr(request, "user", None)
     if usuario is None or not getattr(usuario, "is_authenticated", False):
         return
     if not puede(usuario, accion):
-        raise PermissionDenied("No tiene permiso para realizar esta acción.")
+        raise PermisoSistema(
+            "No tiene permiso para realizar esta acción.",
+            accion=accion,
+            entidad=entidad or "Recurso",
+        )
 
 
 class ListaCrearFacultadesVista(generics.ListCreateAPIView):
@@ -33,7 +37,7 @@ class ListaCrearFacultadesVista(generics.ListCreateAPIView):
     serializer_class = FacultadSerializador
 
     def post(self, request, *args, **kwargs):
-        _validar_permiso(request, "crear_facultad")
+        _validar_permiso(request, "crear_facultad", entidad="Facultad")
         return super().post(request, *args, **kwargs)
 
 
@@ -43,7 +47,7 @@ class ListaCrearCarrerasVista(generics.ListCreateAPIView):
     serializer_class = CarreraSerializador
 
     def post(self, request, *args, **kwargs):
-        _validar_permiso(request, "crear_carrera")
+        _validar_permiso(request, "crear_carrera", entidad="Carrera")
         return super().post(request, *args, **kwargs)
 
 
@@ -59,7 +63,7 @@ class ListaCrearCiclosVista(generics.ListCreateAPIView):
     serializer_class = CicloSerializador
 
     def post(self, request, *args, **kwargs):
-        _validar_permiso(request, "abrir_ciclo")
+        _validar_permiso(request, "abrir_ciclo", entidad="Ciclo")
         return super().post(request, *args, **kwargs)
 
     def get_queryset(self):
@@ -97,7 +101,7 @@ class CerrarCicloVista(APIView):
     permission_classes = (AllowAny,)
 
     def post(self, request, pk):
-        _validar_permiso(request, "cerrar_ciclo")
+        _validar_permiso(request, "cerrar_ciclo", entidad="Ciclo")
         ciclo = get_object_or_404(Ciclo.objects.all(), pk=pk)
         serializer = CicloCierreSerializador(data=request.data, context={"ciclo": ciclo})
         serializer.is_valid(raise_exception=True)
@@ -126,7 +130,7 @@ class AsignacionesCicloVista(generics.GenericAPIView):
         return Response(serializer.data)
 
     def post(self, request, pk):
-        _validar_permiso(request, "asignar_dimension")
+        _validar_permiso(request, "asignar_dimension", entidad="AsignacionDimension")
         ciclo = self.get_ciclo()
         serializer = AsignacionDimensionCrearSerializador(
             data=request.data,
@@ -138,7 +142,7 @@ class AsignacionesCicloVista(generics.GenericAPIView):
         return Response(respuesta.data, status=status.HTTP_201_CREATED)
 
     def delete(self, request, pk):
-        _validar_permiso(request, "quitar_asignacion")
+        _validar_permiso(request, "quitar_asignacion", entidad="AsignacionDimension")
         ciclo = self.get_ciclo()
         serializer = AsignacionDimensionQuitarSerializador(
             data=request.data,
