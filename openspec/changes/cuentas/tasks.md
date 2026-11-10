@@ -8,10 +8,10 @@
 
 ## 2. Lógica de permisos real y reemplazo del stub
 
-- [ ] 2.1 Implementar la matriz de permisos y la función `puede(usuario, accion, objeto=None)` en `cuentas/permisos.py`, respetando exactamente la regla de negocio: el director solo ve su carrera y el administrador ve todo.
-- [ ] 2.2 Sustituir el stub de permisos del módulo de ciclos por la lógica real del módulo `cuentas`, manteniendo la firma actual y verificando que `abrir_ciclo`, `cerrar_ciclo` y `asignar_dimension` siguen funcionando.
-- [ ] 2.3 Reemplazar la comprobación de acceso de auditoría por la autorización real de `cuentas`, y verificar que un director solo vea registros de su ámbito y que el administrador técnico conserva acceso global.
-- [ ] 2.4 Incorporar la trazabilidad de accesos denegados a la auditoría y verificar que el registro conserva usuario, acción y entidad sin contenido sensible.
+- [x] 2.1 Implementar la matriz de permisos y la función `puede(usuario, accion, objeto=None)` en `cuentas/permisos.py`, respetando exactamente la regla de negocio: el director solo ve su carrera y el administrador ve todo.
+- [x] 2.2 Sustituir el stub de permisos del módulo de ciclos por la lógica real del módulo `cuentas`, manteniendo la firma actual y verificando que `abrir_ciclo`, `cerrar_ciclo` y `asignar_dimension` siguen funcionando.
+- [x] 2.3 Reemplazar la comprobación de acceso de auditoría por la autorización real de `cuentas`, y verificar que un director solo vea registros de su ámbito y que el administrador técnico conserva acceso global.
+- [x] 2.4 Incorporar la trazabilidad de accesos denegados a la auditoría y verificar que el registro conserva usuario, acción y entidad sin contenido sensible.
 
 ## 3. API de autenticación y administración
 

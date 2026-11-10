@@ -42,6 +42,95 @@ def _normalizar_token(valor):
     return str(valor).strip().lower().replace("-", "_").replace(" ", "_")
 
 
+def _coerce_carrera_id(valor):
+    if valor is None:
+        return None
+
+    if isinstance(valor, dict):
+        for clave in ("carrera_id", "carrera", "carrera_pk", "id"):
+            if clave in valor:
+                return _coerce_carrera_id(valor[clave])
+        return None
+
+    if hasattr(valor, "pk") and getattr(getattr(valor, "_meta", None), "model_name", None) == "carrera":
+        return _coerce_carrera_id(valor.pk)
+
+    for nombre in ("carrera_id", "carrera_pk"):
+        try:
+            atributo = getattr(valor, nombre, None)
+        except Exception:
+            atributo = None
+        if atributo is not None:
+            carrera_id = _coerce_carrera_id(atributo)
+            if carrera_id is not None:
+                return carrera_id
+
+    for nombre in ("carrera",):
+        try:
+            atributo = getattr(valor, nombre, None)
+        except Exception:
+            atributo = None
+        if atributo is not None:
+            carrera_id = _coerce_carrera_id(atributo)
+            if carrera_id is not None:
+                return carrera_id
+
+    if isinstance(valor, str):
+        valor = valor.strip()
+        if valor.isdigit():
+            return int(valor)
+        return None
+
+    if isinstance(valor, int):
+        return valor
+
+    return None
+
+
+def _ids_carrera_del_usuario(actor):
+    if actor is None:
+        return set()
+
+    valores = []
+    carrera_id = getattr(actor, "carrera_id", None)
+    if carrera_id is not None:
+        valores.append(carrera_id)
+
+    for nombre in ("carrera_actual", "carrera_pk"):
+        try:
+            valor = getattr(actor, nombre, None)
+        except Exception:
+            valor = None
+        if valor is not None:
+            valores.append(valor)
+
+    try:
+        carrera = getattr(actor, "carrera", None)
+    except Exception:
+        carrera = None
+    if carrera is not None:
+        valores.append(carrera)
+
+    for nombre in ("carreras", "carreras_asignadas", "carreras_director"):
+        try:
+            coleccion = getattr(actor, nombre, None)
+        except Exception:
+            coleccion = None
+        if coleccion is None:
+            continue
+        if hasattr(coleccion, "all"):
+            coleccion = coleccion.all()
+        if isinstance(coleccion, Iterable) and not isinstance(coleccion, (str, bytes, bytearray, dict)):
+            valores.extend(coleccion)
+
+    ids = set()
+    for valor in valores:
+        carrera_id = _coerce_carrera_id(valor)
+        if carrera_id is not None:
+            ids.add(carrera_id)
+    return ids
+
+
 def _iterar_roles(actor):
     if actor is None:
         return []
@@ -70,9 +159,32 @@ def _iterar_roles(actor):
         yield "administrador_tecnico"
 
 
-def puede(actor, accion, *, recurso=None, contexto=None):
+def _puede_por_contexto(actor, accion, objeto):
+    if actor is None or objeto is None:
+        return False
+
+    roles = set(_iterar_roles(actor))
+    if "administrador_tecnico" in roles:
+        return True
+    if "director_carrera" not in roles:
+        return False
+
+    if isinstance(objeto, (list, tuple, set, frozenset)):
+        return any(_puede_por_contexto(actor, accion, item) for item in objeto)
+
+    carrera_objeto = _coerce_carrera_id(objeto)
+    if carrera_objeto is None:
+        return True
+
+    return carrera_objeto in _ids_carrera_del_usuario(actor)
+
+
+def puede(actor, accion, objeto=None, *, recurso=None, contexto=None):
     if actor is None:
         return False
+
+    if recurso is not None and objeto is None:
+        objeto = recurso
 
     nombre_accion = _normalizar_token(accion)
     if nombre_accion.startswith("ciclos_"):
@@ -85,7 +197,18 @@ def puede(actor, accion, *, recurso=None, contexto=None):
         return True
 
     roles = set(_iterar_roles(actor))
-    if roles.intersection(roles_requeridos):
+    if "administrador_tecnico" in roles:
+        return True
+
+    if "director_carrera" not in roles:
+        return False
+    if "director_carrera" not in roles_requeridos:
+        return False
+
+    if objeto is None:
+        return True
+
+    if _puede_por_contexto(actor, nombre_accion, objeto):
         return True
 
     permisos = set()

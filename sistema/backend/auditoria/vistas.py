@@ -118,19 +118,28 @@ def _aplicar_filtros(queryset, params):
 def _acceso_registros(request):
     usuario = getattr(request, "user", None)
     if usuario is None or not getattr(usuario, "is_authenticated", False):
+        request.accion_denegada = "consultar_auditoria"
+        request.entidad_denegada = "Auditoria"
         raise PermissionDenied("No tiene permiso para consultar la auditoría.")
     usuario = _aplicar_contexto_sesion(request, usuario)
-    if puede(usuario, "consultar_auditoria"):
-        queryset = RegistroAuditoria.objects.select_related("usuario")
-        if getattr(usuario, "rol", None) == "director_carrera" or getattr(usuario, "es_director", False) or getattr(usuario, "es_director_carrera", False):
-            carreras = _carreras_director(usuario)
-            if not carreras:
-                return queryset.none()
-            queryset = queryset.filter(
-                Q(detalle__carrera_id__in=carreras) | Q(contexto__carrera_id__in=carreras)
-            )
-        return queryset
-    raise PermissionDenied("No tiene permiso para consultar la auditoría.")
+    if not puede(usuario, "consultar_auditoria"):
+        request.accion_denegada = "consultar_auditoria"
+        request.entidad_denegada = "Auditoria"
+        raise PermissionDenied("No tiene permiso para consultar la auditoría.")
+
+    queryset = RegistroAuditoria.objects.select_related("usuario")
+    if getattr(usuario, "rol", None) == "director_carrera" or getattr(usuario, "es_director", False) or getattr(usuario, "es_director_carrera", False):
+        carreras = _carreras_director(usuario)
+        if not carreras:
+            return queryset.none()
+        if not all(puede(usuario, "consultar_auditoria", objeto={"carrera_id": carrera_id}) for carrera_id in carreras):
+            request.accion_denegada = "consultar_auditoria"
+            request.entidad_denegada = "Auditoria"
+            raise PermissionDenied("No tiene permiso para consultar la auditoría.")
+        queryset = queryset.filter(
+            Q(detalle__carrera_id__in=carreras) | Q(contexto__carrera_id__in=carreras)
+        )
+    return queryset
 
 
 @api_view(["GET"])

@@ -8,10 +8,10 @@ from cuentas.permisos import puede
 from .models import AsignacionDimension, Carrera, Ciclo, Facultad
 
 
-def _requerir_permiso(accion, actor):
+def _requerir_permiso(accion, actor, objeto=None):
     if actor is None:
         return
-    if not puede(actor, accion):
+    if not puede(actor, accion, objeto=objeto):
         raise ValidationError("No tiene permiso para realizar esta acción.")
 
 
@@ -66,7 +66,7 @@ def abrir_ciclo(
     ciclo_anterior=None,
     usuario=None,
 ):
-    _requerir_permiso("abrir_ciclo", usuario)
+    _requerir_permiso("abrir_ciclo", usuario, carrera)
     if carrera is None:
         raise ValidationError("Debe indicarse una carrera válida.")
     if version_normativa is None:
@@ -112,7 +112,7 @@ def abrir_ciclo(
 
 
 def cerrar_ciclo(ciclo, categoria_obtenida=None, vigencia_anios=None, usuario=None):
-    _requerir_permiso("cerrar_ciclo", usuario)
+    _requerir_permiso("cerrar_ciclo", usuario, ciclo)
     if ciclo is None:
         raise ValidationError("Debe indicar un ciclo válido.")
     if ciclo.estado == Ciclo.Estado.CERRADO:
@@ -139,7 +139,7 @@ def cerrar_ciclo(ciclo, categoria_obtenida=None, vigencia_anios=None, usuario=No
 
 
 def asignar_dimension(ciclo, usuario, dimension, actor=None):
-    _requerir_permiso("asignar_dimension", actor)
+    _requerir_permiso("asignar_dimension", actor, ciclo)
     exigir_ciclo_abierto(ciclo)
     if usuario is None:
         raise ValidationError("Debe indicarse un usuario válido.")
@@ -147,11 +147,8 @@ def asignar_dimension(ciclo, usuario, dimension, actor=None):
         raise ValidationError("Debe indicarse una dimensión válida.")
 
     carrera = ciclo.carrera
-    try:
-        related = getattr(carrera, "usuarios")
-    except AttributeError:
-        related = None
-    if related is not None and not related.filter(pk=usuario.pk).exists():
+    usuario_carrera_id = getattr(usuario, "carrera_id", None)
+    if usuario_carrera_id is not None and usuario_carrera_id != carrera.pk:
         raise ValidationError("El usuario no pertenece a la carrera del ciclo.")
 
     if AsignacionDimension.objects.filter(
@@ -177,7 +174,7 @@ def asignar_dimension(ciclo, usuario, dimension, actor=None):
 
 
 def quitar_asignacion(ciclo, usuario, dimension, actor=None):
-    _requerir_permiso("quitar_asignacion", actor)
+    _requerir_permiso("quitar_asignacion", actor, ciclo)
     exigir_ciclo_abierto(ciclo)
     if usuario is None:
         raise ValidationError("Debe indicarse un usuario válido.")

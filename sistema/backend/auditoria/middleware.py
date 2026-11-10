@@ -1,3 +1,5 @@
+from rest_framework.exceptions import PermissionDenied
+
 from auditoria.servicios import registrar
 
 
@@ -6,7 +8,12 @@ class AuditoriaAccesoDenegadoMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
-        response = self.get_response(request)
+        try:
+            response = self.get_response(request)
+        except PermissionDenied:
+            self._registrar_acceso_denegado(request)
+            raise
+
         if response.status_code == 403:
             self._registrar_acceso_denegado(request)
         return response
@@ -24,17 +31,19 @@ class AuditoriaAccesoDenegadoMiddleware:
             else:
                 entidad = request.path.rstrip("/").split("/")[-1] or "Recurso"
 
+        accion = getattr(request, "accion_denegada", None) or "acceso.denegado"
         detalle = {
             "method": request.method,
             "path": request.path,
             "query": self._filtrar_datos(request.GET),
+            "accion": accion,
         }
         registrar(
             "acceso.denegado",
             usuario=usuario,
             entidad=entidad,
             detalle=detalle,
-            contexto={"path": request.path, "method": request.method},
+            contexto={"path": request.path, "method": request.method, "accion": accion, "entidad": entidad},
             resultado="denegado",
             ip=request.META.get("REMOTE_ADDR"),
         )

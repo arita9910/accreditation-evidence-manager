@@ -272,7 +272,7 @@ class ServiciosCiclosTests(TestCase):
 
     def test_t5_permisos_y_auditoria_stub(self):
         limpiar_registros()
-        director = SimpleNamespace(rol="director_carrera")
+        director = SimpleNamespace(rol="director_carrera", carrera_id=42)
         tecnico = SimpleNamespace(rol="administrador_tecnico")
         miembro = SimpleNamespace(rol="miembro")
 
@@ -286,6 +286,9 @@ class ServiciosCiclosTests(TestCase):
 
         facultad = crear_facultad("Facultad técnica", usuario=tecnico)
         carrera = crear_carrera(facultad, "Carrera técnica", usuario=tecnico)
+        director.carrera_id = carrera.pk
+        self.assertTrue(puede(director, "abrir_ciclo", objeto={"carrera_id": carrera.pk}))
+        self.assertFalse(puede(director, "abrir_ciclo", objeto={"carrera_id": carrera.pk + 99}))
         ciclo = abrir_ciclo(
             carrera,
             "ordinario",

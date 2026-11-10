@@ -97,6 +97,11 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
             )
 
     def save(self, *args, **kwargs):
+        update_fields = kwargs.get("update_fields")
+        if update_fields is not None:
+            campos = {str(campo) for campo in update_fields}
+            if campos.issubset({"last_login"}):
+                return super().save(*args, **kwargs)
         self.full_clean()
         return super().save(*args, **kwargs)
 

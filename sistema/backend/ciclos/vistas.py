@@ -24,6 +24,8 @@ def _validar_permiso(request, accion, *, entidad=None):
     if usuario is None or not getattr(usuario, "is_authenticated", False):
         return
     if not puede(usuario, accion):
+        request.accion_denegada = accion
+        request.entidad_denegada = entidad or "Recurso"
         raise PermisoSistema(
             "No tiene permiso para realizar esta acción.",
             accion=accion,
