@@ -29,7 +29,7 @@ class PrototipoDocxTests(SimpleTestCase):
             self.assertEqual(len(documento.tables), 1)
             filas = documento.tables[0].rows
             self.assertEqual(filas[1].cells[0].text, "M1")
-            self.assertEqual(filas[1].cells[1].text, "Pendiente")
+            self.assertEqual(filas[1].cells[1].text, "Resumen del claustro")
             self.assertEqual(filas[1].cells[2].text, "2.2.1, 2.2.3")
             self.assertEqual(len(documento.sections), 2)
 

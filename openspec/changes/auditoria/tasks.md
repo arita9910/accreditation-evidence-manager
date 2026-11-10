@@ -32,5 +32,5 @@
 
 ## 6. Verificación final y integración
 
-- [ ] 6.1 Ejecutar las pruebas del módulo de auditoría y del módulo de ciclos, y verificar que la regresión de la firma `registrar(...)` no rompe el comportamiento existente.
-- [ ] 6.2 Revisar el alcance de la documentación y de los artefactos del cambio, y verificar que la especificación, el diseño y la implementación quedan alineados con el plan 06 y las decisiones D-07, D-11 y D-17.
+- [x] 6.1 Ejecutar las pruebas del módulo de auditoría y del módulo de ciclos, y verificar que la regresión de la firma `registrar(...)` no rompe el comportamiento existente.
+- [x] 6.2 Revisar el alcance de la documentación y de los artefactos del cambio, y verificar que la especificación, el diseño y la implementación quedan alineados con el plan 06 y las decisiones D-07, D-11 y D-17.
