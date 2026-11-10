@@ -27,8 +27,8 @@
 
 ## 5. Pantalla de consulta
 
-- [ ] 5.1 Diseñar la pantalla de auditoría con filtros de usuario, acción, fechas y resultado, y comprobar que el formulario envía los argumentos esperados a la API.
-- [ ] 5.2 Añadir la paginación visual y la presentación del listado, y verificar con Vitest que el flujo del filtro y la carga de datos sigue funcionando.
+- [x] 5.1 Diseñar la pantalla de auditoría con filtros de usuario, acción, fechas y resultado, y comprobar que el formulario envía los argumentos esperados a la API.
+- [x] 5.2 Añadir la paginación visual y la presentación del listado, y verificar con Vitest que el flujo del filtro y la carga de datos sigue funcionando.
 
 ## 6. Verificación final y integración
 

@@ -12,6 +12,9 @@ function Diseno({ children }) {
           <li className="nav-item">
             <NavLink className="nav-link" to="/ciclos">Ciclos</NavLink>
           </li>
+          <li className="nav-item">
+            <NavLink className="nav-link" to="/auditoria">Auditoría</NavLink>
+          </li>
         </ul>
       </nav>
       <main className="container py-4">{children}</main>
