@@ -15,9 +15,9 @@
 
 ## 3. API de autenticación y administración
 
-- [ ] 3.1 Crear `POST /api/sesion/`, `DELETE /api/sesion/`, `POST /api/cuentas/cambiar-clave/` y `GET /api/cuentas/yo/`, y verificar login, logout, cambio de contraseña y respuesta del perfil autenticado.
-- [ ] 3.2 Implementar los endpoints de gestión de usuarios y roles para el administrador técnico (`GET/POST/PATCH /api/usuarios/` y `GET/POST/DELETE /api/usuarios/{id}/roles/`), y verificar el flujo de alta, edición y revocación.
-- [ ] 3.3 Añadir la validación de CSRF y la política de bloqueo por intentos fallidos, y verificar que los POST/DELETE requieren sesión segura y que el acceso denegado queda registrado.
+- [x] 3.1 Crear `POST /api/sesion/`, `DELETE /api/sesion/`, `POST /api/cuentas/cambiar-clave/` y `GET /api/cuentas/yo/`, y verificar login, logout, cambio de contraseña y respuesta del perfil autenticado.
+- [x] 3.2 Implementar los endpoints de gestión de usuarios y roles para el administrador técnico (`GET/POST/PATCH /api/usuarios/` y `GET/POST/DELETE /api/usuarios/{id}/roles/`), y verificar el flujo de alta, edición y revocación.
+- [x] 3.3 Añadir la validación de CSRF y la política de bloqueo por intentos fallidos, y verificar que los POST/DELETE requieren sesión segura y que el acceso denegado queda registrado.
 
 ## 4. Pantallas de gestión de usuarios y roles
 

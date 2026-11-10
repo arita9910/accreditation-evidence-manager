@@ -30,6 +30,17 @@ _PERMISOS_POR_ACCION = {
     "listar_carreras": {"administrador_tecnico", "director_carrera"},
     "consultar_auditoria": {"administrador_tecnico", "director_carrera"},
     "listar_auditoria": {"administrador_tecnico", "director_carrera"},
+    "listar_usuarios": {"administrador_tecnico"},
+    "crear_usuario": {"administrador_tecnico"},
+    "editar_usuario": {"administrador_tecnico"},
+    "eliminar_usuario": {"administrador_tecnico"},
+    "listar_roles": {"administrador_tecnico"},
+    "asignar_rol": {"administrador_tecnico"},
+    "revocar_rol": {"administrador_tecnico"},
+    "gestionar_usuarios": {"administrador_tecnico"},
+    "gestionar_roles": {"administrador_tecnico"},
+    "ver_perfil": {"administrador_tecnico", "director_carrera"},
+    "cambiar_clave": {"administrador_tecnico", "director_carrera"},
 }
 
 

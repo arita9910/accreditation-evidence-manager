@@ -24,6 +24,7 @@ def salud(request):
 urlpatterns = [
     path("api/salud/", salud, name="salud"),
     path("api/auditoria/", include("auditoria.urls")),
+    path("api/", include("cuentas.urls")),
     path("api/", include("ciclos.urls")),
     path('admin/', admin.site.urls),
 ]
