@@ -1,7 +1,19 @@
+const API_BASE_URL = '/api';
+
+function construirUrl(url) {
+  if (/^https?:\/\//i.test(url)) {
+    return url
+  }
+
+  const ruta = url.startsWith('/') ? url : `/${url}`
+  const rutaSinPrefijoApi = ruta === '/api' ? '' : (ruta.startsWith('/api/') ? ruta.slice(4) : ruta)
+  return `${API_BASE_URL}${rutaSinPrefijoApi}`
+}
+
 async function peticion(url, opciones = {}) {
   const config = {
     ...opciones,
-    credentials: 'same-origin',
+    credentials: 'include',
     headers: {
       ...(opciones.headers || {}),
     },
@@ -21,9 +33,17 @@ async function peticion(url, opciones = {}) {
     }
   }
 
-  const respuesta = await fetch(url, config)
+  const respuesta = await fetch(construirUrl(url), config)
   const cuerpo = await respuesta.text()
-  const datos = cuerpo ? JSON.parse(cuerpo) : {}
+  let datos = {}
+
+  if (cuerpo) {
+    try {
+      datos = JSON.parse(cuerpo)
+    } catch {
+      throw new Error(`respuesta_invalida: El servidor devolvió contenido no JSON (${respuesta.status}).`)
+    }
+  }
 
   if (!respuesta.ok) {
     const codigo = datos?.codigo || 'error'

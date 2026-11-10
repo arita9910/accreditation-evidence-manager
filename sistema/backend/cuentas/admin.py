@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
 from django.contrib.auth.forms import UserChangeForm, UserCreationForm
 
-from .models import Usuario
+from .modelos import Usuario
 
 
 class UsuarioCreationForm(UserCreationForm):
@@ -28,7 +28,10 @@ class UsuarioAdmin(DjangoUserAdmin):
     filter_horizontal = ("groups", "user_permissions")
     fieldsets = (
         (None, {"fields": ("username", "password")}),
-        ("Información personal", {"fields": ("nombre", "apellidos", "email")}),
+        (
+            "Información personal",
+            {"fields": ("nombre", "apellidos", "email", "rol", "carrera")},
+        ),
         (
             "Permisos",
             {
