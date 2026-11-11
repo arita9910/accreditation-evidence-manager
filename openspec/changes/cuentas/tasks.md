@@ -27,6 +27,6 @@
 
 ## 5. Verificación final
 
-- [ ] 5.1 Ejecutar la prueba de la matriz de permisos del plan 05, cubriendo tanto las autorizaciones positivas como las negativas, y verificar que la regla de roles con ámbito funciona para cada perfil.
-- [ ] 5.2 Ejecutar las pruebas de backend para autenticación, roles, auditoría y ciclos, y verificar que la integración con el stub real de permisos no rompe la operación previa.
-- [ ] 5.3 Revisar la documentación de avance y el cierre del módulo, y confirmar que la propuesta queda alineada con el plan 05, D-06, D-13 y la evaluación del núcleo.
+- [x] 5.1 Ejecutar la prueba de la matriz de permisos del plan 05, cubriendo tanto las autorizaciones positivas como las negativas, y verificar que la regla de roles con ámbito funciona para cada perfil.
+- [x] 5.2 Ejecutar las pruebas de backend para autenticación, roles, auditoría y ciclos, y verificar que la integración con el stub real de permisos no rompe la operación previa.
+- [x] 5.3 Revisar la documentación de avance y el cierre del módulo, y confirmar que la propuesta queda alineada con el plan 05, D-06, D-13 y la evaluación del núcleo.
