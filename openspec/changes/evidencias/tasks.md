@@ -2,9 +2,9 @@
 
 ## 1. Modelo y migración
 
-- [ ] 1.1 Definir `Evidencia`, `FicheroEvidencia` y `Clasificacion` con su relación con ciclo, criterio y usuario, y verificar que la unicidad y la vigencia del archivo queden documentadas en pruebas. Verificación: pruebas del modelo y migración en SQLite.
-- [ ] 1.2 Añadir restricciones de negocio para soporte papel, ausencia de fichero y regla de ciclo abierto, y comprobar que el error se reporta con mensajes del proyecto. Verificación: tests de validación y casos de rechazo.
-- [ ] 1.3 Crear la migración inicial y comprobar que la estructura no rompe la base existente ni los ciclos ya abiertos. Verificación: ejecutar la migración y la batería de pruebas del módulo.
+- [x] 1.1 Definir `Evidencia`, `FicheroEvidencia` y `Clasificacion` con su relación con ciclo, criterio y usuario, y verificar que la unicidad y la vigencia del archivo queden documentadas en pruebas. Verificación: pruebas del modelo y migración en SQLite.
+- [x] 1.2 Añadir restricciones de negocio para soporte papel, ausencia de fichero y regla de ciclo abierto, y comprobar que el error se reporta con mensajes del proyecto. Verificación: tests de validación y casos de rechazo.
+- [x] 1.3 Crear la migración inicial y comprobar que la estructura no rompe la base existente ni los ciclos ya abiertos. Verificación: ejecutar la migración y la batería de pruebas del módulo.
 
 ## 2. Carga, huella y almacenamiento sin sobrescritura
 
