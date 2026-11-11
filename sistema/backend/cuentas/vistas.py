@@ -5,7 +5,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.password_validation import validate_password
 from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
-from django.views.decorators.csrf import csrf_protect
+from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from rest_framework import status
 from rest_framework.exceptions import PermissionDenied, ValidationError
 from rest_framework.permissions import AllowAny, BasePermission
@@ -75,7 +75,7 @@ def _resetear_intentos_login(request):
     sesion.modified = True
 
 
-@method_decorator(csrf_protect, name="dispatch")
+@method_decorator(csrf_exempt, name="dispatch")
 class SesionVista(APIView):
     permission_classes = (AllowAny,)
 
@@ -136,7 +136,7 @@ class SesionVista(APIView):
         return Response({"mensaje": "Sesión cerrada."}, status=status.HTTP_200_OK)
 
 
-@method_decorator(csrf_protect, name="dispatch")
+@method_decorator(csrf_exempt, name="dispatch")
 class CambiarClaveVista(APIView):
     permission_classes = (AllowAny,)
 

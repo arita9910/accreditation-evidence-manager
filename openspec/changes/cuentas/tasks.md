@@ -21,9 +21,9 @@
 
 ## 4. Pantallas de gestión de usuarios y roles
 
-- [ ] 4.1 Diseñar la pantalla de acceso (login), cambio de clave y perfil del usuario autenticado, y verificar la navegación protegida con rutas del plan 02.
-- [ ] 4.2 Implementar la administración de usuarios y roles para el administrador técnico, con filtros, listado y acciones de asignación/revocación, y verificar la experiencia de uso en Vitest.
-- [ ] 4.3 Ocultar o deshabilitar acciones en la UI según el perfil del usuario sin depender de la interfaz como guardia de seguridad, y verificar que la seguridad del servidor sigue siendo la fuente de verdad.
+- [x] 4.1 Diseñar la pantalla de acceso (login), cambio de clave y perfil del usuario autenticado, y verificar la navegación protegida con rutas del plan 02.
+- [x] 4.2 Implementar la administración de usuarios y roles para el administrador técnico, con filtros, listado y acciones de asignación/revocación, y verificar la experiencia de uso en Vitest.
+- [x] 4.3 Ocultar o deshabilitar acciones en la UI según el perfil del usuario sin depender de la interfaz como guardia de seguridad, y verificar que la seguridad del servidor sigue siendo la fuente de verdad.
 
 ## 5. Verificación final
 

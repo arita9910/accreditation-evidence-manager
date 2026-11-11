@@ -12,6 +12,14 @@ function respuesta(datos, ok = true) {
   }
 }
 
+function rutaApi(url) {
+  const texto = String(url)
+  if (/^https?:\/\//i.test(texto)) {
+    return new URL(texto).pathname
+  }
+  return texto
+}
+
 afterEach(() => {
   cleanup()
   vi.unstubAllGlobals()
@@ -25,7 +33,7 @@ function prepararFetch({
   asignaciones = [],
 } = {}) {
   const fetchMock = vi.fn((url, opciones = {}) => {
-    const urlTexto = String(url)
+    const urlTexto = rutaApi(url)
 
     if (urlTexto === '/api/carreras/' && !opciones.method) {
       return Promise.resolve(respuesta({ results: carreras }))
@@ -96,7 +104,7 @@ describe('Pantallas de ciclos', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Abrir ciclo' }))
 
     await waitFor(() => {
-      const llamada = fetchMock.mock.calls.find(([url, opciones = {}]) => url === '/api/ciclos/' && opciones.method === 'POST')
+      const llamada = fetchMock.mock.calls.find(([url, opciones = {}]) => rutaApi(url) === '/api/ciclos/' && opciones.method === 'POST')
       expect(llamada).toBeTruthy()
       const [, opciones] = llamada
       const cuerpo = JSON.parse(opciones.body)

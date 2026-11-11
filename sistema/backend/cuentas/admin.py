@@ -28,7 +28,10 @@ class UsuarioAdmin(DjangoUserAdmin):
     filter_horizontal = ("groups", "user_permissions")
     fieldsets = (
         (None, {"fields": ("username", "password")}),
-        ("Información personal", {"fields": ("nombre", "apellidos", "email")}),
+        (
+            "Información personal",
+            {"fields": ("nombre", "apellidos", "email", "rol", "carrera")},
+        ),
         (
             "Permisos",
             {
