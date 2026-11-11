@@ -66,6 +66,9 @@ def _coerce_carrera_id(valor):
         for clave in ("carrera_id", "carrera", "carrera_pk", "id"):
             if clave in valor:
                 return _coerce_carrera_id(valor[clave])
+        for clave in ("ciclo_id", "ciclo"):
+            if clave in valor:
+                return _coerce_carrera_id(valor[clave])
         return None
 
     if hasattr(valor, "pk") and getattr(getattr(valor, "_meta", None), "model_name", None) == "carrera":
@@ -81,7 +84,7 @@ def _coerce_carrera_id(valor):
             if carrera_id is not None:
                 return carrera_id
 
-    for nombre in ("carrera",):
+    for nombre in ("carrera", "ciclo"):
         try:
             atributo = getattr(valor, nombre, None)
         except Exception:

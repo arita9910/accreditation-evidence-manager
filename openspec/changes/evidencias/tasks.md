@@ -16,10 +16,10 @@
 
 ## 3. Búsqueda y API
 
-- [ ] 3.1 Implementar el servicio de búsqueda con dos estrategias (SQLite y PostgreSQL) y filtros por dimensión, indicador, criterio, curso y soporte. Verificación: pruebas de búsqueda con texto y filtros.
-- [ ] 3.2 Exponer endpoints de listado, detalle y creación de evidencias bajo `/api/evidencias/` con autenticación y paginación. Verificación: pruebas de API y casos de permiso.
-- [ ] 3.3 Exponer endpoints de historial y descarga de fichero vigente, incluyendo `POST /api/evidencias/{id}/ficheros/` y `GET /api/ficheros/{id}/descarga/`. Verificación: pruebas de API de versiones y descargables.
-- [ ] 3.4 Exponer la clasificación por criterio y la verificación de huellas por ciclo, con repuesta JSON coherente con el resto de la API. Verificación: pruebas de clasificación y verificación de integridad por ciclo.
+- [x] 3.1 Implementar el servicio de búsqueda con dos estrategias (SQLite y PostgreSQL) y filtros por dimensión, indicador, criterio, curso y soporte. Verificación: pruebas de búsqueda con texto y filtros.
+- [x] 3.2 Exponer endpoints de listado, detalle y creación de evidencias bajo `/api/evidencias/` con autenticación y paginación. Verificación: pruebas de API y casos de permiso.
+- [x] 3.3 Exponer endpoints de historial y descarga de fichero vigente, incluyendo `POST /api/evidencias/{id}/ficheros/` y `GET /api/ficheros/{id}/descarga/`. Verificación: pruebas de API de versiones y descargables.
+- [x] 3.4 Exponer la clasificación por criterio y la verificación de huellas por ciclo, con repuesta JSON coherente con el resto de la API. Verificación: pruebas de clasificación y verificación de integridad por ciclo.
 
 ## 4. Pantalla del módulo
 

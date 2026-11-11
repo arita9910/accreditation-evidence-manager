@@ -14,11 +14,11 @@ from django.http import FileResponse
 from auditoria.servicios import registrar
 from ciclos.servicios import exigir_ciclo_abierto
 from cuentas.permisos import puede
-from estructura.models import TipoEvidencia
+from estructura.models import Criterio, TipoEvidencia
 from nucleo.almacenamiento import guardar_fichero
 from nucleo.almacenamiento import verificar_huella as verificar_huella_almacenamiento
 
-from .modelos import Evidencia, FicheroEvidencia
+from .modelos import Clasificacion, Evidencia, FicheroEvidencia
 
 EXTENSIONES_PERMITIDAS = {
     ".pdf",
@@ -361,6 +361,60 @@ def verificar_huella(fichero):
         return "falta"
 
 
+def clasificar(evidencia, criterios, usuario=None):
+    evidencia = _resolver_evidencia(evidencia)
+    usuario = _obtener_usuario(usuario=usuario)
+    if usuario is None:
+        raise ValidationError("Debe indicar el usuario que clasifica la evidencia.")
+    if not isinstance(criterios, (list, tuple, set)):
+        criterios = [criterios]
+
+    resultados = []
+    for criterio in criterios:
+        if isinstance(criterio, Criterio):
+            criterio_obj = criterio
+        else:
+            criterio_obj = Criterio.objects.get(pk=criterio)
+        if criterio_obj.indicador.dimension.version_id != evidencia.ciclo.version_normativa_id:
+            raise ValidationError(
+                "El criterio debe pertenecer a la misma versión normativa del ciclo de la evidencia."
+            )
+        clasificacion, creada = Clasificacion.objects.get_or_create(
+            evidencia=evidencia,
+            criterio=criterio_obj,
+            defaults={"clasificada_por": usuario},
+        )
+        if not creada:
+            clasificacion.clasificada_por = usuario
+            clasificacion.save(update_fields=["clasificada_por"])
+        registrar(
+            "clasificar_evidencia",
+            usuario=usuario,
+            entidad="Clasificacion",
+            detalle={"evidencia_id": evidencia.pk, "criterio_id": criterio_obj.pk},
+            contexto={"ciclo_id": evidencia.ciclo.pk},
+        )
+        resultados.append(clasificacion)
+    return resultados[0] if len(resultados) == 1 else resultados
+
+
+def quitar_clasificacion(evidencia, criterio, usuario=None):
+    evidencia = _resolver_evidencia(evidencia)
+    criterio_obj = criterio if isinstance(criterio, Criterio) else Criterio.objects.get(pk=criterio)
+    clasificacion = evidencia.clasificaciones.filter(criterio=criterio_obj).first()
+    if clasificacion is None:
+        raise ValidationError("La evidencia no está clasificada en ese criterio.")
+    clasificacion.delete()
+    registrar(
+        "quitar_clasificacion",
+        usuario=_obtener_usuario(usuario=usuario),
+        entidad="Clasificacion",
+        detalle={"evidencia_id": evidencia.pk, "criterio_id": criterio_obj.pk},
+        contexto={"ciclo_id": evidencia.ciclo.pk},
+    )
+    return True
+
+
 def verificar_huellas(ciclo):
     ciclo = ciclo or getattr(ciclo, "ciclo", None)
     if ciclo is None:
@@ -439,6 +493,8 @@ __all__ = [
     "EXTENSIONES_PERMITIDAS",
     "TAMANO_MAXIMO_BYTES",
     "crear_evidencia",
+    "clasificar",
+    "quitar_clasificacion",
     "reemplazar_fichero",
     "verificar_huella",
     "verificar_huellas",

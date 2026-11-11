@@ -1,3 +1,4 @@
+import hashlib
 from datetime import date
 from pathlib import Path
 
@@ -10,6 +11,7 @@ from django.db import IntegrityError
 from django.test import TestCase
 
 from ciclos.modelos import Carrera, Ciclo, Facultad
+from cuentas.permisos import puede
 from estructura.models import Criterio, Dimension, Indicador, TipoEvidencia, VersionNormativa
 
 from .modelos import Clasificacion, Evidencia, FicheroEvidencia
@@ -406,3 +408,272 @@ class EvidenciasServiciosTests(TestCase):
 
         with self.assertRaises(Exception):
             descargar(fichero, usuario=AnonymousUser())
+
+
+class EvidenciasApiTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.facultad = Facultad.objects.create(nombre="Ingeniería")
+        cls.carrera = Carrera.objects.create(
+            facultad=cls.facultad,
+            nombre="Ingeniería Informática",
+            activa=True,
+        )
+        cls.otra_carrera = Carrera.objects.create(
+            facultad=cls.facultad,
+            nombre="Ingeniería de Telecomunicaciones",
+            activa=True,
+        )
+        cls.version = VersionNormativa.objects.create(
+            nombre="SEA-CU 2025",
+            fecha_aprobacion=date(2025, 1, 1),
+            fuentes="Fuente",
+            activa=True,
+        )
+        cls.dimension = Dimension.objects.create(
+            version=cls.version,
+            codigo="1",
+            nombre="Pertinencia",
+            orden=1,
+        )
+        cls.indicador = Indicador.objects.create(
+            dimension=cls.dimension,
+            codigo="I1",
+            texto="Indicador de prueba",
+        )
+        cls.criterio = Criterio.objects.create(
+            indicador=cls.indicador,
+            codigo="C1",
+            codigo_guia="C-1",
+            solo_en_guia=False,
+            texto="Criterio de prueba",
+            tipo_dato=Criterio.TipoDato.CUALITATIVO,
+            valoracion_por_categoria=False,
+        )
+        cls.tipo_evidencia = TipoEvidencia.objects.create(
+            dimension=cls.dimension,
+            nombre="Documento de soporte",
+            naturaleza=TipoEvidencia.Naturaleza.DOCUMENTO,
+            soporte_exigido=TipoEvidencia.Soporte.DIGITAL,
+        )
+        cls.director = get_user_model().objects.create_user(
+            "director-evidencias",
+            "clave-segura-123",
+            nombre="Director",
+            apellidos="Carrera",
+            email="director@example.com",
+            rol=get_user_model()._meta.get_field("rol").choices[1][0],
+            carrera=cls.carrera,
+        )
+        cls.otro_director = get_user_model().objects.create_user(
+            "director-otra-carrera",
+            "clave-segura-123",
+            nombre="Otro",
+            apellidos="Director",
+            email="otro-director@example.com",
+            rol=get_user_model()._meta.get_field("rol").choices[1][0],
+            carrera=cls.otra_carrera,
+        )
+        cls.ciclo = Ciclo.objects.create(
+            carrera=cls.carrera,
+            version_normativa=cls.version,
+            tipo="ordinario",
+            anio_base=2026,
+            curso_inicial=2021,
+            curso_final=2025,
+            estado=Ciclo.Estado.ABIERTO,
+            fecha_apertura=date(2026, 1, 1),
+        )
+
+    def _crear_evidencia(self, *, titulo="Memoria de autoevaluación"):
+        archivo = SimpleUploadedFile("memoria.pdf", b"contenido pdf", content_type="application/pdf")
+        response = self.client.post(
+            "/api/evidencias/",
+            {
+                "ciclo": self.ciclo.pk,
+                "tipo_evidencia": self.tipo_evidencia.pk,
+                "titulo": titulo,
+                "descripcion": "Documento principal del ciclo",
+                "curso_academico": 2025,
+                "periodo_desde": "2025-09-01",
+                "periodo_hasta": "2026-06-30",
+                "soporte": "digital",
+                "archivo": archivo,
+            },
+            format="multipart",
+        )
+        self.assertEqual(response.status_code, 201, response.content)
+        return response.json()
+
+    def test_listado_y_detalle_de_evidencias(self):
+        self.client.force_login(self.director)
+        evidencia = Evidencia.objects.create(
+            ciclo=self.ciclo,
+            tipo_evidencia=self.tipo_evidencia,
+            titulo="Listado de evidencias",
+            descripcion="Prueba de listado",
+            curso_academico=2025,
+            periodo_desde=date(2025, 9, 1),
+            periodo_hasta=date(2026, 6, 30),
+            soporte=Evidencia.Soporte.DIGITAL,
+        )
+        FicheroEvidencia.objects.create(
+            evidencia=evidencia,
+            version=1,
+            nombre_original="listado.pdf",
+            nombre_interno="d7d01c0e-bd1c-4d6b-8c24-0c8d5d508dd0",
+            tamano=100,
+            tipo_mime="application/pdf",
+            sha256="d" * 64,
+            vigente=True,
+            subido_por=self.director,
+        )
+
+        response = self.client.get("/api/evidencias/")
+        self.assertEqual(response.status_code, 200)
+        resultados = response.json()["results"]
+        self.assertTrue(any(item["id"] == evidencia.pk for item in resultados))
+
+        detalle = self.client.get(f"/api/evidencias/{evidencia.pk}/")
+        self.assertEqual(detalle.status_code, 200)
+        self.assertEqual(detalle.json()["titulo"], "Listado de evidencias")
+
+    def test_creacion_acepta_fichero_y_rechaza_validacion(self):
+        self.client.force_login(self.director)
+
+        response = self._crear_evidencia(titulo="Evidencia creada por API")
+        self.assertEqual(response["titulo"], "Evidencia creada por API")
+        self.assertEqual(Evidencia.objects.filter(titulo="Evidencia creada por API").count(), 1)
+
+        bad_response = self.client.post(
+            "/api/evidencias/",
+            {
+                "ciclo": self.ciclo.pk,
+                "tipo_evidencia": self.tipo_evidencia.pk,
+                "titulo": "",
+                "descripcion": "Sin título",
+                "curso_academico": 2025,
+                "periodo_desde": "2025-09-01",
+                "periodo_hasta": "2026-06-30",
+                "soporte": "digital",
+            },
+            content_type="application/json",
+        )
+        self.assertEqual(bad_response.status_code, 400)
+
+    def test_descarga_y_verificacion_huella_respetan_permisos(self):
+        self.client.force_login(self.director)
+        evidencia = Evidencia.objects.create(
+            ciclo=self.ciclo,
+            tipo_evidencia=self.tipo_evidencia,
+            titulo="Evidencia para descargar",
+            descripcion="Descarga",
+            curso_academico=2025,
+            periodo_desde=date(2025, 9, 1),
+            periodo_hasta=date(2026, 6, 30),
+            soporte=Evidencia.Soporte.DIGITAL,
+        )
+        contenido = b"contenido descarga"
+        fichero = FicheroEvidencia.objects.create(
+            evidencia=evidencia,
+            version=1,
+            nombre_original="descarga.pdf",
+            nombre_interno="a0f9d2d2-9715-4f67-a2a3-61d44534b8c3",
+            tamano=len(contenido),
+            tipo_mime="application/pdf",
+            sha256=hashlib.sha256(contenido).hexdigest(),
+            vigente=True,
+            subido_por=self.director,
+        )
+        archivo = Path(settings.EVIDENCIAS_ROOT) / "ciclos" / str(evidencia.pk) / "evidencias" / f"{fichero.nombre_interno}.pdf"
+        archivo.parent.mkdir(parents=True, exist_ok=True)
+        archivo.write_bytes(contenido)
+
+        self.assertTrue(puede(self.director, "descargar_evidencia", objeto=evidencia))
+        self.assertFalse(puede(self.otro_director, "descargar_evidencia", objeto=evidencia))
+
+        response = self.client.get(f"/api/ficheros/{fichero.pk}/descarga/")
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("attachment; filename=\"descarga.pdf\"", response["Content-Disposition"])
+
+        self.client.force_login(self.otro_director)
+        denied = self.client.get(f"/api/ficheros/{fichero.pk}/descarga/")
+        self.assertEqual(denied.status_code, 403)
+
+        self.client.force_login(self.director)
+        verify = self.client.post(f"/api/ciclos/{self.ciclo.pk}/verificar-huellas/")
+        self.assertEqual(verify.status_code, 200)
+        self.assertEqual(verify.json()["total"], 1)
+        self.assertEqual(verify.json()["correctas"], 1)
+
+    def test_historial_de_ficheros_y_clasificacion_con_permisos(self):
+        self.client.force_login(self.director)
+        evidencia = Evidencia.objects.create(
+            ciclo=self.ciclo,
+            tipo_evidencia=self.tipo_evidencia,
+            titulo="Evidencia con historial",
+            descripcion="Historial",
+            curso_academico=2025,
+            periodo_desde=date(2025, 9, 1),
+            periodo_hasta=date(2026, 6, 30),
+            soporte=Evidencia.Soporte.DIGITAL,
+        )
+        primer = FicheroEvidencia.objects.create(
+            evidencia=evidencia,
+            version=1,
+            nombre_original="v1.pdf",
+            nombre_interno="4cbf7d52-6e37-46b3-aa1c-c1d72d53f0c1",
+            tamano=100,
+            tipo_mime="application/pdf",
+            sha256="f" * 64,
+            vigente=True,
+            subido_por=self.director,
+        )
+        archivo = Path(settings.EVIDENCIAS_ROOT) / "ciclos" / str(evidencia.pk) / "evidencias" / f"{primer.nombre_interno}.pdf"
+        archivo.parent.mkdir(parents=True, exist_ok=True)
+        archivo.write_bytes(b"primera version")
+
+        nueva = SimpleUploadedFile("v2.pdf", b"segunda version", content_type="application/pdf")
+        upload = self.client.post(
+            f"/api/evidencias/{evidencia.pk}/ficheros/",
+            {"archivo": nueva},
+            format="multipart",
+        )
+        self.assertEqual(upload.status_code, 201, upload.content)
+        self.assertEqual(len(upload.json()["sha256"]) , 64)
+        self.assertTrue(upload.json()["vigente"])
+
+        detalle = self.client.get(f"/api/evidencias/{evidencia.pk}/")
+        self.assertEqual(detalle.status_code, 200)
+        self.assertEqual(len(detalle.json()["ficheros"]), 2)
+        self.assertTrue(all(item["vigente"] is False for item in detalle.json()["ficheros"] if item["version"] == 1))
+
+        self.assertTrue(puede(self.director, "crear_evidencia", objeto=evidencia))
+        self.assertFalse(puede(self.otro_director, "crear_evidencia", objeto=evidencia))
+
+        clasificacion = self.client.post(
+            f"/api/evidencias/{evidencia.pk}/clasificaciones/",
+            {"criterio": self.criterio.pk},
+            content_type="application/json",
+        )
+        self.assertEqual(clasificacion.status_code, 201)
+        self.assertEqual(clasificacion.json()["criterio"], self.criterio.pk)
+
+        self.client.force_login(self.otro_director)
+        denied = self.client.post(
+            f"/api/evidencias/{evidencia.pk}/clasificaciones/",
+            {"criterio": self.criterio.pk},
+            content_type="application/json",
+        )
+        self.assertEqual(denied.status_code, 403)
+
+        self.client.force_login(self.director)
+        response = self.client.delete(
+            f"/api/evidencias/{evidencia.pk}/clasificaciones/",
+            {"criterio": self.criterio.pk},
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, 204)
+
+        criterio_response = self.client.get(f"/api/criterios/{self.criterio.codigo}/evidencias/")
+        self.assertEqual(criterio_response.status_code, 200)
