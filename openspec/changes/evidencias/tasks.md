@@ -8,11 +8,11 @@
 
 ## 2. Carga, huella y almacenamiento sin sobrescritura
 
-- [ ] 2.1 Implementar el servicio de almacenamiento seguro con rutas internas protegidas y cálculo de SHA-256 por bloques. Verificación: prueba de generación de huella y de ruta insegura.
-- [ ] 2.2 Implementar `crear_evidencia` con validación de metadatos, soporte, tipo de fichero y tamaño, y registro de auditoría. Verificación: tests positivos y negativos de alta de evidencia.
-- [ ] 2.3 Implementar `reemplazar_fichero` con una nueva versión, marcado de `vigente=False` sobre la anterior y conservación del historial. Verificación: pruebas de reemplazo y de historial de versiones.
-- [ ] 2.4 Implementar `verificar_huella` y `verificar_huellas` para comparar el contenido real con el registro almacenado. Verificación: pruebas de archivo correcto y archivo alterado.
-- [ ] 2.5 Implementar `descargar` con control de permisos, auditoría y entrega diferida según entorno. Verificación: tests de descarga autorizada y rechazada.
+- [x] 2.1 Implementar el servicio de almacenamiento seguro con rutas internas protegidas y cálculo de SHA-256 por bloques. Verificación: prueba de generación de huella y de ruta insegura.
+- [x] 2.2 Implementar `crear_evidencia` con validación de metadatos, soporte, tipo de fichero y tamaño, y registro de auditoría. Verificación: tests positivos y negativos de alta de evidencia.
+- [x] 2.3 Implementar `reemplazar_fichero` con una nueva versión, marcado de `vigente=False` sobre la anterior y conservación del historial. Verificación: pruebas de reemplazo y de historial de versiones.
+- [x] 2.4 Implementar `verificar_huella` y `verificar_huellas` para comparar el contenido real con el registro almacenado. Verificación: pruebas de archivo correcto y archivo alterado.
+- [x] 2.5 Implementar `descargar` con control de permisos, auditoría y entrega diferida según entorno. Verificación: tests de descarga autorizada y rechazada.
 
 ## 3. Búsqueda y API
 

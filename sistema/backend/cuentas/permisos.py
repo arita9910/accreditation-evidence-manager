@@ -39,6 +39,11 @@ _PERMISOS_POR_ACCION = {
     "revocar_rol": {"administrador_tecnico"},
     "gestionar_usuarios": {"administrador_tecnico"},
     "gestionar_roles": {"administrador_tecnico"},
+    "crear_evidencia": {"director_carrera", "administrador_tecnico"},
+    "reemplazar_fichero": {"director_carrera", "administrador_tecnico"},
+    "descargar_evidencia": {"director_carrera", "administrador_tecnico"},
+    "verificar_huella": {"director_carrera", "administrador_tecnico"},
+    "verificar_huellas": {"director_carrera", "administrador_tecnico"},
     "ver_perfil": {"administrador_tecnico", "director_carrera"},
     "cambiar_clave": {"administrador_tecnico", "director_carrera"},
 }
