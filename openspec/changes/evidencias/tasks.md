@@ -23,8 +23,8 @@
 
 ## 4. Pantalla del módulo
 
-- [ ] 4.1 Crear la vista de listado con búsqueda, filtros y marca visual de evidencias en papel. Verificación: pruebas Vitest de listado y filtros.
-- [ ] 4.2 Crear el formulario de carga y el detalle con historial de versiones y estado de huella. Verificación: pruebas Vitest del formulario y del panel de detalle.
+- [x] 4.1 Crear la vista de listado con búsqueda, filtros y marca visual de evidencias en papel. Verificación: pruebas Vitest de listado y filtros.
+- [x] 4.2 Crear el formulario de carga y el detalle con historial de versiones y estado de huella. Verificación: pruebas Vitest del formulario y del panel de detalle.
 
 ## Workflow follow-up
 
