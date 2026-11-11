@@ -14,7 +14,7 @@ La aplicación SHALL permitir registrar facultades con nombre y carreras vincula
 - **THEN** ambos registros quedan persistidos con su relación de pertenencia y la carrera conserva su estado activo o no activo
 
 ### Requirement: Apertura y cierre de ciclos de evaluación
-La lógica del módulo de ciclos SHALL mantener las reglas de apertura y cierre ya establecidas y SHALL registrar cada operación relevante a través del servicio de auditoría sin cambiar la firma ni la semántica del flujo de negocio existente.
+La lógica del módulo de ciclos SHALL aplicar la autorización centralizada del módulo `cuentas` para cada operación de negocio y SHALL mantener la firma pública del servicio actual, incluso cuando el permiso real deje de estar embebido en un stub local.
 
 #### Scenario: Abrir un ciclo válido
 - **WHEN** se abre un ciclo con una carrera válida, cinco cursos consecutivos y un ciclo anterior cerrado de la misma carrera
@@ -27,6 +27,18 @@ La lógica del módulo de ciclos SHALL mantener las reglas de apertura y cierre 
 #### Scenario: Rechazar apertura cuando ya existe otro ciclo abierto
 - **WHEN** una carrera ya tiene un ciclo abierto
 - **THEN** la apertura de otro ciclo para la misma carrera falla y no crea un segundo ciclo abierto simultáneamente
+
+#### Scenario: Director de carrera puede abrir un ciclo
+- **WHEN** el actor tiene una asignación vigente como director de carrera sobre la carrera objetivo
+- **THEN** el módulo de ciclos autoriza la apertura del ciclo y conserva la trazabilidad de la operación en auditoría
+
+#### Scenario: Miembro sin permiso no puede abrir un ciclo
+- **WHEN** un miembro no autorizado intenta abrir o cerrar un ciclo
+- **THEN** la operación queda denegada con el error de negocio estándar y el intento se registra como acceso denegado
+
+#### Scenario: Integración con la función real de permisos
+- **WHEN** un servicio del módulo de ciclos llama a la función centralizada de permisos del sistema
+- **THEN** la decisión de acceso se toma con la misma matriz y el mismo contexto del módulo `cuentas`, sin duplicar la lógica en el servicio de ciclos
 
 ### Requirement: Restricciones de integridad del ciclo
 La lógica de negocio SHALL impedir que un ciclo anterior pertenezca a otra carrera, exigir cinco cursos entre `curso_inicial` y `curso_final` y reservar la edición de un ciclo cerrado como solo lectura.
