@@ -513,3 +513,16 @@ class ValoracionApiTests(TestCase):
 
         delete_response = self.client.delete(f"/api/valoraciones/{valoracion.pk}/")
         self.assertEqual(delete_response.status_code, 204)
+
+    def test_catalogo_por_ciclo_devuelve_dimensiones_y_criterios(self):
+        self.client.force_login(self.director)
+        response = self.client.get(f"/api/ciclos/{self.ciclo.pk}/valoraciones/catalogo/")
+
+        self.assertEqual(response.status_code, 200)
+        cuerpo = response.json()
+        self.assertEqual(cuerpo["version"]["id"], self.version.pk)
+        self.assertEqual(cuerpo["dimensiones"][0]["id"], self.dimension.pk)
+        self.assertEqual(
+            cuerpo["dimensiones"][0]["indicadores"][0]["criterios"][0]["id"],
+            self.criterio.pk,
+        )

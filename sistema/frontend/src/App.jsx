@@ -10,6 +10,7 @@ import FichaCriterio from './paginas/FichaCriterio.jsx'
 import Login from './paginas/Login.jsx'
 import MiPerfil from './paginas/MiPerfil.jsx'
 import Usuarios from './paginas/Usuarios.jsx'
+import Valoraciones from './paginas/Valoraciones.jsx'
 
 const CLAVE_USUARIO = 'acuenta.usuario'
 
@@ -95,6 +96,7 @@ function App() {
           <Route path="/usuarios" element={<RutaProtegida autenticado={Boolean(usuario)}><Usuarios usuario={usuario} /></RutaProtegida>} />
           <Route path="/ciclos" element={<Ciclos />} />
           <Route path="/evidencias" element={<RutaProtegida autenticado={Boolean(usuario)}><Evidencias usuario={usuario} /></RutaProtegida>} />
+          <Route path="/valoraciones" element={<RutaProtegida autenticado={Boolean(usuario)}><Valoraciones usuario={usuario} /></RutaProtegida>} />
           <Route path="/auditoria" element={<Auditoria />} />
           <Route path="/criterios/:codigo" element={<FichaCriterio />} />
           <Route path="/protegido" element={<RutaProtegida autenticado={Boolean(usuario)}><Cargando texto="Cargando panel" /></RutaProtegida>} />

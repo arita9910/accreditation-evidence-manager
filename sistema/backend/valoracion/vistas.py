@@ -8,6 +8,7 @@ from rest_framework.response import Response
 from ciclos.modelos import AsignacionDimension, Ciclo
 from cuentas.permisos import PermisoSistema, puede
 from estructura.models import Dimension
+from estructura.serializadores import DimensionSerializador, VersionNormativaSerializador
 
 from .models import Valoracion
 from .serializadores import (
@@ -117,6 +118,32 @@ class ValoracionesCicloVista(generics.ListCreateAPIView):
         return Response(ValoracionSerializador(valoracion).data, status=status.HTTP_201_CREATED)
 
 
+class ValoracionesCatalogoCicloVista(generics.GenericAPIView):
+    permission_classes = (AllowAny,)
+
+    def get(self, request, *args, **kwargs):
+        ciclo = get_object_or_404(
+            Ciclo.objects.select_related("version_normativa"),
+            pk=self.kwargs["pk"],
+        )
+        version = ciclo.version_normativa
+        dimensiones = (
+            Dimension.objects.filter(version=version)
+            .order_by("orden", "codigo")
+            .prefetch_related(
+                "indicadores__criterios__evidencias_sugeridas",
+                "indicadores__criterios__requisitos_categoria",
+                "indicadores__criterios__modelos_relacionados__modelo",
+            )
+        )
+        return Response(
+            {
+                "version": VersionNormativaSerializador(version).data,
+                "dimensiones": DimensionSerializador(dimensiones, many=True).data,
+            }
+        )
+
+
 @extend_schema(
     parameters=[
         OpenApiParameter(
@@ -204,5 +231,6 @@ class ValoracionDetalleVista(generics.GenericAPIView):
 
 __all__ = [
     "ValoracionesCicloVista",
+    "ValoracionesCatalogoCicloVista",
     "ValoracionDetalleVista",
 ]

@@ -21,13 +21,15 @@
 
 ## 4. Pantalla React
 
-- [ ] 4.1 Crear el editor por dimensión para fortalezas y debilidades con selector de criterios del mismo ciclo y control visual del tipo de valoración. Verificación: componente con renderización y estados iniciales.
-- [ ] 4.2 Añadir selector de evidencias del ciclo que ya estén clasificadas y asistente para insertar porcentajes con el formato `86,2 % (19/23)`. Verificación: prueba Vitest del asistente con valor exacto.
-- [ ] 4.3 Añadir recordatorio de las indicaciones del Anexo 5 del Manual y validación de la UI para evitar guardar valoraciones sin contenido, criterios o evidencias válidas. Verificación: prueba de validación del formulario.
+- [x] 4.1 Crear el editor por dimensión para fortalezas y debilidades con selector de criterios del mismo ciclo y control visual del tipo de valoración. Verificación: componente con renderización y estados iniciales.
+- [x] 4.2 Añadir selector de evidencias del ciclo que ya estén clasificadas y asistente para insertar porcentajes con el formato `86,2 % (19/23)`. Verificación: prueba Vitest del asistente con valor exacto.
+- [x] 4.3 Añadir recordatorio de las indicaciones del Anexo 5 del Manual y validación de la UI para evitar guardar valoraciones sin contenido, criterios o evidencias válidas. Verificación: prueba de validación del formulario.
 
 ## 5. Verificación y cierre
 
-- [ ] 5.1 Ejecutar la batería de pruebas del módulo (modelo, servicio, API y UI), comprobar que la validación de ciclo, permisos y auditoría siguen funcionando y dejar evidencia de la ejecución en el bloque final. Verificación: suite del módulo en verde y registro del resultado.
+- [x] 5.1 Ejecutar la batería de pruebas del módulo (modelo, servicio, API y UI), comprobar que la validación de ciclo, permisos y auditoría siguen funcionando y dejar evidencia de la ejecución en el bloque final. Verificación: suite del módulo en verde y registro del resultado.
+  - Evidencia backend (SQLite): `Set-Location "D:\tesis-app\accreditation-evidence-manager\sistema\backend"; & "D:\tesis-app\accreditation-evidence-manager\.venv\Scripts\python.exe" manage.py test valoracion` → **13 pruebas OK**.
+  - Evidencia frontend: `Set-Location "D:\tesis-app\accreditation-evidence-manager\sistema\frontend"; npm run test:run -- --pool=vmThreads --maxWorkers=1 src/paginas/Valoraciones.test.jsx` → **3 pruebas OK**.
 
 ## Workflow follow-up
 
