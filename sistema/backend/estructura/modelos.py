@@ -160,6 +160,7 @@ class TipoEvidencia(ModeloBase):
         on_delete=models.PROTECT,
     )
     nombre = models.TextField("nombre")
+    descripcion = models.TextField("descripción", blank=True)
     naturaleza = models.CharField("naturaleza", max_length=22, choices=Naturaleza.choices)
     soporte_exigido = models.CharField("soporte exigido", max_length=13, choices=Soporte.choices)
 

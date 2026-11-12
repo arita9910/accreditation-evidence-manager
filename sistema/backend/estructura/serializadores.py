@@ -52,6 +52,7 @@ class CriterioSerializador(serializers.ModelSerializer):
     class Meta:
         model = Criterio
         fields = (
+            "id",
             "codigo",
             "codigo_manual",
             "codigo_guia",
@@ -82,7 +83,7 @@ class IndicadorSerializador(serializers.ModelSerializer):
 
     class Meta:
         model = Indicador
-        fields = ("codigo", "texto", "criterios")
+        fields = ("id", "codigo", "texto", "criterios")
         read_only_fields = fields
 
 
@@ -91,7 +92,7 @@ class DimensionSerializador(serializers.ModelSerializer):
 
     class Meta:
         model = Dimension
-        fields = ("codigo", "nombre", "orden", "indicadores")
+        fields = ("id", "codigo", "nombre", "orden", "indicadores")
         read_only_fields = fields
 
 
