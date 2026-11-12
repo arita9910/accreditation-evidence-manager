@@ -8,9 +8,9 @@
 
 ## 1. Modelo y migración
 
-- [ ] 1.1 Definir la migración de `ValorModelo`, `ValorCriterio` y `VinculoDato` con unicidad por ciclo/curso/campo y validaciones de integridad; verificar que la migración se aplica correctamente en SQLite y no introduce columnas nominales.
-- [ ] 1.2 Añadir la restricción `CHECK` de `VinculoDato` para asegurar que exactamente uno de los dos datos esté presente y verificar la prueba que reproduzca la violación del CHECK.
-- [ ] 1.3 Preparar pruebas de modelo para tipos, no negativos, porcentajes y la copia de `acreditacion_anterior`; verificar que los casos esperados pasan en SQLite.
+- [x] 1.1 Definir la migración de `ValorModelo`, `ValorCriterio` y `VinculoDato` con unicidad por ciclo/curso/campo y validaciones de integridad; verificar que la migración se aplica correctamente en SQLite y no introduce columnas nominales.
+- [x] 1.2 Añadir la restricción `CHECK` de `VinculoDato` para asegurar que exactamente uno de los dos datos esté presente y verificar la prueba que reproduzca la violación del CHECK.
+- [x] 1.3 Preparar pruebas de modelo para tipos, no negativos, porcentajes y la copia de `acreditacion_anterior`; verificar que los casos esperados pasan en SQLite.
 
 ## 2. Servicios
 
