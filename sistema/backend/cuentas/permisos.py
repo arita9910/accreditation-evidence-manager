@@ -39,6 +39,14 @@ _PERMISOS_POR_ACCION = {
     "revocar_rol": {"administrador_tecnico"},
     "gestionar_usuarios": {"administrador_tecnico"},
     "gestionar_roles": {"administrador_tecnico"},
+    "crear_evidencia": {"director_carrera", "administrador_tecnico"},
+    "reemplazar_fichero": {"director_carrera", "administrador_tecnico"},
+    "descargar_evidencia": {"director_carrera", "administrador_tecnico"},
+    "verificar_huella": {"director_carrera", "administrador_tecnico"},
+    "verificar_huellas": {"director_carrera", "administrador_tecnico"},
+    "crear_valoracion": {"director_carrera", "administrador_tecnico"},
+    "editar_valoracion": {"director_carrera", "administrador_tecnico"},
+    "eliminar_valoracion": {"director_carrera", "administrador_tecnico"},
     "ver_perfil": {"administrador_tecnico", "director_carrera"},
     "cambiar_clave": {"administrador_tecnico", "director_carrera"},
 }
@@ -61,6 +69,9 @@ def _coerce_carrera_id(valor):
         for clave in ("carrera_id", "carrera", "carrera_pk", "id"):
             if clave in valor:
                 return _coerce_carrera_id(valor[clave])
+        for clave in ("ciclo_id", "ciclo"):
+            if clave in valor:
+                return _coerce_carrera_id(valor[clave])
         return None
 
     if hasattr(valor, "pk") and getattr(getattr(valor, "_meta", None), "model_name", None) == "carrera":
@@ -76,7 +87,7 @@ def _coerce_carrera_id(valor):
             if carrera_id is not None:
                 return carrera_id
 
-    for nombre in ("carrera",):
+    for nombre in ("carrera", "ciclo"):
         try:
             atributo = getattr(valor, nombre, None)
         except Exception:
@@ -233,6 +244,9 @@ def puede(actor, accion, objeto=None, *, recurso=None, contexto=None):
         "cerrar_ciclo": {"ciclo.cerrar", "cerrar_ciclo", "ciclo_cerrar"},
         "asignar_dimension": {"dimension.asignar", "asignar_dimension", "dimension_asignar"},
         "quitar_asignacion": {"dimension.quitar", "quitar_asignacion", "dimension_quitar"},
+        "crear_valoracion": {"valoracion.crear", "crear_valoracion", "valoracion_crear"},
+        "editar_valoracion": {"valoracion.editar", "editar_valoracion", "valoracion_editar"},
+        "eliminar_valoracion": {"valoracion.eliminar", "eliminar_valoracion", "valoracion_eliminar"},
     }
     if nombre_accion in aliases:
         if permisos.intersection(aliases[nombre_accion]):

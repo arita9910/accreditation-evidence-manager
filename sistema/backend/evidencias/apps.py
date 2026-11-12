@@ -5,3 +5,6 @@ class EvidenciasConfig(AppConfig):
     default_auto_field = "django.db.models.BigAutoField"
     name = "evidencias"
     verbose_name = "Evidencias"
+
+    def ready(self):
+        from . import modelos  # noqa: F401
