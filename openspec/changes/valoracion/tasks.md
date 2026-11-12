@@ -15,9 +15,9 @@
 
 ## 3. API
 
-- [ ] 3.1 Exponer `GET/POST /api/ciclos/{id}/valoraciones/` y filtros por dimensión y tipo, con validación de permisos, ciclo abierto y contexto de carrera. Verificación: prueba de API alternativa positiva y negativa.
-- [ ] 3.2 Exponer `GET/PATCH/DELETE /api/valoraciones/{id}/` con restricciones por usuario y dimensión; rechazar eliminaciones con dependencias. Verificación: pruebas de API con casos autorizados y denegados.
-- [ ] 3.3 Documentar el contrato OpenAPI del módulo y verificar que la respuesta de error y los códigos de estado son coherentes con el resto de la API del proyecto. Verificación: pruebas de serialización y respuestas HTTP.
+- [x] 3.1 Exponer `GET/POST /api/ciclos/{id}/valoraciones/` y filtros por dimensión y tipo, con validación de permisos, ciclo abierto y contexto de carrera. Verificación: prueba de API alternativa positiva y negativa.
+- [x] 3.2 Exponer `GET/PATCH/DELETE /api/valoraciones/{id}/` con restricciones por usuario y dimensión; rechazar eliminaciones con dependencias. Verificación: pruebas de API con casos autorizados y denegados.
+- [x] 3.3 Documentar el contrato OpenAPI del módulo y verificar que la respuesta de error y los códigos de estado son coherentes con el resto de la API del proyecto. Verificación: pruebas de serialización y respuestas HTTP.
 
 ## 4. Pantalla React
 

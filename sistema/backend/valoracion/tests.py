@@ -400,3 +400,116 @@ class ValoracionServiciosTests(TestCase):
         self.assertTrue(
             RegistroAuditoria.objects.filter(accion__in=["crear_valoracion", "editar_valoracion"]).exists()
         )
+
+
+class ValoracionApiTests(TestCase):
+    def setUp(self):
+        self.facultad = Facultad.objects.create(nombre="Ingeniería")
+        self.carrera = Carrera.objects.create(
+            facultad=self.facultad,
+            nombre="Ingeniería Informática",
+            activa=True,
+        )
+        self.director = get_user_model().objects.create_user(
+            "director-valoracion",
+            "clave-segura-123",
+            nombre="Directora",
+            apellidos="Prueba",
+            email="director@example.com",
+            rol=Usuario.Rol.DIRECTOR_CARRERA,
+            carrera=self.carrera,
+        )
+
+        self.version = VersionNormativa.objects.create(
+            nombre="SEA-CU 2025",
+            fecha_aprobacion=date(2025, 1, 1),
+            fuentes="Fuente",
+            activa=True,
+        )
+        self.dimension = Dimension.objects.create(
+            version=self.version,
+            codigo="1",
+            nombre="Pertinencia",
+            orden=1,
+        )
+        self.indicador = Indicador.objects.create(
+            dimension=self.dimension,
+            codigo="1.1",
+            texto="Indicador de prueba",
+        )
+        self.criterio = Criterio.objects.create(
+            indicador=self.indicador,
+            codigo="1.1.1",
+            codigo_guia="C-1",
+            solo_en_guia=False,
+            texto="Criterio de prueba",
+            tipo_dato=Criterio.TipoDato.CUALITATIVO,
+            valoracion_por_categoria=False,
+        )
+        self.tipo_evidencia = TipoEvidencia.objects.create(
+            dimension=self.dimension,
+            nombre="Documento de soporte",
+            naturaleza=TipoEvidencia.Naturaleza.DOCUMENTO,
+            soporte_exigido=TipoEvidencia.Soporte.DIGITAL,
+        )
+        self.ciclo = Ciclo.objects.create(
+            carrera=self.carrera,
+            version_normativa=self.version,
+            tipo="ordinario",
+            anio_base=2026,
+            curso_inicial=2021,
+            curso_final=2025,
+            estado=Ciclo.Estado.ABIERTO,
+            fecha_apertura=date(2026, 1, 1),
+        )
+        self.evidencia = Evidencia.objects.create(
+            ciclo=self.ciclo,
+            tipo_evidencia=self.tipo_evidencia,
+            titulo="Memoria de autoevaluación",
+            descripcion="Documento principal del ciclo",
+            curso_academico=2025,
+            periodo_desde=date(2025, 9, 1),
+            periodo_hasta=date(2026, 6, 30),
+            soporte=Evidencia.Soporte.DIGITAL,
+        )
+
+    def test_post_crea_valoracion_en_ciclo(self):
+        self.client.force_login(self.director)
+        response = self.client.post(
+            f"/api/ciclos/{self.ciclo.pk}/valoraciones/",
+            {
+                "dimension": self.dimension.pk,
+                "tipo": "fortaleza",
+                "texto": "Evaluación en API",
+                "criterios": [self.criterio.pk],
+                "evidencias": [self.evidencia.pk],
+            },
+            content_type="application/json",
+        )
+
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.json()["tipo"], "fortaleza")
+        self.assertEqual(response.json()["dimension"], self.dimension.pk)
+
+    def test_patch_y_delete_requieren_permiso_y_procesan_valoracion(self):
+        valoracion = crear_valoracion(
+            self.ciclo,
+            self.dimension,
+            Valoracion.Tipo.DEBILIDAD,
+            "Texto inicial",
+            [self.criterio],
+            [self.evidencia],
+            usuario=self.director,
+        )
+        self.client.force_login(self.director)
+
+        response = self.client.patch(
+            f"/api/valoraciones/{valoracion.pk}/",
+            {"texto": "Texto actualizado"},
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()["texto"], "Texto actualizado")
+
+        delete_response = self.client.delete(f"/api/valoraciones/{valoracion.pk}/")
+        self.assertEqual(delete_response.status_code, 204)

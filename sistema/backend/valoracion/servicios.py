@@ -108,10 +108,12 @@ def _validar_criterios_y_evidencias(ciclo, dimension, criterios, evidencias):
 
 def _depende_de_acciones_mejora(valoracion):
     for model in apps.get_models():
-        if model is Valoracion:
+        if model in (Valoracion, ValoracionCriterio, ValoracionEvidencia):
             continue
         for field in model._meta.get_fields():
             if not getattr(field, "is_relation", False):
+                continue
+            if not getattr(field, "concrete", False):
                 continue
             related_model = getattr(field, "remote_field", None)
             if related_model is None:
