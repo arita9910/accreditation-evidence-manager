@@ -31,7 +31,7 @@ class Evidencia(ModeloBase):
     )
     titulo = models.CharField("título", max_length=200)
     descripcion = models.TextField("descripción", blank=True)
-    curso_academico = models.PositiveIntegerField("curso académico")
+    curso_academico = models.CharField("curso académico", max_length=20, blank=True, null=True)
     periodo_desde = models.DateField("periodo desde")
     periodo_hasta = models.DateField("periodo hasta")
     soporte = models.CharField(

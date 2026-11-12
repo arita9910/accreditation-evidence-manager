@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import mimetypes
+import re
 import uuid
 from pathlib import Path
 
@@ -43,9 +44,8 @@ EXTENSIONES_PERMITIDAS = {
     ".html",
 }
 
-# Límite inicial propuesto para evidencias digitales. Se revisará con las entrevistas; por ahora
-# se mantiene razonable para evitar archivos excesivamente grandes en el almacenamiento interno.
-TAMANO_MAXIMO_BYTES = 25 * 1024 * 1024
+# Límite técnico acordado en A6: 10 MB por archivo digital.
+TAMANO_MAXIMO_BYTES = 10 * 1024 * 1024
 
 
 def _resolver_tipo_evidencia(valor):
@@ -174,13 +174,15 @@ def _validar_datos_evidencia(ciclo, datos, archivo=None):
 
     curso_academico = datos.get("curso_academico")
     if curso_academico in (None, ""):
-        raise ValidationError("El curso académico es obligatorio.")
-    try:
-        curso_academico = int(curso_academico)
-    except (TypeError, ValueError):
-        raise ValidationError("El curso académico debe ser numérico.") from None
-    if curso_academico <= 0:
-        raise ValidationError("El curso académico debe ser válido.")
+        curso_academico = None
+    else:
+        curso_academico = str(curso_academico).strip()
+        if not curso_academico:
+            curso_academico = None
+        elif not re.fullmatch(r"\d{4}(-\d{4})?", curso_academico):
+            raise ValidationError(
+                "El curso académico debe tener el formato 2024-2025 o un año válido."
+            )
 
     desde = datos.get("periodo_desde") or datos.get("fecha_desde")
     hasta = datos.get("periodo_hasta") or datos.get("fecha_hasta")

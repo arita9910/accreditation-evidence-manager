@@ -2,9 +2,13 @@ import { useEffect, useMemo, useState } from 'react'
 import { Cargando, Mensaje } from '../componentes'
 import peticion from '../api/cliente'
 
+const TAMANO_MAXIMO_ARCHIVO_BYTES = 10 * 1024 * 1024
+
 const FORMULARIO_INICIAL = {
   ciclo: '',
   tipo_evidencia: '',
+  dimension: '',
+  criterio: '',
   titulo: '',
   descripcion: '',
   curso_academico: '',
@@ -17,10 +21,11 @@ const FORMULARIO_INICIAL = {
 
 const FILTROS_INICIALES = {
   q: '',
+  dimension: '',
+  criterio: '',
   soporte: '',
   ciclo: '',
   curso: '',
-  criterio: '',
 }
 
 function extraerLista(respuesta) {
@@ -53,6 +58,9 @@ function construirQuery(filtros) {
   if (filtros.soporte) {
     query.set('soporte', filtros.soporte)
   }
+  if (filtros.dimension) {
+    query.set('dimension', filtros.dimension)
+  }
   if (filtros.ciclo) {
     query.set('ciclo', filtros.ciclo)
   }
@@ -70,6 +78,8 @@ function Evidencias({ usuario }) {
   const [filtrosAplicados, setFiltrosAplicados] = useState(FILTROS_INICIALES)
   const [evidencias, setEvidencias] = useState([])
   const [ciclos, setCiclos] = useState([])
+  const [tiposEvidencia, setTiposEvidencia] = useState([])
+  const [catalogo, setCatalogo] = useState(null)
   const [cargando, setCargando] = useState(true)
   const [cargandoDetalle, setCargandoDetalle] = useState(false)
   const [guardando, setGuardando] = useState(false)
@@ -88,16 +98,22 @@ function Evidencias({ usuario }) {
     setError('')
     try {
       const query = construirQuery(filtrosConsulta)
-      const [respuestaEvidencias, respuestaCiclos] = await Promise.all([
+      const [respuestaEvidencias, respuestaCiclos, respuestaTipos, respuestaCatalogo] = await Promise.all([
         peticion(`/api/evidencias/${query ? `?${query}` : ''}`),
         peticion('/api/ciclos/'),
+        peticion('/api/tipos-evidencia/'),
+        peticion('/api/catalogo/'),
       ])
       setEvidencias(extraerLista(respuestaEvidencias))
       setCiclos(extraerLista(respuestaCiclos))
+      setTiposEvidencia(extraerLista(respuestaTipos))
+      setCatalogo(respuestaCatalogo)
       setFiltrosAplicados(filtrosConsulta)
     } catch (errorRecibido) {
       setError(errorRecibido.message)
       setEvidencias([])
+      setTiposEvidencia([])
+      setCatalogo(null)
     } finally {
       setCargando(false)
     }
@@ -140,13 +156,70 @@ function Evidencias({ usuario }) {
     [ciclos, formulario.ciclo],
   )
 
+  const dimensiones = useMemo(
+    () => extraerLista(catalogo?.dimensiones),
+    [catalogo],
+  )
+
+  const tipoSeleccionado = useMemo(
+    () => tiposEvidencia.find((tipo) => String(tipo.id) === String(formulario.tipo_evidencia)),
+    [tiposEvidencia, formulario.tipo_evidencia],
+  )
+
+  const soporteForzadoPapel = tipoSeleccionado?.soporte_exigido === 'papel_firmado'
+
+  const criteriosPorDimension = useMemo(
+    () => dimensiones
+      .filter((dimension) => dimension?.id !== null && dimension?.id !== undefined)
+      .map((dimension) => ({
+        valor: String(dimension.id),
+        criterios: extraerLista(dimension?.indicadores)
+          .flatMap((indicador) => extraerLista(indicador?.criterios))
+          .filter((criterio) => criterio?.id !== null && criterio?.id !== undefined),
+      })),
+    [dimensiones],
+  )
+
+  const criteriosFormulario = useMemo(
+    () => criteriosPorDimension.find((item) => item.valor === String(formulario.dimension))?.criterios ?? [],
+    [criteriosPorDimension, formulario.dimension],
+  )
+
+  const criteriosFiltro = useMemo(
+    () => criteriosPorDimension.find((item) => item.valor === String(filtros.dimension))?.criterios ?? [],
+    [criteriosPorDimension, filtros.dimension],
+  )
+
   const manejarCambioFormulario = (evento) => {
     const { name, value } = evento.target
+    if (name === 'tipo_evidencia') {
+      const tipo = tiposEvidencia.find((item) => String(item.id) === String(value))
+      setFormulario((previo) => ({
+        ...previo,
+        tipo_evidencia: value,
+        soporte: tipo?.soporte_exigido === 'papel_firmado' ? 'papel' : previo.soporte,
+        archivo: tipo?.soporte_exigido === 'papel_firmado' ? null : previo.archivo,
+      }))
+      return
+    }
+
+    if (name === 'dimension') {
+      setFormulario((previo) => ({ ...previo, dimension: value, criterio: '' }))
+      return
+    }
+
     setFormulario((previo) => ({ ...previo, [name]: value }))
   }
 
   const manejarArchivo = (evento) => {
     const [archivo] = evento.target.files ?? []
+    if (archivo && archivo.size > TAMANO_MAXIMO_ARCHIVO_BYTES) {
+      setErrorFormulario('El archivo supera el límite de 10 MB.')
+      evento.target.value = ''
+      setFormulario((previo) => ({ ...previo, archivo: null }))
+      return
+    }
+    setErrorFormulario('')
     setFormulario((previo) => ({ ...previo, archivo: archivo ?? null }))
   }
 
@@ -159,8 +232,8 @@ function Evidencias({ usuario }) {
     setMensaje('')
     setErrorFormulario('')
 
-    if (!formulario.ciclo || !formulario.tipo_evidencia || !formulario.titulo.trim()) {
-      setErrorFormulario('Debe completar ciclo, tipo de evidencia y título.')
+    if (!formulario.ciclo || !formulario.tipo_evidencia || !formulario.dimension || !formulario.criterio || !formulario.titulo.trim()) {
+      setErrorFormulario('Debe completar ciclo, tipo de evidencia, dimensión, criterio y título.')
       return
     }
 
@@ -181,7 +254,7 @@ function Evidencias({ usuario }) {
       cuerpo.set('tipo_evidencia', formulario.tipo_evidencia)
       cuerpo.set('titulo', formulario.titulo.trim())
       cuerpo.set('descripcion', formulario.descripcion.trim())
-      cuerpo.set('curso_academico', formulario.curso_academico)
+      cuerpo.set('curso_academico', formulario.curso_academico.trim())
       cuerpo.set('periodo_desde', formulario.periodo_desde)
       cuerpo.set('periodo_hasta', formulario.periodo_hasta)
       cuerpo.set('soporte', formulario.soporte)
@@ -195,6 +268,16 @@ function Evidencias({ usuario }) {
       const creada = await peticion('/api/evidencias/', {
         method: 'POST',
         body: cuerpo,
+      })
+
+      await peticion(`/api/evidencias/${creada.id}/clasificaciones/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          criterio: formulario.criterio,
+        }),
       })
 
       setMensaje('Evidencia creada correctamente.')
@@ -251,6 +334,24 @@ function Evidencias({ usuario }) {
               </select>
             </div>
             <div className="col-md-2">
+              <label className="form-label" htmlFor="evidencias-dimension">Dimensión</label>
+              <select
+                className="form-select"
+                id="evidencias-dimension"
+                onChange={(evento) => setFiltros((previo) => ({ ...previo, dimension: evento.target.value, criterio: '' }))}
+                value={filtros.dimension}
+              >
+                <option value="">Todas</option>
+                {dimensiones
+                  .filter((dimension) => dimension?.id !== null && dimension?.id !== undefined)
+                  .map((dimension) => (
+                  <option key={dimension.id} value={String(dimension.id)}>
+                    {dimension.codigo} {dimension.nombre}
+                  </option>
+                  ))}
+              </select>
+            </div>
+            <div className="col-md-2">
               <label className="form-label" htmlFor="evidencias-ciclo">Ciclo</label>
               <select
                 className="form-select"
@@ -266,7 +367,7 @@ function Evidencias({ usuario }) {
                 ))}
               </select>
             </div>
-            <div className="col-md-2">
+            <div className="col-md-1">
               <label className="form-label" htmlFor="evidencias-curso">Curso</label>
               <input
                 className="form-control"
@@ -276,15 +377,22 @@ function Evidencias({ usuario }) {
                 value={filtros.curso}
               />
             </div>
-            <div className="col-md-2">
+            <div className="col-md-3">
               <label className="form-label" htmlFor="evidencias-criterio">Criterio</label>
-              <input
-                className="form-control"
+              <select
+                className="form-select"
                 id="evidencias-criterio"
-                inputMode="numeric"
+                disabled={!filtros.dimension}
                 onChange={(evento) => setFiltros((previo) => ({ ...previo, criterio: evento.target.value }))}
                 value={filtros.criterio}
-              />
+              >
+                <option value="">{filtros.dimension ? 'Todos' : 'Seleccione dimensión'}</option>
+                {criteriosFiltro.map((criterio) => (
+                  <option key={criterio.id} value={String(criterio.id)}>
+                    {criterio.codigo} {criterio.texto}
+                  </option>
+                ))}
+              </select>
             </div>
             <div className="col-12">
               <button className="btn btn-primary" type="submit">Aplicar filtros</button>
@@ -366,20 +474,64 @@ function Evidencias({ usuario }) {
                 </select>
               </div>
               <div className="col-md-4">
-                <label className="form-label" htmlFor="evidencia-tipo">Tipo de evidencia (ID)</label>
-                <input
-                  className="form-control"
+                <label className="form-label" htmlFor="evidencia-tipo">Tipo de evidencia</label>
+                <select
+                  className="form-select"
                   id="evidencia-tipo"
-                  inputMode="numeric"
                   name="tipo_evidencia"
                   onChange={manejarCambioFormulario}
                   value={formulario.tipo_evidencia}
-                />
+                >
+                  <option value="">Seleccione</option>
+                  {tiposEvidencia.map((tipo) => (
+                    <option key={tipo.id} value={tipo.id}>
+                      {tipo.nombre} ({tipo.soporte_exigido === 'papel_firmado' ? 'Papel' : tipo.soporte_exigido === 'ambos' ? 'Ambos' : 'Digital'})
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="col-md-4">
+                <label className="form-label" htmlFor="evidencia-dimension">Dimensión</label>
+                <select
+                  className="form-select"
+                  id="evidencia-dimension"
+                  name="dimension"
+                  onChange={manejarCambioFormulario}
+                  value={formulario.dimension}
+                >
+                  <option value="">Seleccione</option>
+                  {dimensiones
+                    .filter((dimension) => dimension?.id !== null && dimension?.id !== undefined)
+                    .map((dimension) => (
+                    <option key={dimension.id} value={String(dimension.id)}>
+                      {dimension.codigo} {dimension.nombre}
+                    </option>
+                    ))}
+                </select>
+              </div>
+              <div className="col-md-4">
+                <label className="form-label" htmlFor="evidencia-criterio">Criterio</label>
+                <select
+                  className="form-select"
+                  disabled={!formulario.dimension}
+                  id="evidencia-criterio"
+                  name="criterio"
+                  onChange={manejarCambioFormulario}
+                  value={formulario.criterio}
+                >
+                  <option value="">{formulario.dimension ? 'Seleccione' : 'Seleccione dimensión'}</option>
+                  {criteriosFormulario.map((criterio) => (
+                    <option key={criterio.id} value={String(criterio.id)}>
+                      {criterio.codigo} {criterio.texto}
+                    </option>
+                  ))}
+                </select>
               </div>
               <div className="col-md-4">
                 <label className="form-label" htmlFor="evidencia-soporte">Soporte</label>
                 <select
                   className="form-select"
+                  disabled={soporteForzadoPapel}
                   id="evidencia-soporte"
                   name="soporte"
                   onChange={manejarCambioFormulario}
@@ -404,9 +556,11 @@ function Evidencias({ usuario }) {
                 <input
                   className="form-control"
                   id="evidencia-curso-academico"
-                  inputMode="numeric"
+                  inputMode="text"
                   name="curso_academico"
                   onChange={manejarCambioFormulario}
+                  placeholder="2024-2025"
+                  type="text"
                   value={formulario.curso_academico}
                 />
               </div>

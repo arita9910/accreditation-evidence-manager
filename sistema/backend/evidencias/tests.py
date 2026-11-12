@@ -15,7 +15,14 @@ from cuentas.permisos import puede
 from estructura.models import Criterio, Dimension, Indicador, TipoEvidencia, VersionNormativa
 
 from .modelos import Clasificacion, Evidencia, FicheroEvidencia
-from .servicios import crear_evidencia, descargar, reemplazar_fichero, verificar_huella, verificar_huellas
+from .servicios import (
+    TAMANO_MAXIMO_BYTES,
+    crear_evidencia,
+    descargar,
+    reemplazar_fichero,
+    verificar_huella,
+    verificar_huellas,
+)
 
 
 class EvidenciasModelosTests(TestCase):
@@ -121,6 +128,31 @@ class EvidenciasModelosTests(TestCase):
 
         self.assertEqual(evidencia.ficheros.count(), 1)
         self.assertEqual(evidencia.clasificaciones.count(), 1)
+
+    def test_evidencia_acepta_curso_academico_en_formato_texto_y_vacio(self):
+        evidencia = Evidencia.objects.create(
+            ciclo=self.ciclo,
+            tipo_evidencia=self.tipo_evidencia,
+            titulo="Evidencia con curso textual",
+            descripcion="Curso académico con guion",
+            curso_academico="2024-2025",
+            periodo_desde=date(2024, 9, 1),
+            periodo_hasta=date(2025, 7, 31),
+            soporte=Evidencia.Soporte.DIGITAL,
+        )
+        self.assertEqual(evidencia.curso_academico, "2024-2025")
+
+        opcional = Evidencia.objects.create(
+            ciclo=self.ciclo,
+            tipo_evidencia=self.tipo_evidencia,
+            titulo="Evidencia opcional",
+            descripcion="Sin curso académico",
+            curso_academico="",
+            periodo_desde=date(2025, 9, 1),
+            periodo_hasta=date(2026, 7, 31),
+            soporte=Evidencia.Soporte.DIGITAL,
+        )
+        self.assertEqual(opcional.curso_academico, "")
 
     def test_evidencia_en_papel_exige_custodia_y_no_admite_archivo(self):
         evidencia = Evidencia(
@@ -409,6 +441,28 @@ class EvidenciasServiciosTests(TestCase):
         with self.assertRaises(Exception):
             descargar(fichero, usuario=AnonymousUser())
 
+    def test_crear_evidencia_rechaza_archivo_mayor_a_10mb(self):
+        archivo = SimpleUploadedFile(
+            "grande.pdf",
+            b"a" * (TAMANO_MAXIMO_BYTES + 1),
+            content_type="application/pdf",
+        )
+        with self.assertRaises(ValidationError) as contexto:
+            crear_evidencia(
+                self.ciclo,
+                {
+                    "titulo": "Archivo grande",
+                    "tipo_evidencia": self.tipo_evidencia,
+                    "soporte": Evidencia.Soporte.DIGITAL,
+                    "curso_academico": 2025,
+                    "periodo_desde": date(2025, 9, 1),
+                    "periodo_hasta": date(2026, 6, 30),
+                },
+                archivo=archivo,
+                usuario=self.usuario,
+            )
+        self.assertIn("10 MB", str(contexto.exception))
+
 
 class EvidenciasApiTests(TestCase):
     @classmethod
@@ -537,6 +591,22 @@ class EvidenciasApiTests(TestCase):
         detalle = self.client.get(f"/api/evidencias/{evidencia.pk}/")
         self.assertEqual(detalle.status_code, 200)
         self.assertEqual(detalle.json()["titulo"], "Listado de evidencias")
+
+    def test_listado_ignora_filtros_fk_con_formato_invalido(self):
+        self.client.force_login(self.director)
+        Evidencia.objects.create(
+            ciclo=self.ciclo,
+            tipo_evidencia=self.tipo_evidencia,
+            titulo="Evidencia filtro inválido",
+            descripcion="Prueba",
+            curso_academico=2025,
+            periodo_desde=date(2025, 9, 1),
+            periodo_hasta=date(2026, 6, 30),
+            soporte=Evidencia.Soporte.DIGITAL,
+        )
+        response = self.client.get("/api/evidencias/?dimension=1&criterio=1.1.1")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()["results"], [])
 
     def test_creacion_acepta_fichero_y_rechaza_validacion(self):
         self.client.force_login(self.director)
@@ -677,3 +747,46 @@ class EvidenciasApiTests(TestCase):
 
         criterio_response = self.client.get(f"/api/criterios/{self.criterio.codigo}/evidencias/")
         self.assertEqual(criterio_response.status_code, 200)
+
+    def test_lista_tipos_evidencia_devuelve_catalogo(self):
+        self.client.force_login(self.director)
+        response = self.client.get("/api/tipos-evidencia/")
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(any(item["id"] == self.tipo_evidencia.pk for item in response.json()["results"]))
+
+    def test_creacion_en_papel_sin_archivo_se_permite_y_digital_lo_exige(self):
+        self.client.force_login(self.director)
+
+        papel = self.client.post(
+            "/api/evidencias/",
+            {
+                "ciclo": self.ciclo.pk,
+                "tipo_evidencia": self.tipo_evidencia.pk,
+                "titulo": "Acta impresa",
+                "descripcion": "Acta con firma original",
+                "curso_academico": 2025,
+                "periodo_desde": "2025-09-01",
+                "periodo_hasta": "2026-06-30",
+                "soporte": "papel",
+                "custodia_original": "Secretaría docente",
+            },
+            format="multipart",
+        )
+        self.assertEqual(papel.status_code, 201, papel.content)
+        self.assertEqual(papel.json()["soporte"], "papel")
+
+        digital_sin_archivo = self.client.post(
+            "/api/evidencias/",
+            {
+                "ciclo": self.ciclo.pk,
+                "tipo_evidencia": self.tipo_evidencia.pk,
+                "titulo": "Informe sin archivo",
+                "descripcion": "Debe fallar",
+                "curso_academico": 2025,
+                "periodo_desde": "2025-09-01",
+                "periodo_hasta": "2026-06-30",
+                "soporte": "digital",
+            },
+            format="multipart",
+        )
+        self.assertEqual(digital_sin_archivo.status_code, 400)

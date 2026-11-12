@@ -35,6 +35,13 @@ class FicheroEvidenciaSerializador(serializers.ModelSerializer):
         read_only_fields = fields
 
 
+class TipoEvidenciaOpcionSerializador(serializers.ModelSerializer):
+    class Meta:
+        model = TipoEvidencia
+        fields = ("id", "nombre", "descripcion", "soporte_exigido")
+        read_only_fields = fields
+
+
 class ClasificacionSerializador(serializers.ModelSerializer):
     criterio = serializers.PrimaryKeyRelatedField(read_only=True)
     clasificada_por = serializers.PrimaryKeyRelatedField(read_only=True)
@@ -92,7 +99,7 @@ class EvidenciaCrearSerializador(serializers.Serializer):
     tipo = serializers.PrimaryKeyRelatedField(queryset=TipoEvidencia.objects.all(), required=False)
     titulo = serializers.CharField(max_length=200)
     descripcion = serializers.CharField(required=False, allow_blank=True, default="")
-    curso_academico = serializers.IntegerField()
+    curso_academico = serializers.CharField(required=False, allow_blank=True, allow_null=True, default=None)
     periodo_desde = serializers.DateField()
     periodo_hasta = serializers.DateField()
     soporte = serializers.ChoiceField(choices=("digital", "papel"))

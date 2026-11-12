@@ -6,7 +6,7 @@ from rest_framework.views import APIView
 
 from ciclos.modelos import Ciclo
 from cuentas.permisos import PermisoSistema, puede
-from estructura.models import Criterio
+from estructura.models import Criterio, TipoEvidencia
 
 from .busqueda import buscar
 from .modelos import Clasificacion, Evidencia, FicheroEvidencia
@@ -18,6 +18,7 @@ from .serializadores import (
     EvidenciaSerializador,
     FicheroEvidenciaSerializador,
     FicheroSubidaSerializador,
+    TipoEvidenciaOpcionSerializador,
 )
 from .servicios import descargar, quitar_clasificacion, verificar_huellas
 
@@ -60,6 +61,21 @@ class EvidenciaListaVista(generics.ListCreateAPIView):
         serializer.is_valid(raise_exception=True)
         evidencia = serializer.save()
         return Response(EvidenciaSerializador(evidencia).data, status=status.HTTP_201_CREATED)
+
+
+class TipoEvidenciaListaVista(generics.ListAPIView):
+    permission_classes = (AllowAny,)
+    serializer_class = TipoEvidenciaOpcionSerializador
+
+    def get_queryset(self):
+        queryset = TipoEvidencia.objects.select_related("dimension").order_by(
+            "dimension__orden",
+            "nombre",
+        )
+        ciclo_id = self.request.query_params.get("ciclo")
+        if ciclo_id not in (None, ""):
+            queryset = queryset.filter(dimension__version__ciclos__id=ciclo_id).distinct()
+        return queryset
 
 
 class EvidenciaDetalleVista(generics.RetrieveUpdateAPIView):
@@ -166,4 +182,3 @@ class EvidenciasPorCriterioVista(APIView):
         queryset = buscar(ciclo_id, filtros={"criterio": criterio.pk})
         serializer = EvidenciaSerializador(queryset, many=True)
         return Response(serializer.data)
-
