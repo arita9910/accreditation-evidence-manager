@@ -2,9 +2,9 @@
 
 ## 1. Modelo y migración
 
-- [ ] 1.1 Definir los modelos `Valoracion`, `ValoracionCriterio` y `ValoracionEvidencia`, con restricciones de unicidad y claves foráneas, y verificar la migración en SQLite. Fuente: [docs/origin-plans/08-modulo-valoracion.md](../../docs/origin-plans/08-modulo-valoracion.md#L15-L18).
-- [ ] 1.2 Añadir pruebas del modelo para validar el tipo de valoración, la dimensión y la asociación a criterios/evidencias del mismo ciclo, y verificar los casos de rechazo. Fuente: [docs/origin-plans/08-modulo-valoracion.md](../../docs/origin-plans/08-modulo-valoracion.md#L21-L27).
-- [ ] 1.3 Verificar que la migración y la validación de integridad siguen la convención de catálogo y de datos versionados de los planes 01 y 07. Fuente: [docs/decisiones/README.md](../../docs/decisiones/README.md#L25-L43), [docs/origin-plans/07-modulo-evidencias.md](../../docs/origin-plans/07-modulo-evidencias.md#L15-L57).
+- [x] 1.1 Definir los modelos `Valoracion`, `ValoracionCriterio` y `ValoracionEvidencia`, con restricciones de unicidad y claves foráneas, y verificar la migración en SQLite. Fuente: [docs/origin-plans/08-modulo-valoracion.md](../../docs/origin-plans/08-modulo-valoracion.md#L15-L18).
+- [x] 1.2 Añadir pruebas del modelo para validar el tipo de valoración, la dimensión y la asociación a criterios/evidencias del mismo ciclo, y verificar los casos de rechazo. Fuente: [docs/origin-plans/08-modulo-valoracion.md](../../docs/origin-plans/08-modulo-valoracion.md#L21-L27).
+- [x] 1.3 Verificar que la migración y la validación de integridad siguen la convención de catálogo y de datos versionados de los planes 01 y 07. Fuente: [docs/decisiones/README.md](../../docs/decisiones/README.md#L25-L43), [docs/origin-plans/07-modulo-evidencias.md](../../docs/origin-plans/07-modulo-evidencias.md#L15-L57).
 
 ## 2. Servicios de valoración
 
