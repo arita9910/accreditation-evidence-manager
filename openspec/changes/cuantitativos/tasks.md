@@ -2,9 +2,9 @@
 
 ## 0. Catálogo de modelos y `ModeloCampo`
 
-- [ ] 0.1 Crear el fichero de datos `sistema/datos/` con los 11 modelos del Manual y el cargador repetible por claves naturales, verificando que el total de modelos y campos quede alineado con el catálogo cargado; documentar celdas dudosas como preguntas abiertas sin conjeturas.
-- [ ] 0.2 Implementar la carga de `ModeloCampo` y pruebas de idempotencia para el catálogo, verificando que la cuenta de 11 modelos y sus campos coincida con la fuente del Manual y que no se dupliquen registros al recargar.
-- [ ] 0.3 Añadir pruebas de integridad para `CriterioModelo` y `ModeloCampo` con total de modelos y campos, verificando que el catálogo cargado no produzca asociaciones extrañas ni campos faltantes.
+- [x] 0.1 Crear el fichero de datos `sistema/datos/` con los 11 modelos del Manual y el cargador repetible por claves naturales, verificando que el total de modelos y campos quede alineado con el catálogo cargado; documentar celdas dudosas como preguntas abiertas sin conjeturas.
+- [x] 0.2 Implementar la carga de `ModeloCampo` y pruebas de idempotencia para el catálogo, verificando que la cuenta de 11 modelos y sus campos coincida con la fuente del Manual y que no se dupliquen registros al recargar.
+- [x] 0.3 Añadir pruebas de integridad para `CriterioModelo` y `ModeloCampo` con total de modelos y campos, verificando que el catálogo cargado no produzca asociaciones extrañas ni campos faltantes.
 
 ## 1. Modelo y migración
 

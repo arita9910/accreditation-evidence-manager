@@ -15,3 +15,7 @@ La carga de `ModeloCampo` debe basarse en un fichero de datos del proyecto y un 
 ## D-09.04 — Pregunta abierta sobre criterios sin modelo
 
 La decisión pendiente es determinar qué criterios de los 38 cuantitativos no tienen modelo asociado y contrastarlo con el catálogo cargado (`20 criterios con 22 asociaciones CriterioModelo`). La resolución debe basarse en la fuente y en la línea del Manual y no en suposiciones de implementación. Fuente: [docs/fuentes/Manual implementación SEA-CU 2025.md](../../../docs/fuentes/Manual%20implementaci%C3%B3n%20SEA-CU%202025.md#L1234-L1409), [docs/origin-plans/03-modulo-estructura.md](../../../docs/origin-plans/03-modulo-estructura.md#L18-L28), [docs/origin-plans/01-modelo-de-datos.md](../../../docs/origin-plans/01-modelo-de-datos.md#L41-L43).
+
+## D-09.05 — Preguntas abiertas de celdas dudosas en ModeloCampo
+
+El archivo `sistema/datos/modelos_resumen.json` incorpora la estructura base de celdas para los 11 modelos y mantiene preguntas abiertas por modelo cuando la fuente no permite fijar inequívocamente tipo o desagregación de algunas celdas. Estas dudas quedan explícitas como `preguntas_abiertas` por modelo y no se resuelven con conjeturas en código. Fuente: [docs/fuentes/Manual implementación SEA-CU 2025.md](../../../docs/fuentes/Manual%20implementaci%C3%B3n%20SEA-CU%202025.md#L1234-L1409), [docs/origin-plans/09-modulo-cuantitativos.md](../../../docs/origin-plans/09-modulo-cuantitativos.md#L13-L19).

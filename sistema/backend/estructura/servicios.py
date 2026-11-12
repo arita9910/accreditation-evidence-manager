@@ -13,6 +13,7 @@ from .models import (
     Dimension,
     EvidenciaSugerida,
     Indicador,
+    ModeloCampo,
     ModeloDefinicion,
     RequisitoCategoria,
     VersionNormativa,
@@ -179,6 +180,16 @@ def _tipo_dato(valor, ubicacion):
     raise ErrorCatalogo(f"{ubicacion} contiene un tipo de dato no reconocido: {valor!r}.")
 
 
+def _tipo_valor_modelo(valor, ubicacion):
+    if not isinstance(valor, str):
+        raise ErrorCatalogo(f"{ubicacion} debe indicar un tipo de valor de ModeloCampo.")
+    normalizado = valor.strip().casefold()
+    validos = {tipo for tipo, _ in ModeloCampo.TipoValor.choices}
+    if normalizado in validos:
+        return normalizado
+    raise ErrorCatalogo(f"{ubicacion} contiene un tipo de valor no reconocido: {valor!r}.")
+
+
 def _referencias_modelo(valor, ubicacion):
     if not isinstance(valor, str) or not valor.strip():
         return []
@@ -226,6 +237,45 @@ def _preparar_importacion(datos, datos_modelos):
             campos_faltantes.append(f"modelos[{indice}].nombre.valor")
             continue
         numero_rm36 = modelo.get("numero_rm36")
+        celdas = modelo.get("celdas", {})
+        if celdas is None:
+            celdas = {}
+        if not isinstance(celdas, dict):
+            raise ErrorCatalogo(f"modelos[{indice}].celdas debe ser un objeto.")
+        items_celdas = celdas.get("items", [])
+        if not isinstance(items_celdas, list):
+            raise ErrorCatalogo(f"modelos[{indice}].celdas.items debe ser una lista.")
+        campos_modelo = []
+        coordenadas = set()
+        for indice_celda, celda in enumerate(items_celdas, start=1):
+            ubicacion_celda = f"modelos[{indice}].celdas.items[{indice_celda}]"
+            if not isinstance(celda, dict):
+                raise ErrorCatalogo(f"{ubicacion_celda} debe ser un objeto.")
+            fila = celda.get("fila")
+            columna = celda.get("columna")
+            orden = celda.get("orden", indice_celda)
+            if not isinstance(fila, int) or fila <= 0:
+                raise ErrorCatalogo(f"{ubicacion_celda}.fila debe ser un entero positivo.")
+            if not isinstance(columna, int) or columna <= 0:
+                raise ErrorCatalogo(f"{ubicacion_celda}.columna debe ser un entero positivo.")
+            if not isinstance(orden, int) or orden <= 0:
+                raise ErrorCatalogo(f"{ubicacion_celda}.orden debe ser un entero positivo.")
+            coordenada = (fila, columna)
+            if coordenada in coordenadas:
+                raise ErrorCatalogo(
+                    f"{ubicacion_celda} repite la coordenada fila={fila}, columna={columna}."
+                )
+            coordenadas.add(coordenada)
+            campos_modelo.append(
+                {
+                    "fila": fila,
+                    "columna": columna,
+                    "tipo_valor": _tipo_valor_modelo(
+                        celda.get("tipo_valor"), f"{ubicacion_celda}.tipo_valor"
+                    ),
+                    "orden": orden,
+                }
+            )
         modelos[numero] = {
             "nombre": valor_nombre.strip(),
             "numero_rm36": (
@@ -233,6 +283,7 @@ def _preparar_importacion(datos, datos_modelos):
                 if isinstance(numero_rm36, dict)
                 else None
             ),
+            "campos": campos_modelo,
         }
 
     dimensiones = []
@@ -328,6 +379,8 @@ def _preparar_importacion(datos, datos_modelos):
                         f"{criterio['codigo']} referencia modelos inexistentes: "
                         + ", ".join(f"M{numero}" for numero in desconocidos)
                     )
+    if not any(modelo["campos"] for modelo in modelos.values()):
+        raise ErrorCatalogo("No se definieron celdas para ModeloCampo en los 11 modelos.")
 
     nombre_version = f"{datos['catalogo']} {datos['version']}".strip()
     return {
@@ -376,6 +429,19 @@ def cargar_catalogo(ruta=None, ruta_modelos=None):
                     "numero_rm36": datos_modelo["numero_rm36"],
                 },
             )
+            ids_campos_vigentes = []
+            for datos_campo in datos_modelo["campos"]:
+                campo, _ = ModeloCampo.objects.update_or_create(
+                    modelo=modelo,
+                    fila=datos_campo["fila"],
+                    columna=datos_campo["columna"],
+                    defaults={
+                        "tipo_valor": datos_campo["tipo_valor"],
+                        "orden": datos_campo["orden"],
+                    },
+                )
+                ids_campos_vigentes.append(campo.id)
+            modelo.campos.exclude(id__in=ids_campos_vigentes).delete()
             modelos_guardados[numero] = modelo
 
         for datos_dimension in plan["dimensiones"]:
@@ -440,5 +506,9 @@ def cargar_catalogo(ruta=None, ruta_modelos=None):
             for dimension in plan["dimensiones"]
             for indicador in dimension["indicadores"]
             for criterio in indicador["criterios"]
+        ),
+        "campos_modelo": sum(
+            len(modelo["campos"])
+            for modelo in plan["modelos"].values()
         ),
     }

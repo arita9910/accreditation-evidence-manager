@@ -2,6 +2,7 @@
   "version": "SEA-CU 2025 v3",
   "estado": "parcial",
   "fuentes": [
+    "docs/fuentes/Manual implementación SEA-CU 2025.md",
     "docs/origin-plans/01-modelo-de-datos.md",
     "docs/origin-plans/03-modulo-estructura.md",
     "docs/origin-plans/09-modulo-cuantitativos.md",
@@ -11,9 +12,10 @@
     "modelos": 11,
     "identificadores_confirmados": 11,
     "nombres_pendientes": 0,
-    "celdas_pendientes": 11
+    "campos_confirmados": 74,
+    "modelos_con_preguntas_abiertas": 11
   },
-  "nota": "El Manual (Anexo 6) y la plantilla Excel vacía no están disponibles en las fuentes del repositorio. Se conservan las referencias de modelos del catálogo; los nombres, números RM36 y celdas no disponibles quedan pendientes, sin inferir valores.",
+  "nota": "Las celdas se registran como estructura base por modelo para cargar ModeloCampo. Las variantes de filas repetitivas y celdas sin tipo inequívoco quedan como preguntas abiertas, sin conjeturas.",
   "modelos": [
     {
       "codigo": "M1",
@@ -36,13 +38,15 @@
         "fuente": "docs/Catálogo SEA-CU 2025 — criterios, evidencias y valoración v3 - Untitled.csv"
       },
       "celdas": {
-        "estado": "pendiente",
-        "items": [],
-        "campos_definidos_por_el_plan": [
-          "fila",
-          "columna",
-          "tipo_valor",
-          "orden"
+        "estado": "parcial",
+        "items": [
+          { "fila": 1, "columna": 1, "tipo_valor": "entero", "orden": 1 },
+          { "fila": 1, "columna": 2, "tipo_valor": "porcentaje", "orden": 2 },
+          { "fila": 1, "columna": 3, "tipo_valor": "entero", "orden": 3 },
+          { "fila": 1, "columna": 4, "tipo_valor": "porcentaje", "orden": 4 }
+        ],
+        "preguntas_abiertas": [
+          "Confirmar si la fila «Total del claustro» se persiste como dato editable o solo como total calculado."
         ]
       }
     },
@@ -67,13 +71,17 @@
         "fuente": "docs/Catálogo SEA-CU 2025 — criterios, evidencias y valoración v3 - Untitled.csv"
       },
       "celdas": {
-        "estado": "pendiente",
-        "items": [],
-        "campos_definidos_por_el_plan": [
-          "fila",
-          "columna",
-          "tipo_valor",
-          "orden"
+        "estado": "parcial",
+        "items": [
+          { "fila": 1, "columna": 1, "tipo_valor": "entero", "orden": 1 },
+          { "fila": 1, "columna": 2, "tipo_valor": "entero", "orden": 2 },
+          { "fila": 1, "columna": 3, "tipo_valor": "entero", "orden": 3 },
+          { "fila": 1, "columna": 4, "tipo_valor": "entero", "orden": 4 },
+          { "fila": 1, "columna": 5, "tipo_valor": "entero", "orden": 5 },
+          { "fila": 1, "columna": 6, "tipo_valor": "entero", "orden": 6 }
+        ],
+        "preguntas_abiertas": [
+          "Confirmar si los índices del modelo 2 se capturan como celdas adicionales o se calculan automáticamente."
         ]
       }
     },
@@ -97,13 +105,17 @@
         "fuente": "docs/Catálogo SEA-CU 2025 — criterios, evidencias y valoración v3 - Untitled.csv"
       },
       "celdas": {
-        "estado": "pendiente",
-        "items": [],
-        "campos_definidos_por_el_plan": [
-          "fila",
-          "columna",
-          "tipo_valor",
-          "orden"
+        "estado": "parcial",
+        "items": [
+          { "fila": 1, "columna": 1, "tipo_valor": "entero", "orden": 1 },
+          { "fila": 1, "columna": 2, "tipo_valor": "entero", "orden": 2 },
+          { "fila": 1, "columna": 3, "tipo_valor": "entero", "orden": 3 },
+          { "fila": 1, "columna": 4, "tipo_valor": "entero", "orden": 4 },
+          { "fila": 1, "columna": 5, "tipo_valor": "entero", "orden": 5 },
+          { "fila": 1, "columna": 6, "tipo_valor": "entero", "orden": 6 }
+        ],
+        "preguntas_abiertas": [
+          "Confirmar si los índices de provincial/nacional/internacional se persisten o se calculan."
         ]
       }
     },
@@ -128,13 +140,20 @@
         "fuente": "docs/Catálogo SEA-CU 2025 — criterios, evidencias y valoración v3 - Untitled.csv"
       },
       "celdas": {
-        "estado": "pendiente",
-        "items": [],
-        "campos_definidos_por_el_plan": [
-          "fila",
-          "columna",
-          "tipo_valor",
-          "orden"
+        "estado": "parcial",
+        "items": [
+          { "fila": 1, "columna": 1, "tipo_valor": "entero", "orden": 1 },
+          { "fila": 1, "columna": 2, "tipo_valor": "texto", "orden": 2 },
+          { "fila": 1, "columna": 3, "tipo_valor": "entero", "orden": 3 },
+          { "fila": 1, "columna": 4, "tipo_valor": "entero", "orden": 4 },
+          { "fila": 1, "columna": 5, "tipo_valor": "entero", "orden": 5 },
+          { "fila": 1, "columna": 6, "tipo_valor": "texto", "orden": 6 },
+          { "fila": 1, "columna": 7, "tipo_valor": "texto", "orden": 7 },
+          { "fila": 1, "columna": 8, "tipo_valor": "texto", "orden": 8 }
+        ],
+        "preguntas_abiertas": [
+          "Confirmar el tipo final de las columnas «Desde» y «Hasta» (texto o fecha).",
+          "Confirmar si PAP/PNAP/Internacional se almacenan como conteo o como marca booleana."
         ]
       }
     },
@@ -160,13 +179,19 @@
         "fuente": "docs/Catálogo SEA-CU 2025 — criterios, evidencias y valoración v3 - Untitled.csv"
       },
       "celdas": {
-        "estado": "pendiente",
-        "items": [],
-        "campos_definidos_por_el_plan": [
-          "fila",
-          "columna",
-          "tipo_valor",
-          "orden"
+        "estado": "parcial",
+        "items": [
+          { "fila": 1, "columna": 1, "tipo_valor": "entero", "orden": 1 },
+          { "fila": 1, "columna": 2, "tipo_valor": "entero", "orden": 2 },
+          { "fila": 1, "columna": 3, "tipo_valor": "entero", "orden": 3 },
+          { "fila": 1, "columna": 4, "tipo_valor": "entero", "orden": 4 },
+          { "fila": 1, "columna": 5, "tipo_valor": "entero", "orden": 5 },
+          { "fila": 1, "columna": 6, "tipo_valor": "entero", "orden": 6 },
+          { "fila": 1, "columna": 7, "tipo_valor": "entero", "orden": 7 },
+          { "fila": 1, "columna": 8, "tipo_valor": "porcentaje", "orden": 8 }
+        ],
+        "preguntas_abiertas": [
+          "Confirmar si la fila «Profesores incorporados» del modelo 5 requiere desglose adicional por categoría."
         ]
       }
     },
@@ -191,13 +216,19 @@
         "fuente": "docs/Catálogo SEA-CU 2025 — criterios, evidencias y valoración v3 - Untitled.csv"
       },
       "celdas": {
-        "estado": "pendiente",
-        "items": [],
-        "campos_definidos_por_el_plan": [
-          "fila",
-          "columna",
-          "tipo_valor",
-          "orden"
+        "estado": "parcial",
+        "items": [
+          { "fila": 1, "columna": 1, "tipo_valor": "entero", "orden": 1 },
+          { "fila": 1, "columna": 2, "tipo_valor": "entero", "orden": 2 },
+          { "fila": 1, "columna": 3, "tipo_valor": "entero", "orden": 3 },
+          { "fila": 1, "columna": 4, "tipo_valor": "entero", "orden": 4 },
+          { "fila": 1, "columna": 5, "tipo_valor": "entero", "orden": 5 },
+          { "fila": 1, "columna": 6, "tipo_valor": "entero", "orden": 6 },
+          { "fila": 1, "columna": 7, "tipo_valor": "entero", "orden": 7 },
+          { "fila": 1, "columna": 8, "tipo_valor": "porcentaje", "orden": 8 }
+        ],
+        "preguntas_abiertas": [
+          "Confirmar si la celda de total de proyectos comunitarios/extensionistas debe ser editable o calculada."
         ]
       }
     },
@@ -223,13 +254,18 @@
         "fuente": "docs/Catálogo SEA-CU 2025 — criterios, evidencias y valoración v3 - Untitled.csv"
       },
       "celdas": {
-        "estado": "pendiente",
-        "items": [],
-        "campos_definidos_por_el_plan": [
-          "fila",
-          "columna",
-          "tipo_valor",
-          "orden"
+        "estado": "parcial",
+        "items": [
+          { "fila": 1, "columna": 1, "tipo_valor": "entero", "orden": 1 },
+          { "fila": 1, "columna": 2, "tipo_valor": "entero", "orden": 2 },
+          { "fila": 1, "columna": 3, "tipo_valor": "entero", "orden": 3 },
+          { "fila": 1, "columna": 4, "tipo_valor": "entero", "orden": 4 },
+          { "fila": 1, "columna": 5, "tipo_valor": "entero", "orden": 5 },
+          { "fila": 1, "columna": 6, "tipo_valor": "entero", "orden": 6 },
+          { "fila": 1, "columna": 7, "tipo_valor": "entero", "orden": 7 }
+        ],
+        "preguntas_abiertas": [
+          "Confirmar si «Modelo 7.1 premios estudiantiles» se conserva en el mismo modelo 7 o si requiere una codificación aparte."
         ]
       }
     },
@@ -254,13 +290,18 @@
         "fuente": "docs/Catálogo SEA-CU 2025 — criterios, evidencias y valoración v3 - Untitled.csv"
       },
       "celdas": {
-        "estado": "pendiente",
-        "items": [],
-        "campos_definidos_por_el_plan": [
-          "fila",
-          "columna",
-          "tipo_valor",
-          "orden"
+        "estado": "parcial",
+        "items": [
+          { "fila": 1, "columna": 1, "tipo_valor": "entero", "orden": 1 },
+          { "fila": 1, "columna": 2, "tipo_valor": "entero", "orden": 2 },
+          { "fila": 1, "columna": 3, "tipo_valor": "entero", "orden": 3 },
+          { "fila": 1, "columna": 4, "tipo_valor": "entero", "orden": 4 },
+          { "fila": 1, "columna": 5, "tipo_valor": "entero", "orden": 5 },
+          { "fila": 1, "columna": 6, "tipo_valor": "entero", "orden": 6 },
+          { "fila": 1, "columna": 7, "tipo_valor": "entero", "orden": 7 }
+        ],
+        "preguntas_abiertas": [
+          "Confirmar si la escala -5..0 en actividad de postgrado se almacena como columnas fijas o como categorías externas."
         ]
       }
     },
@@ -284,13 +325,17 @@
         "fuente": "docs/Catálogo SEA-CU 2025 — criterios, evidencias y valoración v3 - Untitled.csv"
       },
       "celdas": {
-        "estado": "pendiente",
-        "items": [],
-        "campos_definidos_por_el_plan": [
-          "fila",
-          "columna",
-          "tipo_valor",
-          "orden"
+        "estado": "parcial",
+        "items": [
+          { "fila": 1, "columna": 1, "tipo_valor": "entero", "orden": 1 },
+          { "fila": 1, "columna": 2, "tipo_valor": "entero", "orden": 2 },
+          { "fila": 1, "columna": 3, "tipo_valor": "entero", "orden": 3 },
+          { "fila": 1, "columna": 4, "tipo_valor": "entero", "orden": 4 },
+          { "fila": 1, "columna": 5, "tipo_valor": "entero", "orden": 5 },
+          { "fila": 1, "columna": 6, "tipo_valor": "entero", "orden": 6 }
+        ],
+        "preguntas_abiertas": [
+          "Confirmar si «Propio/Afín» debe persistirse en filas separadas o como atributo de cada celda."
         ]
       }
     },
@@ -314,13 +359,19 @@
         "fuente": "docs/Catálogo SEA-CU 2025 — criterios, evidencias y valoración v3 - Untitled.csv"
       },
       "celdas": {
-        "estado": "pendiente",
-        "items": [],
-        "campos_definidos_por_el_plan": [
-          "fila",
-          "columna",
-          "tipo_valor",
-          "orden"
+        "estado": "parcial",
+        "items": [
+          { "fila": 1, "columna": 1, "tipo_valor": "entero", "orden": 1 },
+          { "fila": 1, "columna": 2, "tipo_valor": "entero", "orden": 2 },
+          { "fila": 1, "columna": 3, "tipo_valor": "entero", "orden": 3 },
+          { "fila": 1, "columna": 4, "tipo_valor": "entero", "orden": 4 },
+          { "fila": 1, "columna": 5, "tipo_valor": "entero", "orden": 5 },
+          { "fila": 1, "columna": 6, "tipo_valor": "porcentaje", "orden": 6 },
+          { "fila": 1, "columna": 7, "tipo_valor": "porcentaje", "orden": 7 },
+          { "fila": 1, "columna": 8, "tipo_valor": "porcentaje", "orden": 8 }
+        ],
+        "preguntas_abiertas": [
+          "Confirmar si la fila «Total» del modelo 10 se persiste o se calcula a partir de los años."
         ]
       }
     },
@@ -346,13 +397,17 @@
         "fuente": "docs/Catálogo SEA-CU 2025 — criterios, evidencias y valoración v3 - Untitled.csv"
       },
       "celdas": {
-        "estado": "pendiente",
-        "items": [],
-        "campos_definidos_por_el_plan": [
-          "fila",
-          "columna",
-          "tipo_valor",
-          "orden"
+        "estado": "parcial",
+        "items": [
+          { "fila": 1, "columna": 1, "tipo_valor": "entero", "orden": 1 },
+          { "fila": 1, "columna": 2, "tipo_valor": "entero", "orden": 2 },
+          { "fila": 1, "columna": 3, "tipo_valor": "entero", "orden": 3 },
+          { "fila": 1, "columna": 4, "tipo_valor": "entero", "orden": 4 },
+          { "fila": 1, "columna": 5, "tipo_valor": "entero", "orden": 5 },
+          { "fila": 1, "columna": 6, "tipo_valor": "entero", "orden": 6 }
+        ],
+        "preguntas_abiertas": [
+          "Confirmar si la última columna del encabezado «0 - 0» en el Manual corresponde a una sola columna o a dos columnas separadas."
         ]
       }
     }

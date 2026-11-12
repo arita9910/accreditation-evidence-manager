@@ -2,7 +2,7 @@
 
 ## Estado
 
-La planificación del cambio `cuantitativos` se ha revisado para mantener coherencia entre la propuesta, el diseño y la ejecución. La carga del catálogo de modelos, la restricción de `VinculoDato` y la verificación de SQLite quedan como base del incremento.
+La planificación del cambio `cuantitativos` se ha revisado para mantener coherencia entre la propuesta, el diseño y la ejecución. En este bloque se implementó la carga de `ModeloCampo` desde `sistema/datos/modelos_resumen.json` con 11 modelos, se volvió repetible por claves naturales (`modelo`, `fila`, `columna`) y se añadieron pruebas de idempotencia e integridad en SQLite.
 
 ## Criterios revisados
 
@@ -10,6 +10,7 @@ La planificación del cambio `cuantitativos` se ha revisado para mantener cohere
 - Revisión de permisos y auditoría: `puede(...)` en lecturas y escrituras; `registrar(...)` solo en escrituras relevantes.
 - `VinculoDato` apunta a `Evidencia`; exige mismo ciclo; impide duplicar par dato–evidencia; `desvincular` exige ciclo abierto.
 - Pregunta abierta documentada para contrastar los 38 criterios cuantitativos con el catálogo cargado (20 criterios con 22 asociaciones `CriterioModelo`).
+- Preguntas abiertas por celdas dudosas registradas sin conjeturas en `modelos_resumen.json` y en la decisión D-09.05.
 
 ## Pendiente documental
 

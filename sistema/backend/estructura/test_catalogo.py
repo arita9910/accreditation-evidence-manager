@@ -88,15 +88,32 @@ def crear_catalogo_completo():
             {"nombre": f"{codigo_dimension} Dimensión {codigo_dimension}", "indicadores": indicadores}
         )
 
-    modelos = [
-        {
-            "codigo": f"M{numero}",
-            "numero": numero,
-            "nombre": {"valor": f"Modelo {numero}"},
-            "numero_rm36": {"valor": None},
-        }
-        for numero in range(1, 12)
-    ]
+    modelos = []
+    for numero in range(1, 12):
+        modelos.append(
+            {
+                "codigo": f"M{numero}",
+                "numero": numero,
+                "nombre": {"valor": f"Modelo {numero}"},
+                "numero_rm36": {"valor": None},
+                "celdas": {
+                    "items": [
+                        {
+                            "fila": 1,
+                            "columna": 1,
+                            "tipo_valor": "entero",
+                            "orden": 1,
+                        },
+                        {
+                            "fila": 1,
+                            "columna": 2,
+                            "tipo_valor": "porcentaje",
+                            "orden": 2,
+                        },
+                    ]
+                },
+            }
+        )
     return (
         {
             "catalogo": "SEA-CU 2025",
@@ -194,12 +211,15 @@ class CargaCatalogoTests(TestCase):
         self.assertEqual(primer_resultado["criterios"], 65)
         self.assertEqual(primer_resultado["modelos"], 11)
         self.assertEqual(primer_resultado["asociaciones"], 22)
+        self.assertEqual(primer_resultado["campos_modelo"], 22)
         self.assertEqual(segundo_resultado["asociaciones"], 22)
+        self.assertEqual(segundo_resultado["campos_modelo"], 22)
         self.assertEqual(VersionNormativa.objects.count(), 1)
         self.assertEqual(Dimension.objects.count(), 6)
         self.assertEqual(Indicador.objects.count(), 24)
         self.assertEqual(Criterio.objects.count(), 65)
         self.assertEqual(ModeloDefinicion.objects.count(), 11)
+        self.assertEqual(ModeloCampo.objects.count(), 22)
         self.assertEqual(CriterioModelo.objects.count(), 22)
         self.assertEqual(
             CriterioModelo.objects.values("criterio_id").distinct().count(),
@@ -226,7 +246,10 @@ class CargaCatalogoTests(TestCase):
         self.assertTrue(criterio_solo_guia.solo_en_guia)
         self.assertIsNone(criterio_solo_guia.codigo_manual)
         self.assertEqual(TipoEvidencia.objects.count(), 0)
-        self.assertEqual(ModeloCampo.objects.count(), 0)
+        self.assertEqual(
+            ModeloCampo.objects.values("modelo_id").distinct().count(),
+            11,
+        )
 
     def test_falla_dentro_de_transaccion_y_revierte_toda_la_carga(self):
         with patch(
@@ -269,6 +292,35 @@ class CargaCatalogoTests(TestCase):
 
         self.assertEqual(VersionNormativa.objects.count(), 0)
         self.assertEqual(Dimension.objects.count(), 0)
+
+    def test_rechaza_coordenadas_duplicadas_en_modelo_campo(self):
+        self.datos_modelos["modelos"][0]["celdas"]["items"].append(
+            {"fila": 1, "columna": 1, "tipo_valor": "entero", "orden": 3}
+        )
+        self._escribir_fuentes()
+
+        with self.assertRaisesRegex(ErrorCatalogo, "repite la coordenada"):
+            self.cargar()
+
+    def test_coinciden_totales_de_asociaciones_y_campos_con_fuentes(self):
+        resultado = self.cargar()
+        total_campos = sum(
+            len(modelo["celdas"]["items"])
+            for modelo in self.datos_modelos["modelos"]
+        )
+        total_asociaciones = sum(
+            len(
+                [valor for valor in criterio.get("modelos_manual", "").split(",") if valor.strip()]
+            )
+            for dimension in self.datos["dimensiones"]
+            for indicador in dimension["indicadores"]
+            for criterio in indicador["criterios"]
+        )
+
+        self.assertEqual(resultado["campos_modelo"], total_campos)
+        self.assertEqual(resultado["asociaciones"], total_asociaciones)
+        self.assertEqual(ModeloCampo.objects.count(), total_campos)
+        self.assertEqual(CriterioModelo.objects.count(), total_asociaciones)
 
 
 class CatalogoAPITests(TestCase):

@@ -25,6 +25,7 @@ class Command(BaseCommand):
                 f"{resultado['dimensiones']}/{resultado['indicadores']}/"
                 f"{resultado['criterios']} dimensiones/indicadores/criterios; "
                 f"{resultado['modelos']} modelos y "
-                f"{resultado['asociaciones']} asociaciones."
+                f"{resultado['asociaciones']} asociaciones; "
+                f"{resultado['campos_modelo']} campos de modelo."
             )
         )
