@@ -44,6 +44,9 @@ _PERMISOS_POR_ACCION = {
     "descargar_evidencia": {"director_carrera", "administrador_tecnico"},
     "verificar_huella": {"director_carrera", "administrador_tecnico"},
     "verificar_huellas": {"director_carrera", "administrador_tecnico"},
+    "crear_valoracion": {"director_carrera", "administrador_tecnico"},
+    "editar_valoracion": {"director_carrera", "administrador_tecnico"},
+    "eliminar_valoracion": {"director_carrera", "administrador_tecnico"},
     "ver_perfil": {"administrador_tecnico", "director_carrera"},
     "cambiar_clave": {"administrador_tecnico", "director_carrera"},
 }
@@ -241,6 +244,9 @@ def puede(actor, accion, objeto=None, *, recurso=None, contexto=None):
         "cerrar_ciclo": {"ciclo.cerrar", "cerrar_ciclo", "ciclo_cerrar"},
         "asignar_dimension": {"dimension.asignar", "asignar_dimension", "dimension_asignar"},
         "quitar_asignacion": {"dimension.quitar", "quitar_asignacion", "dimension_quitar"},
+        "crear_valoracion": {"valoracion.crear", "crear_valoracion", "valoracion_crear"},
+        "editar_valoracion": {"valoracion.editar", "editar_valoracion", "valoracion_editar"},
+        "eliminar_valoracion": {"valoracion.eliminar", "eliminar_valoracion", "valoracion_eliminar"},
     }
     if nombre_accion in aliases:
         if permisos.intersection(aliases[nombre_accion]):

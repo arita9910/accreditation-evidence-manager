@@ -8,10 +8,10 @@
 
 ## 2. Servicios de valoración
 
-- [ ] 2.1 Implementar `crear_valoracion(...)` con validación de ciclo abierto, permisos por dimensión y vinculación segura a criterios/evidencias del mismo ciclo. Verificación: prueba unitaria de caso correcto y caso rechazado.
-- [ ] 2.2 Implementar `editar_valoracion(...)` y `eliminar_valoracion(...)` con validación de dependencias y mensajes claros cuando una debilidad tiene acciones asociadas. Verificación: prueba de edición y prueba de bloqueo por dependencia.
-- [ ] 2.3 Implementar `formatear_porcentaje(...)` con coma decimal y una cifra decimal, reutilizable por el resto del sistema y compatible con `86,2 % (19/23)`. Verificación: prueba de caso normal y caso denominador cero.
-- [ ] 2.4 Reforzar la auditoría y la trazabilidad con `registrar(...)` y asegurar que cada escritura del servicio queda registrada antes del cierre del bloque. Verificación: prueba de registro en alta y edición.
+- [x] 2.1 Implementar `crear_valoracion(...)` con validación de ciclo abierto, permisos por dimensión y vinculación segura a criterios/evidencias del mismo ciclo. Verificación: prueba unitaria de caso correcto y caso rechazado.
+- [x] 2.2 Implementar `editar_valoracion(...)` y `eliminar_valoracion(...)` con validación de dependencias y mensajes claros cuando una debilidad tiene acciones asociadas. Verificación: prueba de edición y prueba de bloqueo por dependencia.
+- [x] 2.3 Implementar `formatear_porcentaje(...)` con coma decimal y una cifra decimal, reutilizable por el resto del sistema y compatible con `86,2 % (19/23)`. Verificación: prueba de caso normal y caso denominador cero.
+- [x] 2.4 Reforzar la auditoría y la trazabilidad con `registrar(...)` y asegurar que cada escritura del servicio queda registrada antes del cierre del bloque. Verificación: prueba de registro en alta y edición.
 
 ## 3. API
 
