@@ -21,10 +21,10 @@
 
 ## 3. API
 
-- [ ] 3.1 Crear `GET/PUT /api/ciclos/{id}/modelos/{n}/valores/?curso=` para consulta y escritura de valores por modelo; verificar respuesta JSON y permisos positivos/negativos.
-- [ ] 3.2 Crear `GET/PUT /api/ciclos/{id}/criterios/{codigo}/valor/` para consulta y escritura de valores por criterio; verificar respuesta JSON, validaciones y permisos.
-- [ ] 3.3 Crear `POST/DELETE /api/vinculos/`, `GET /api/evidencias/{id}/datos/` y `GET /api/datos/{tipo}/{id}/evidencias/`; verificar vínculos en ambos sentidos y la restricción de complejidad del par dato–evidencia.
-- [ ] 3.4 Crear `GET /api/ciclos/{id}/datos/sin-respaldo/` y pruebas de API para volver a consultar los casos de datos sin evidencia y los accesos denegados.
+- [x] 3.1 Crear `GET/PUT /api/ciclos/{id}/modelos/{n}/valores/?curso=` para consulta y escritura de valores por modelo; verificar respuesta JSON y permisos positivos/negativos.
+- [x] 3.2 Crear `GET/PUT /api/ciclos/{id}/criterios/{codigo}/valor/` para consulta y escritura de valores por criterio; verificar respuesta JSON, validaciones y permisos.
+- [x] 3.3 Crear `POST/DELETE /api/vinculos/`, `GET /api/evidencias/{id}/datos/` y `GET /api/datos/{tipo}/{id}/evidencias/`; verificar vínculos en ambos sentidos y la restricción de complejidad del par dato–evidencia.
+- [x] 3.4 Crear `GET /api/ciclos/{id}/datos/sin-respaldo/` y pruebas de API para volver a consultar los casos de datos sin evidencia y los accesos denegados.
 
 ## 4. Pantalla
 

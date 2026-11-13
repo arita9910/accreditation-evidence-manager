@@ -464,3 +464,176 @@ class CuantitativosServiciosTests(TestCase):
         desvincular(valor_modelo, [self.evidencia], usuario=self.usuario)
         self.assertIn(valor_modelo, datos_sin_respaldo(self.ciclo))
         self.assertEqual(datos_de_evidencia(self.evidencia), [])
+
+
+class CuantitativosApiTests(TestCase):
+    def setUp(self):
+        self.facultad = Facultad.objects.create(nombre="Ingeniería")
+        self.carrera = Carrera.objects.create(
+            facultad=self.facultad,
+            nombre="Ingeniería Informática",
+            activa=True,
+        )
+        self.otra_carrera = Carrera.objects.create(
+            facultad=self.facultad,
+            nombre="Arquitectura",
+            activa=True,
+        )
+        self.usuario = get_user_model().objects.create_user(
+            "director-cuantitativos-api",
+            "clave-segura-123",
+            nombre="Director",
+            apellidos="Carrera",
+            email="director-api@example.com",
+            rol=get_user_model().Rol.DIRECTOR_CARRERA,
+            carrera=self.carrera,
+        )
+        self.otro_usuario = get_user_model().objects.create_user(
+            "otro-director-api",
+            "clave-segura-123",
+            nombre="Otro",
+            apellidos="Director",
+            email="otro-api@example.com",
+            rol=get_user_model().Rol.DIRECTOR_CARRERA,
+            carrera=self.otra_carrera,
+        )
+        self.version = VersionNormativa.objects.create(
+            nombre="SEA-CU 2025",
+            fecha_aprobacion=date(2025, 1, 1),
+            fuentes="Fuente",
+            activa=True,
+        )
+        self.dimension = Dimension.objects.create(
+            version=self.version,
+            codigo="1",
+            nombre="Pertinencia",
+            orden=1,
+        )
+        self.indicador = Indicador.objects.create(
+            dimension=self.dimension,
+            codigo="1.1",
+            texto="Indicador de prueba",
+        )
+        self.criterio = Criterio.objects.create(
+            indicador=self.indicador,
+            codigo="1.1.1",
+            codigo_guia="C-1",
+            solo_en_guia=False,
+            texto="Criterio de prueba",
+            tipo_dato=Criterio.TipoDato.CUANTITATIVO,
+            valoracion_por_categoria=False,
+        )
+        self.modelo = ModeloDefinicion.objects.create(
+            version=self.version,
+            numero=1,
+            nombre="Modelo de prueba",
+        )
+        self.campo_porcentaje = ModeloCampo.objects.create(
+            modelo=self.modelo,
+            fila=1,
+            columna=1,
+            tipo_valor=ModeloCampo.TipoValor.PORCENTAJE,
+            orden=1,
+        )
+        self.campo_entero = ModeloCampo.objects.create(
+            modelo=self.modelo,
+            fila=1,
+            columna=2,
+            tipo_valor=ModeloCampo.TipoValor.ENTERO,
+            orden=2,
+        )
+        self.tipo_evidencia = TipoEvidencia.objects.create(
+            dimension=self.dimension,
+            nombre="Documento de soporte",
+            naturaleza=TipoEvidencia.Naturaleza.DOCUMENTO,
+            soporte_exigido=TipoEvidencia.Soporte.DIGITAL,
+        )
+        self.ciclo = Ciclo.objects.create(
+            carrera=self.carrera,
+            version_normativa=self.version,
+            tipo="ordinario",
+            anio_base=2026,
+            curso_inicial=2021,
+            curso_final=2025,
+            estado=Ciclo.Estado.ABIERTO,
+            fecha_apertura=date(2026, 1, 1),
+        )
+        self.evidencia = Evidencia.objects.create(
+            ciclo=self.ciclo,
+            tipo_evidencia=self.tipo_evidencia,
+            titulo="Documentación de evidencia",
+            descripcion="Documento principal",
+            curso_academico="2025-2026",
+            periodo_desde=date(2025, 9, 1),
+            periodo_hasta=date(2026, 6, 30),
+            soporte=Evidencia.Soporte.DIGITAL,
+        )
+
+    def test_api_valores_de_modelo_y_criterio_funcionan_y_respetan_permisos(self):
+        self.client.force_login(self.usuario)
+
+        put_modelo = self.client.put(
+            f"/api/ciclos/{self.ciclo.pk}/modelos/{self.modelo.numero}/valores/?curso=2025",
+            data={
+                "celdas": [
+                    {"campo": self.campo_porcentaje.pk, "valor": 75, "numerador": 3, "denominador": 4},
+                    {"campo": self.campo_entero.pk, "valor": 12},
+                ]
+            },
+            content_type="application/json",
+        )
+        self.assertEqual(put_modelo.status_code, 200, put_modelo.content)
+        self.assertEqual(ValorModelo.objects.filter(ciclo=self.ciclo, curso=2025).count(), 2)
+
+        get_modelo = self.client.get(f"/api/ciclos/{self.ciclo.pk}/modelos/{self.modelo.numero}/valores/?curso=2025")
+        self.assertEqual(get_modelo.status_code, 200)
+        self.assertGreaterEqual(len(get_modelo.json()["celdas"]), 2)
+
+        put_criterio = self.client.put(
+            f"/api/ciclos/{self.ciclo.pk}/criterios/{self.criterio.codigo}/valor/",
+            data={"valor": 50, "numerador": 1, "denominador": 2, "unidad": "%"},
+            content_type="application/json",
+        )
+        self.assertEqual(put_criterio.status_code, 200, put_criterio.content)
+
+        get_criterio = self.client.get(f"/api/ciclos/{self.ciclo.pk}/criterios/{self.criterio.codigo}/valor/")
+        self.assertEqual(get_criterio.status_code, 200)
+        self.assertEqual(get_criterio.json()["valor"]["valor"], 50)
+
+        self.client.force_login(self.otro_usuario)
+        denied = self.client.get(f"/api/ciclos/{self.ciclo.pk}/modelos/{self.modelo.numero}/valores/?curso=2025")
+        self.assertEqual(denied.status_code, 403)
+
+    def test_api_vinculos_y_datos_sin_respaldo_comparten_informacion(self):
+        valor_modelo = ValorModelo.objects.create(
+            ciclo=self.ciclo,
+            campo=self.campo_porcentaje,
+            curso=2025,
+            valor=40,
+            numerador=2,
+            denominador=5,
+        )
+
+        self.client.force_login(self.usuario)
+        response = self.client.post(
+            "/api/vinculos/",
+            data={"dato": {"tipo": "modelo", "id": valor_modelo.pk}, "evidencia": self.evidencia.pk},
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, 201, response.content)
+
+        evidencia_response = self.client.get(f"/api/evidencias/{self.evidencia.pk}/datos/")
+        self.assertEqual(evidencia_response.status_code, 200)
+        self.assertEqual(len(evidencia_response.json()["datos"]), 1)
+
+        datos_response = self.client.get(f"/api/datos/modelo/{valor_modelo.pk}/evidencias/")
+        self.assertEqual(datos_response.status_code, 200)
+        self.assertEqual(len(datos_response.json()["evidencias"]), 1)
+
+        sin_respaldo = self.client.get(f"/api/ciclos/{self.ciclo.pk}/datos/sin-respaldo/")
+        self.assertEqual(sin_respaldo.status_code, 200)
+        self.assertNotIn(valor_modelo.pk, [item["id"] for item in sin_respaldo.json()["datos"]])
+
+        self.client.force_login(self.otro_usuario)
+        denied = self.client.get(f"/api/ciclos/{self.ciclo.pk}/datos/sin-respaldo/")
+        self.assertEqual(denied.status_code, 403)
