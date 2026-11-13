@@ -7,6 +7,10 @@ class ValorModeloSerializador(serializers.ModelSerializer):
     tipo = serializers.SerializerMethodField()
     modelo = serializers.SerializerMethodField()
     campo = serializers.IntegerField(source="campo_id", read_only=True)
+    fila = serializers.IntegerField(source="campo.fila", read_only=True)
+    columna = serializers.IntegerField(source="campo.columna", read_only=True)
+    etiqueta_fila = serializers.CharField(source="campo.etiqueta_fila", read_only=True)
+    etiqueta_columna = serializers.CharField(source="campo.etiqueta_columna", read_only=True)
     criterio = serializers.SerializerMethodField()
 
     class Meta:
@@ -16,6 +20,10 @@ class ValorModeloSerializador(serializers.ModelSerializer):
             "tipo",
             "modelo",
             "campo",
+            "fila",
+            "columna",
+            "etiqueta_fila",
+            "etiqueta_columna",
             "curso",
             "valor",
             "numerador",

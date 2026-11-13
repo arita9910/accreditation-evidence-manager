@@ -90,6 +90,12 @@ function Evidencias({ usuario }) {
   const [detalle, setDetalle] = useState(null)
   const [evidenciaSeleccionadaId, setEvidenciaSeleccionadaId] = useState(null)
   const [formulario, setFormulario] = useState(FORMULARIO_INICIAL)
+  const [datosRespaldo, setDatosRespaldo] = useState([])
+  const [datosSinRespaldo, setDatosSinRespaldo] = useState([])
+  const [datoPendienteSeleccionado, setDatoPendienteSeleccionado] = useState('')
+  const [cargandoVinculosDato, setCargandoVinculosDato] = useState(false)
+  const [guardandoVinculoDato, setGuardandoVinculoDato] = useState(false)
+  const [errorVinculoDato, setErrorVinculoDato] = useState('')
 
   const puedeEditar = usuario?.rol === 'administrador_tecnico' || usuario?.rol === 'director_carrera'
 
@@ -122,18 +128,94 @@ function Evidencias({ usuario }) {
   const cargarDetalle = async (evidenciaId) => {
     if (!evidenciaId) {
       setDetalle(null)
+      setDatosRespaldo([])
+      setDatosSinRespaldo([])
+      setDatoPendienteSeleccionado('')
       return
     }
     setCargandoDetalle(true)
     setErrorDetalle('')
+    setErrorVinculoDato('')
+    setCargandoVinculosDato(true)
+    let cicloDetalle = null
     try {
       const datos = await peticion(`/api/evidencias/${evidenciaId}/`)
       setDetalle(datos)
+      cicloDetalle = datos?.ciclo ?? null
     } catch (errorRecibido) {
       setErrorDetalle(errorRecibido.message)
       setDetalle(null)
+      setDatosRespaldo([])
+      setDatosSinRespaldo([])
+      setDatoPendienteSeleccionado('')
+      setCargandoDetalle(false)
+      setCargandoVinculosDato(false)
+      return
     } finally {
       setCargandoDetalle(false)
+    }
+
+    try {
+      if (!cicloDetalle) {
+        setDatosRespaldo([])
+        setDatosSinRespaldo([])
+        return
+      }
+      const [datosAsociados, pendientes] = await Promise.all([
+        peticion(`/api/evidencias/${evidenciaId}/datos/`),
+        peticion(`/api/ciclos/${cicloDetalle}/datos/sin-respaldo/`),
+      ])
+      setDatosRespaldo(extraerLista(datosAsociados?.datos))
+      setDatosSinRespaldo(extraerLista(pendientes?.datos_sin_respaldo ?? pendientes?.datos))
+    } catch (errorRecibido) {
+      setErrorVinculoDato(errorRecibido.message)
+      setDatosRespaldo([])
+      setDatosSinRespaldo([])
+      setDatoPendienteSeleccionado('')
+    } finally {
+      setCargandoVinculosDato(false)
+    }
+  }
+
+  const describirDato = (dato) => {
+    if (dato?.tipo === 'modelo') {
+      return `Modelo ${dato.modelo} · valor ${dato.valor ?? '—'}`
+    }
+    return `Criterio ${dato?.codigo ?? dato?.criterio} · valor ${dato?.valor ?? '—'}`
+  }
+
+  const vincularDatoPendiente = async (evento) => {
+    evento.preventDefault()
+    if (!detalle?.id) {
+      setErrorVinculoDato('Seleccione una evidencia.')
+      return
+    }
+    if (!datoPendienteSeleccionado) {
+      setErrorVinculoDato('Seleccione un dato pendiente.')
+      return
+    }
+
+    const [tipo, datoId] = datoPendienteSeleccionado.split(':')
+    setGuardandoVinculoDato(true)
+    setErrorVinculoDato('')
+    try {
+      await peticion('/api/vinculos/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          evidencia: detalle.id,
+          dato: { tipo, id: datoId },
+        }),
+      })
+      setDatoPendienteSeleccionado('')
+      await cargarDetalle(detalle.id)
+      setMensaje('Dato cuantitativo vinculado correctamente.')
+    } catch (errorRecibido) {
+      setErrorVinculoDato(errorRecibido.message)
+    } finally {
+      setGuardandoVinculoDato(false)
     }
   }
 
@@ -661,6 +743,63 @@ function Evidencias({ usuario }) {
                   Periodo: {formatearFecha(detalle.periodo_desde)} - {formatearFecha(detalle.periodo_hasta)}
                 </p>
               </div>
+
+              <section aria-labelledby="titulo-datos-respaldo">
+                <h3 className="h6" id="titulo-datos-respaldo">Datos respaldados por esta evidencia</h3>
+                {cargandoVinculosDato ? <Cargando texto="Cargando datos cuantitativos..." /> : null}
+                {errorVinculoDato ? <Mensaje tipo="error">{errorVinculoDato}</Mensaje> : null}
+                {!cargandoVinculosDato ? (
+                  datosRespaldo.length > 0 ? (
+                    <ul>
+                      {datosRespaldo.map((dato) => (
+                        <li key={`${dato.tipo}-${dato.id}`}>{describirDato(dato)}</li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <Mensaje tipo="info">Esta evidencia todavía no respalda datos cuantitativos.</Mensaje>
+                  )
+                ) : null}
+              </section>
+
+              <section aria-labelledby="titulo-datos-sin-respaldo">
+                <h3 className="h6" id="titulo-datos-sin-respaldo">Datos sin respaldo del ciclo</h3>
+                {datosSinRespaldo.length > 0 ? (
+                  <>
+                    {puedeEditar ? (
+                      <form className="row g-2 align-items-end" onSubmit={vincularDatoPendiente}>
+                        <div className="col-md-8">
+                          <label className="form-label" htmlFor="dato-pendiente">Dato pendiente</label>
+                          <select
+                            className="form-select"
+                            id="dato-pendiente"
+                            onChange={(evento) => setDatoPendienteSeleccionado(evento.target.value)}
+                            value={datoPendienteSeleccionado}
+                          >
+                            <option value="">Seleccione</option>
+                            {datosSinRespaldo.map((dato) => (
+                              <option key={`${dato.tipo}-${dato.id}`} value={`${dato.tipo}:${dato.id}`}>
+                                {describirDato(dato)}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                        <div className="col-md-4">
+                          <button className="btn btn-outline-primary w-100" disabled={guardandoVinculoDato} type="submit">
+                            {guardandoVinculoDato ? 'Vinculando...' : 'Vincular dato'}
+                          </button>
+                        </div>
+                      </form>
+                    ) : null}
+                    <ul className="mt-2 mb-0">
+                      {datosSinRespaldo.map((dato) => (
+                        <li key={`pendiente-${dato.tipo}-${dato.id}`}>{describirDato(dato)}</li>
+                      ))}
+                    </ul>
+                  </>
+                ) : (
+                  <Mensaje tipo="info">No hay datos pendientes de respaldo para este ciclo.</Mensaje>
+                )}
+              </section>
 
               {Array.isArray(detalle.ficheros) && detalle.ficheros.length > 0 ? (
                 <div className="table-responsive">

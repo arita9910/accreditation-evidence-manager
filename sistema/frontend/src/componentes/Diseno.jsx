@@ -19,6 +19,9 @@ function Diseno({ children, onLogout, usuario }) {
             <NavLink className="nav-link" to="/evidencias">Evidencias</NavLink>
           </li>
           <li className="nav-item">
+            <NavLink className="nav-link" to="/cuantitativos">Cuantitativos</NavLink>
+          </li>
+          <li className="nav-item">
             <NavLink className="nav-link" to="/valoraciones">Valoraciones</NavLink>
           </li>
           <li className="nav-item">

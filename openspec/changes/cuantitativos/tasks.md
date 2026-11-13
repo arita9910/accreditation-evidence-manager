@@ -28,9 +28,9 @@
 
 ## 4. Pantalla
 
-- [ ] 4.1 Construir la tabla editable de datos por modelo con validación de números no negativos, cálculos de porcentaje y totales; verificar con Vitest la validación de entrada.
-- [ ] 4.2 Construir la edición del valor por criterio con referencia textual a la Guía como dato de apoyo, sin que el sistema lo evalúe como cumplimiento; verificar la visualización y la validación de la pantalla.
-- [ ] 4.3 Construir el selector de evidencias para vincular datos y la lista de datos sin respaldo en la ficha de evidencia; verificar que la interfaz muestra los datos respaldados y los pendientes.
+- [x] 4.1 Construir la tabla editable de datos por modelo con validación de números no negativos, cálculos de porcentaje y totales; verificar con Vitest la validación de entrada.
+- [x] 4.2 Construir la edición del valor por criterio con referencia textual a la Guía como dato de apoyo, sin que el sistema lo evalúe como cumplimiento; verificar la visualización y la validación de la pantalla.
+- [x] 4.3 Construir el selector de evidencias para vincular datos y la lista de datos sin respaldo en la ficha de evidencia; verificar que la interfaz muestra los datos respaldados y los pendientes.
 
 ## 5. Verificación final
 

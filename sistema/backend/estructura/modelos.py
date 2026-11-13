@@ -208,6 +208,8 @@ class ModeloCampo(ModeloBase):
     columna = models.PositiveIntegerField("columna")
     tipo_valor = models.CharField("tipo de valor", max_length=11, choices=TipoValor.choices)
     orden = models.PositiveIntegerField("orden")
+    etiqueta_fila = models.CharField("etiqueta de fila", max_length=255, blank=True, default="")
+    etiqueta_columna = models.CharField("etiqueta de columna", max_length=255, blank=True, default="")
 
     class Meta:
         verbose_name = "campo de modelo"

@@ -260,22 +260,31 @@ def _preparar_importacion(datos, datos_modelos):
                 raise ErrorCatalogo(f"{ubicacion_celda}.columna debe ser un entero positivo.")
             if not isinstance(orden, int) or orden <= 0:
                 raise ErrorCatalogo(f"{ubicacion_celda}.orden debe ser un entero positivo.")
+            etiqueta_fila = celda.get("etiqueta_fila")
+            etiqueta_columna = celda.get("etiqueta_columna")
+            if etiqueta_fila is not None and not isinstance(etiqueta_fila, str):
+                raise ErrorCatalogo(f"{ubicacion_celda}.etiqueta_fila debe ser texto o nulo.")
+            if etiqueta_columna is not None and not isinstance(etiqueta_columna, str):
+                raise ErrorCatalogo(f"{ubicacion_celda}.etiqueta_columna debe ser texto o nulo.")
             coordenada = (fila, columna)
             if coordenada in coordenadas:
                 raise ErrorCatalogo(
                     f"{ubicacion_celda} repite la coordenada fila={fila}, columna={columna}."
                 )
             coordenadas.add(coordenada)
-            campos_modelo.append(
-                {
-                    "fila": fila,
-                    "columna": columna,
-                    "tipo_valor": _tipo_valor_modelo(
-                        celda.get("tipo_valor"), f"{ubicacion_celda}.tipo_valor"
-                    ),
-                    "orden": orden,
-                }
-            )
+            campo = {
+                "fila": fila,
+                "columna": columna,
+                "tipo_valor": _tipo_valor_modelo(
+                    celda.get("tipo_valor"), f"{ubicacion_celda}.tipo_valor"
+                ),
+                "orden": orden,
+            }
+            if etiqueta_fila is not None:
+                campo["etiqueta_fila"] = etiqueta_fila.strip()
+            if etiqueta_columna is not None:
+                campo["etiqueta_columna"] = etiqueta_columna.strip()
+            campos_modelo.append(campo)
         modelos[numero] = {
             "nombre": valor_nombre.strip(),
             "numero_rm36": (
@@ -438,6 +447,8 @@ def cargar_catalogo(ruta=None, ruta_modelos=None):
                     defaults={
                         "tipo_valor": datos_campo["tipo_valor"],
                         "orden": datos_campo["orden"],
+                        "etiqueta_fila": datos_campo.get("etiqueta_fila", ""),
+                        "etiqueta_columna": datos_campo.get("etiqueta_columna", ""),
                     },
                 )
                 ids_campos_vigentes.append(campo.id)

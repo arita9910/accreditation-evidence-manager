@@ -587,7 +587,13 @@ class CuantitativosApiTests(TestCase):
 
         get_modelo = self.client.get(f"/api/ciclos/{self.ciclo.pk}/modelos/{self.modelo.numero}/valores/?curso=2025")
         self.assertEqual(get_modelo.status_code, 200)
-        self.assertGreaterEqual(len(get_modelo.json()["celdas"]), 2)
+        celdas = get_modelo.json()["celdas"]
+        self.assertGreaterEqual(len(celdas), 2)
+        celda_porcentaje = next(item for item in celdas if item["campo"] == self.campo_porcentaje.pk)
+        self.assertEqual(celda_porcentaje["fila"], self.campo_porcentaje.fila)
+        self.assertEqual(celda_porcentaje["columna"], self.campo_porcentaje.columna)
+        self.assertEqual(celda_porcentaje["etiqueta_fila"], self.campo_porcentaje.etiqueta_fila)
+        self.assertEqual(celda_porcentaje["etiqueta_columna"], self.campo_porcentaje.etiqueta_columna)
 
         put_criterio = self.client.put(
             f"/api/ciclos/{self.ciclo.pk}/criterios/{self.criterio.codigo}/valor/",

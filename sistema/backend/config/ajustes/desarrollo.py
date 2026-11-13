@@ -16,4 +16,4 @@ DATABASES = {
         "NAME": BASE_DIR / "db.sqlite3",
     }
 }
-CATALOGO_API_DESARROLLO = False 
+CATALOGO_API_DESARROLLO = False

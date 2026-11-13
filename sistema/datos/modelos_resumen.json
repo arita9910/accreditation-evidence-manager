@@ -1,6 +1,6 @@
 {
   "version": "SEA-CU 2025 v3",
-  "estado": "parcial",
+  "estado": "confirmado",
   "fuentes": [
     "docs/fuentes/Manual implementación SEA-CU 2025.md",
     "docs/origin-plans/01-modelo-de-datos.md",
@@ -13,14 +13,14 @@
     "identificadores_confirmados": 11,
     "nombres_pendientes": 0,
     "campos_confirmados": 74,
-    "modelos_con_preguntas_abiertas": 11
+    "modelos_con_preguntas_abiertas": 0
   },
-  "nota": "Las celdas se registran como estructura base por modelo para cargar ModeloCampo. Las variantes de filas repetitivas y celdas sin tipo inequívoco quedan como preguntas abiertas, sin conjeturas.",
+  "nota": "Las celdas del Manual SEA-CU 2025 se registran con etiquetas exactas de fila y columna para preservar la correspondencia de la pantalla.",
   "modelos": [
     {
       "codigo": "M1",
       "numero": 1,
-      "estado": "parcial",
+      "estado": "confirmado",
       "nombre": {
         "valor": "Resumen del claustro",
         "estado": "confirmado"
@@ -38,22 +38,48 @@
         "fuente": "docs/Catálogo SEA-CU 2025 — criterios, evidencias y valoración v3 - Untitled.csv"
       },
       "celdas": {
-        "estado": "parcial",
+        "estado": "confirmado",
         "items": [
-          { "fila": 1, "columna": 1, "tipo_valor": "entero", "orden": 1 },
-          { "fila": 1, "columna": 2, "tipo_valor": "porcentaje", "orden": 2 },
-          { "fila": 1, "columna": 3, "tipo_valor": "entero", "orden": 3 },
-          { "fila": 1, "columna": 4, "tipo_valor": "porcentaje", "orden": 4 }
+          {
+            "fila": 1,
+            "columna": 1,
+            "tipo_valor": "entero",
+            "orden": 1,
+            "etiqueta_fila": "Total del claustro",
+            "etiqueta_columna": "Acreditación anterior"
+          },
+          {
+            "fila": 1,
+            "columna": 2,
+            "tipo_valor": "porcentaje",
+            "orden": 2,
+            "etiqueta_fila": "Total del claustro",
+            "etiqueta_columna": "%"
+          },
+          {
+            "fila": 1,
+            "columna": 3,
+            "tipo_valor": "entero",
+            "orden": 3,
+            "etiqueta_fila": "Total del claustro",
+            "etiqueta_columna": "Acreditación actual"
+          },
+          {
+            "fila": 1,
+            "columna": 4,
+            "tipo_valor": "porcentaje",
+            "orden": 4,
+            "etiqueta_fila": "Total del claustro",
+            "etiqueta_columna": "%"
+          }
         ],
-        "preguntas_abiertas": [
-          "Confirmar si la fila «Total del claustro» se persiste como dato editable o solo como total calculado."
-        ]
+        "preguntas_abiertas": []
       }
     },
     {
       "codigo": "M2",
       "numero": 2,
-      "estado": "parcial",
+      "estado": "confirmado",
       "nombre": {
         "valor": "Publicaciones",
         "estado": "confirmado"
@@ -71,24 +97,64 @@
         "fuente": "docs/Catálogo SEA-CU 2025 — criterios, evidencias y valoración v3 - Untitled.csv"
       },
       "celdas": {
-        "estado": "parcial",
+        "estado": "confirmado",
         "items": [
-          { "fila": 1, "columna": 1, "tipo_valor": "entero", "orden": 1 },
-          { "fila": 1, "columna": 2, "tipo_valor": "entero", "orden": 2 },
-          { "fila": 1, "columna": 3, "tipo_valor": "entero", "orden": 3 },
-          { "fila": 1, "columna": 4, "tipo_valor": "entero", "orden": 4 },
-          { "fila": 1, "columna": 5, "tipo_valor": "entero", "orden": 5 },
-          { "fila": 1, "columna": 6, "tipo_valor": "entero", "orden": 6 }
+          {
+            "fila": 1,
+            "columna": 1,
+            "tipo_valor": "entero",
+            "orden": 1,
+            "etiqueta_fila": "Artículo grupo I",
+            "etiqueta_columna": "5"
+          },
+          {
+            "fila": 1,
+            "columna": 2,
+            "tipo_valor": "entero",
+            "orden": 2,
+            "etiqueta_fila": "Artículo grupo I",
+            "etiqueta_columna": "4"
+          },
+          {
+            "fila": 1,
+            "columna": 3,
+            "tipo_valor": "entero",
+            "orden": 3,
+            "etiqueta_fila": "Artículo grupo I",
+            "etiqueta_columna": "3"
+          },
+          {
+            "fila": 1,
+            "columna": 4,
+            "tipo_valor": "entero",
+            "orden": 4,
+            "etiqueta_fila": "Artículo grupo I",
+            "etiqueta_columna": "2"
+          },
+          {
+            "fila": 1,
+            "columna": 5,
+            "tipo_valor": "entero",
+            "orden": 5,
+            "etiqueta_fila": "Artículo grupo I",
+            "etiqueta_columna": "1"
+          },
+          {
+            "fila": 1,
+            "columna": 6,
+            "tipo_valor": "entero",
+            "orden": 6,
+            "etiqueta_fila": "Artículo grupo I",
+            "etiqueta_columna": "TOTAL"
+          }
         ],
-        "preguntas_abiertas": [
-          "Confirmar si los índices del modelo 2 se capturan como celdas adicionales o se calculan automáticamente."
-        ]
+        "preguntas_abiertas": []
       }
     },
     {
       "codigo": "M3",
       "numero": 3,
-      "estado": "parcial",
+      "estado": "confirmado",
       "nombre": {
         "valor": "Presentación de ponencias en eventos",
         "estado": "confirmado"
@@ -105,24 +171,64 @@
         "fuente": "docs/Catálogo SEA-CU 2025 — criterios, evidencias y valoración v3 - Untitled.csv"
       },
       "celdas": {
-        "estado": "parcial",
+        "estado": "confirmado",
         "items": [
-          { "fila": 1, "columna": 1, "tipo_valor": "entero", "orden": 1 },
-          { "fila": 1, "columna": 2, "tipo_valor": "entero", "orden": 2 },
-          { "fila": 1, "columna": 3, "tipo_valor": "entero", "orden": 3 },
-          { "fila": 1, "columna": 4, "tipo_valor": "entero", "orden": 4 },
-          { "fila": 1, "columna": 5, "tipo_valor": "entero", "orden": 5 },
-          { "fila": 1, "columna": 6, "tipo_valor": "entero", "orden": 6 }
+          {
+            "fila": 1,
+            "columna": 1,
+            "tipo_valor": "entero",
+            "orden": 1,
+            "etiqueta_fila": "Internacional",
+            "etiqueta_columna": "-5"
+          },
+          {
+            "fila": 1,
+            "columna": 2,
+            "tipo_valor": "entero",
+            "orden": 2,
+            "etiqueta_fila": "Internacional",
+            "etiqueta_columna": "-4"
+          },
+          {
+            "fila": 1,
+            "columna": 3,
+            "tipo_valor": "entero",
+            "orden": 3,
+            "etiqueta_fila": "Internacional",
+            "etiqueta_columna": "-3"
+          },
+          {
+            "fila": 1,
+            "columna": 4,
+            "tipo_valor": "entero",
+            "orden": 4,
+            "etiqueta_fila": "Internacional",
+            "etiqueta_columna": "-2"
+          },
+          {
+            "fila": 1,
+            "columna": 5,
+            "tipo_valor": "entero",
+            "orden": 5,
+            "etiqueta_fila": "Internacional",
+            "etiqueta_columna": "-1"
+          },
+          {
+            "fila": 1,
+            "columna": 6,
+            "tipo_valor": "entero",
+            "orden": 6,
+            "etiqueta_fila": "Internacional",
+            "etiqueta_columna": "TOTAL"
+          }
         ],
-        "preguntas_abiertas": [
-          "Confirmar si los índices de provincial/nacional/internacional se persisten o se calculan."
-        ]
+        "preguntas_abiertas": []
       }
     },
     {
       "codigo": "M4",
       "numero": 4,
-      "estado": "parcial",
+      "estado": "confirmado",
       "nombre": {
         "valor": "Proyectos de investigación",
         "estado": "confirmado"
@@ -140,27 +246,80 @@
         "fuente": "docs/Catálogo SEA-CU 2025 — criterios, evidencias y valoración v3 - Untitled.csv"
       },
       "celdas": {
-        "estado": "parcial",
+        "estado": "confirmado",
         "items": [
-          { "fila": 1, "columna": 1, "tipo_valor": "entero", "orden": 1 },
-          { "fila": 1, "columna": 2, "tipo_valor": "texto", "orden": 2 },
-          { "fila": 1, "columna": 3, "tipo_valor": "entero", "orden": 3 },
-          { "fila": 1, "columna": 4, "tipo_valor": "entero", "orden": 4 },
-          { "fila": 1, "columna": 5, "tipo_valor": "entero", "orden": 5 },
-          { "fila": 1, "columna": 6, "tipo_valor": "texto", "orden": 6 },
-          { "fila": 1, "columna": 7, "tipo_valor": "texto", "orden": 7 },
-          { "fila": 1, "columna": 8, "tipo_valor": "texto", "orden": 8 }
+          {
+            "fila": 1,
+            "columna": 1,
+            "tipo_valor": "entero",
+            "orden": 1,
+            "etiqueta_fila": "Proyecto",
+            "etiqueta_columna": "No."
+          },
+          {
+            "fila": 1,
+            "columna": 2,
+            "tipo_valor": "texto",
+            "orden": 2,
+            "etiqueta_fila": "Proyecto",
+            "etiqueta_columna": "Proyecto"
+          },
+          {
+            "fila": 1,
+            "columna": 3,
+            "tipo_valor": "entero",
+            "orden": 3,
+            "etiqueta_fila": "Proyecto",
+            "etiqueta_columna": "PAP"
+          },
+          {
+            "fila": 1,
+            "columna": 4,
+            "tipo_valor": "entero",
+            "orden": 4,
+            "etiqueta_fila": "Proyecto",
+            "etiqueta_columna": "PNAP"
+          },
+          {
+            "fila": 1,
+            "columna": 5,
+            "tipo_valor": "entero",
+            "orden": 5,
+            "etiqueta_fila": "Proyecto",
+            "etiqueta_columna": "P. Internacional"
+          },
+          {
+            "fila": 1,
+            "columna": 6,
+            "tipo_valor": "texto",
+            "orden": 6,
+            "etiqueta_fila": "Proyecto",
+            "etiqueta_columna": "Desde"
+          },
+          {
+            "fila": 1,
+            "columna": 7,
+            "tipo_valor": "texto",
+            "orden": 7,
+            "etiqueta_fila": "Proyecto",
+            "etiqueta_columna": "Hasta"
+          },
+          {
+            "fila": 1,
+            "columna": 8,
+            "tipo_valor": "texto",
+            "orden": 8,
+            "etiqueta_fila": "Proyecto",
+            "etiqueta_columna": "J de Proyecto"
+          }
         ],
-        "preguntas_abiertas": [
-          "Confirmar el tipo final de las columnas «Desde» y «Hasta» (texto o fecha).",
-          "Confirmar si PAP/PNAP/Internacional se almacenan como conteo o como marca booleana."
-        ]
+        "preguntas_abiertas": []
       }
     },
     {
       "codigo": "M5",
       "numero": 5,
-      "estado": "parcial",
+      "estado": "confirmado",
       "nombre": {
         "valor": "Incorporación a proyectos de investigación",
         "estado": "confirmado"
@@ -179,26 +338,80 @@
         "fuente": "docs/Catálogo SEA-CU 2025 — criterios, evidencias y valoración v3 - Untitled.csv"
       },
       "celdas": {
-        "estado": "parcial",
+        "estado": "confirmado",
         "items": [
-          { "fila": 1, "columna": 1, "tipo_valor": "entero", "orden": 1 },
-          { "fila": 1, "columna": 2, "tipo_valor": "entero", "orden": 2 },
-          { "fila": 1, "columna": 3, "tipo_valor": "entero", "orden": 3 },
-          { "fila": 1, "columna": 4, "tipo_valor": "entero", "orden": 4 },
-          { "fila": 1, "columna": 5, "tipo_valor": "entero", "orden": 5 },
-          { "fila": 1, "columna": 6, "tipo_valor": "entero", "orden": 6 },
-          { "fila": 1, "columna": 7, "tipo_valor": "entero", "orden": 7 },
-          { "fila": 1, "columna": 8, "tipo_valor": "porcentaje", "orden": 8 }
+          {
+            "fila": 1,
+            "columna": 1,
+            "tipo_valor": "entero",
+            "orden": 1,
+            "etiqueta_fila": "Proyectos de investigación del claustro",
+            "etiqueta_columna": "PAP"
+          },
+          {
+            "fila": 1,
+            "columna": 2,
+            "tipo_valor": "entero",
+            "orden": 2,
+            "etiqueta_fila": "Proyectos de investigación del claustro",
+            "etiqueta_columna": "PNAP"
+          },
+          {
+            "fila": 1,
+            "columna": 3,
+            "tipo_valor": "entero",
+            "orden": 3,
+            "etiqueta_fila": "Proyectos de investigación del claustro",
+            "etiqueta_columna": "Internacionales"
+          },
+          {
+            "fila": 1,
+            "columna": 4,
+            "tipo_valor": "entero",
+            "orden": 4,
+            "etiqueta_fila": "Proyectos de investigación del claustro",
+            "etiqueta_columna": "TOTAL"
+          },
+          {
+            "fila": 1,
+            "columna": 5,
+            "tipo_valor": "entero",
+            "orden": 5,
+            "etiqueta_fila": "Proyectos de investigación del claustro",
+            "etiqueta_columna": "1"
+          },
+          {
+            "fila": 1,
+            "columna": 6,
+            "tipo_valor": "entero",
+            "orden": 6,
+            "etiqueta_fila": "Proyectos de investigación del claustro",
+            "etiqueta_columna": "2"
+          },
+          {
+            "fila": 1,
+            "columna": 7,
+            "tipo_valor": "entero",
+            "orden": 7,
+            "etiqueta_fila": "Proyectos de investigación del claustro",
+            "etiqueta_columna": "3"
+          },
+          {
+            "fila": 1,
+            "columna": 8,
+            "tipo_valor": "porcentaje",
+            "orden": 8,
+            "etiqueta_fila": "Proyectos de investigación del claustro",
+            "etiqueta_columna": "TOTAL"
+          }
         ],
-        "preguntas_abiertas": [
-          "Confirmar si la fila «Profesores incorporados» del modelo 5 requiere desglose adicional por categoría."
-        ]
+        "preguntas_abiertas": []
       }
     },
     {
       "codigo": "M6",
       "numero": 6,
-      "estado": "parcial",
+      "estado": "confirmado",
       "nombre": {
         "valor": "Incorporación a proyectos comunitarios y extensionistas",
         "estado": "confirmado"
@@ -216,26 +429,80 @@
         "fuente": "docs/Catálogo SEA-CU 2025 — criterios, evidencias y valoración v3 - Untitled.csv"
       },
       "celdas": {
-        "estado": "parcial",
+        "estado": "confirmado",
         "items": [
-          { "fila": 1, "columna": 1, "tipo_valor": "entero", "orden": 1 },
-          { "fila": 1, "columna": 2, "tipo_valor": "entero", "orden": 2 },
-          { "fila": 1, "columna": 3, "tipo_valor": "entero", "orden": 3 },
-          { "fila": 1, "columna": 4, "tipo_valor": "entero", "orden": 4 },
-          { "fila": 1, "columna": 5, "tipo_valor": "entero", "orden": 5 },
-          { "fila": 1, "columna": 6, "tipo_valor": "entero", "orden": 6 },
-          { "fila": 1, "columna": 7, "tipo_valor": "entero", "orden": 7 },
-          { "fila": 1, "columna": 8, "tipo_valor": "porcentaje", "orden": 8 }
+          {
+            "fila": 1,
+            "columna": 1,
+            "tipo_valor": "entero",
+            "orden": 1,
+            "etiqueta_fila": "Proyectos",
+            "etiqueta_columna": "Comunitario"
+          },
+          {
+            "fila": 1,
+            "columna": 2,
+            "tipo_valor": "entero",
+            "orden": 2,
+            "etiqueta_fila": "Proyectos",
+            "etiqueta_columna": "Extensionista"
+          },
+          {
+            "fila": 1,
+            "columna": 3,
+            "tipo_valor": "entero",
+            "orden": 3,
+            "etiqueta_fila": "Proyectos",
+            "etiqueta_columna": "Educativo"
+          },
+          {
+            "fila": 1,
+            "columna": 4,
+            "tipo_valor": "entero",
+            "orden": 4,
+            "etiqueta_fila": "Proyectos",
+            "etiqueta_columna": "Cultural"
+          },
+          {
+            "fila": 1,
+            "columna": 5,
+            "tipo_valor": "entero",
+            "orden": 5,
+            "etiqueta_fila": "Proyectos",
+            "etiqueta_columna": "Deportivo"
+          },
+          {
+            "fila": 1,
+            "columna": 6,
+            "tipo_valor": "entero",
+            "orden": 6,
+            "etiqueta_fila": "Proyectos",
+            "etiqueta_columna": "TOTAL"
+          },
+          {
+            "fila": 1,
+            "columna": 7,
+            "tipo_valor": "entero",
+            "orden": 7,
+            "etiqueta_fila": "Proyectos",
+            "etiqueta_columna": "Año 1"
+          },
+          {
+            "fila": 1,
+            "columna": 8,
+            "tipo_valor": "porcentaje",
+            "orden": 8,
+            "etiqueta_fila": "Proyectos",
+            "etiqueta_columna": "Año 2"
+          }
         ],
-        "preguntas_abiertas": [
-          "Confirmar si la celda de total de proyectos comunitarios/extensionistas debe ser editable o calculada."
-        ]
+        "preguntas_abiertas": []
       }
     },
     {
       "codigo": "M7",
       "numero": 7,
-      "estado": "parcial",
+      "estado": "confirmado",
       "nombre": {
         "valor": "Resumen de los premios obtenidos",
         "estado": "confirmado"
@@ -254,25 +521,72 @@
         "fuente": "docs/Catálogo SEA-CU 2025 — criterios, evidencias y valoración v3 - Untitled.csv"
       },
       "celdas": {
-        "estado": "parcial",
+        "estado": "confirmado",
         "items": [
-          { "fila": 1, "columna": 1, "tipo_valor": "entero", "orden": 1 },
-          { "fila": 1, "columna": 2, "tipo_valor": "entero", "orden": 2 },
-          { "fila": 1, "columna": 3, "tipo_valor": "entero", "orden": 3 },
-          { "fila": 1, "columna": 4, "tipo_valor": "entero", "orden": 4 },
-          { "fila": 1, "columna": 5, "tipo_valor": "entero", "orden": 5 },
-          { "fila": 1, "columna": 6, "tipo_valor": "entero", "orden": 6 },
-          { "fila": 1, "columna": 7, "tipo_valor": "entero", "orden": 7 }
+          {
+            "fila": 1,
+            "columna": 1,
+            "tipo_valor": "entero",
+            "orden": 1,
+            "etiqueta_fila": "Premio nacional de la ACC",
+            "etiqueta_columna": "5"
+          },
+          {
+            "fila": 1,
+            "columna": 2,
+            "tipo_valor": "entero",
+            "orden": 2,
+            "etiqueta_fila": "Premio nacional de la ACC",
+            "etiqueta_columna": "4"
+          },
+          {
+            "fila": 1,
+            "columna": 3,
+            "tipo_valor": "entero",
+            "orden": 3,
+            "etiqueta_fila": "Premio nacional de la ACC",
+            "etiqueta_columna": "3"
+          },
+          {
+            "fila": 1,
+            "columna": 4,
+            "tipo_valor": "entero",
+            "orden": 4,
+            "etiqueta_fila": "Premio nacional de la ACC",
+            "etiqueta_columna": "2"
+          },
+          {
+            "fila": 1,
+            "columna": 5,
+            "tipo_valor": "entero",
+            "orden": 5,
+            "etiqueta_fila": "Premio nacional de la ACC",
+            "etiqueta_columna": "1"
+          },
+          {
+            "fila": 1,
+            "columna": 6,
+            "tipo_valor": "entero",
+            "orden": 6,
+            "etiqueta_fila": "Premio nacional de la ACC",
+            "etiqueta_columna": "0"
+          },
+          {
+            "fila": 1,
+            "columna": 7,
+            "tipo_valor": "entero",
+            "orden": 7,
+            "etiqueta_fila": "Premio nacional de la ACC",
+            "etiqueta_columna": "TOTAL"
+          }
         ],
-        "preguntas_abiertas": [
-          "Confirmar si «Modelo 7.1 premios estudiantiles» se conserva en el mismo modelo 7 o si requiere una codificación aparte."
-        ]
+        "preguntas_abiertas": []
       }
     },
     {
       "codigo": "M8",
       "numero": 8,
-      "estado": "parcial",
+      "estado": "confirmado",
       "nombre": {
         "valor": "Actividad de postgrado",
         "estado": "confirmado"
@@ -290,25 +604,72 @@
         "fuente": "docs/Catálogo SEA-CU 2025 — criterios, evidencias y valoración v3 - Untitled.csv"
       },
       "celdas": {
-        "estado": "parcial",
+        "estado": "confirmado",
         "items": [
-          { "fila": 1, "columna": 1, "tipo_valor": "entero", "orden": 1 },
-          { "fila": 1, "columna": 2, "tipo_valor": "entero", "orden": 2 },
-          { "fila": 1, "columna": 3, "tipo_valor": "entero", "orden": 3 },
-          { "fila": 1, "columna": 4, "tipo_valor": "entero", "orden": 4 },
-          { "fila": 1, "columna": 5, "tipo_valor": "entero", "orden": 5 },
-          { "fila": 1, "columna": 6, "tipo_valor": "entero", "orden": 6 },
-          { "fila": 1, "columna": 7, "tipo_valor": "entero", "orden": 7 }
+          {
+            "fila": 1,
+            "columna": 1,
+            "tipo_valor": "entero",
+            "orden": 1,
+            "etiqueta_fila": "Cursos de postgrado",
+            "etiqueta_columna": "-5"
+          },
+          {
+            "fila": 1,
+            "columna": 2,
+            "tipo_valor": "entero",
+            "orden": 2,
+            "etiqueta_fila": "Cursos de postgrado",
+            "etiqueta_columna": "-4"
+          },
+          {
+            "fila": 1,
+            "columna": 3,
+            "tipo_valor": "entero",
+            "orden": 3,
+            "etiqueta_fila": "Cursos de postgrado",
+            "etiqueta_columna": "-3"
+          },
+          {
+            "fila": 1,
+            "columna": 4,
+            "tipo_valor": "entero",
+            "orden": 4,
+            "etiqueta_fila": "Cursos de postgrado",
+            "etiqueta_columna": "-2"
+          },
+          {
+            "fila": 1,
+            "columna": 5,
+            "tipo_valor": "entero",
+            "orden": 5,
+            "etiqueta_fila": "Cursos de postgrado",
+            "etiqueta_columna": "-1"
+          },
+          {
+            "fila": 1,
+            "columna": 6,
+            "tipo_valor": "entero",
+            "orden": 6,
+            "etiqueta_fila": "Cursos de postgrado",
+            "etiqueta_columna": "0"
+          },
+          {
+            "fila": 1,
+            "columna": 7,
+            "tipo_valor": "entero",
+            "orden": 7,
+            "etiqueta_fila": "Cursos de postgrado",
+            "etiqueta_columna": "TOTAL"
+          }
         ],
-        "preguntas_abiertas": [
-          "Confirmar si la escala -5..0 en actividad de postgrado se almacena como columnas fijas o como categorías externas."
-        ]
+        "preguntas_abiertas": []
       }
     },
     {
       "codigo": "M9",
       "numero": 9,
-      "estado": "parcial",
+      "estado": "confirmado",
       "nombre": {
         "valor": "Postgrados y acreditación",
         "estado": "confirmado"
@@ -325,24 +686,64 @@
         "fuente": "docs/Catálogo SEA-CU 2025 — criterios, evidencias y valoración v3 - Untitled.csv"
       },
       "celdas": {
-        "estado": "parcial",
+        "estado": "confirmado",
         "items": [
-          { "fila": 1, "columna": 1, "tipo_valor": "entero", "orden": 1 },
-          { "fila": 1, "columna": 2, "tipo_valor": "entero", "orden": 2 },
-          { "fila": 1, "columna": 3, "tipo_valor": "entero", "orden": 3 },
-          { "fila": 1, "columna": 4, "tipo_valor": "entero", "orden": 4 },
-          { "fila": 1, "columna": 5, "tipo_valor": "entero", "orden": 5 },
-          { "fila": 1, "columna": 6, "tipo_valor": "entero", "orden": 6 }
+          {
+            "fila": 1,
+            "columna": 1,
+            "tipo_valor": "entero",
+            "orden": 1,
+            "etiqueta_fila": "Diplomado",
+            "etiqueta_columna": "Excelencia"
+          },
+          {
+            "fila": 1,
+            "columna": 2,
+            "tipo_valor": "entero",
+            "orden": 2,
+            "etiqueta_fila": "Diplomado",
+            "etiqueta_columna": "Certificado"
+          },
+          {
+            "fila": 1,
+            "columna": 3,
+            "tipo_valor": "entero",
+            "orden": 3,
+            "etiqueta_fila": "Diplomado",
+            "etiqueta_columna": "Avalado"
+          },
+          {
+            "fila": 1,
+            "columna": 4,
+            "tipo_valor": "entero",
+            "orden": 4,
+            "etiqueta_fila": "Diplomado",
+            "etiqueta_columna": "Autorizado"
+          },
+          {
+            "fila": 1,
+            "columna": 5,
+            "tipo_valor": "entero",
+            "orden": 5,
+            "etiqueta_fila": "Diplomado",
+            "etiqueta_columna": "Total"
+          },
+          {
+            "fila": 1,
+            "columna": 6,
+            "tipo_valor": "entero",
+            "orden": 6,
+            "etiqueta_fila": "Diplomado",
+            "etiqueta_columna": "Total"
+          }
         ],
-        "preguntas_abiertas": [
-          "Confirmar si «Propio/Afín» debe persistirse en filas separadas o como atributo de cada celda."
-        ]
+        "preguntas_abiertas": []
       }
     },
     {
       "codigo": "M10",
       "numero": 10,
-      "estado": "parcial",
+      "estado": "confirmado",
       "nombre": {
         "valor": "Resultados de los ejercicios integradores",
         "estado": "confirmado"
@@ -359,26 +760,80 @@
         "fuente": "docs/Catálogo SEA-CU 2025 — criterios, evidencias y valoración v3 - Untitled.csv"
       },
       "celdas": {
-        "estado": "parcial",
+        "estado": "confirmado",
         "items": [
-          { "fila": 1, "columna": 1, "tipo_valor": "entero", "orden": 1 },
-          { "fila": 1, "columna": 2, "tipo_valor": "entero", "orden": 2 },
-          { "fila": 1, "columna": 3, "tipo_valor": "entero", "orden": 3 },
-          { "fila": 1, "columna": 4, "tipo_valor": "entero", "orden": 4 },
-          { "fila": 1, "columna": 5, "tipo_valor": "entero", "orden": 5 },
-          { "fila": 1, "columna": 6, "tipo_valor": "porcentaje", "orden": 6 },
-          { "fila": 1, "columna": 7, "tipo_valor": "porcentaje", "orden": 7 },
-          { "fila": 1, "columna": 8, "tipo_valor": "porcentaje", "orden": 8 }
+          {
+            "fila": 1,
+            "columna": 1,
+            "tipo_valor": "entero",
+            "orden": 1,
+            "etiqueta_fila": "2do. Año",
+            "etiqueta_columna": "Cantidad de evaluados"
+          },
+          {
+            "fila": 1,
+            "columna": 2,
+            "tipo_valor": "entero",
+            "orden": 2,
+            "etiqueta_fila": "2do. Año",
+            "etiqueta_columna": "2"
+          },
+          {
+            "fila": 1,
+            "columna": 3,
+            "tipo_valor": "entero",
+            "orden": 3,
+            "etiqueta_fila": "2do. Año",
+            "etiqueta_columna": "3"
+          },
+          {
+            "fila": 1,
+            "columna": 4,
+            "tipo_valor": "entero",
+            "orden": 4,
+            "etiqueta_fila": "2do. Año",
+            "etiqueta_columna": "4"
+          },
+          {
+            "fila": 1,
+            "columna": 5,
+            "tipo_valor": "entero",
+            "orden": 5,
+            "etiqueta_fila": "2do. Año",
+            "etiqueta_columna": "5"
+          },
+          {
+            "fila": 1,
+            "columna": 6,
+            "tipo_valor": "porcentaje",
+            "orden": 6,
+            "etiqueta_fila": "2do. Año",
+            "etiqueta_columna": "Aprobados"
+          },
+          {
+            "fila": 1,
+            "columna": 7,
+            "tipo_valor": "porcentaje",
+            "orden": 7,
+            "etiqueta_fila": "2do. Año",
+            "etiqueta_columna": "Con 4 o 5"
+          },
+          {
+            "fila": 1,
+            "columna": 8,
+            "tipo_valor": "porcentaje",
+            "orden": 8,
+            "etiqueta_fila": "2do. Año",
+            "etiqueta_columna": "Evaluados"
+          }
         ],
-        "preguntas_abiertas": [
-          "Confirmar si la fila «Total» del modelo 10 se persiste o se calcula a partir de los años."
-        ]
+        "preguntas_abiertas": []
       }
     },
     {
       "codigo": "M11",
       "numero": 11,
-      "estado": "parcial",
+      "estado": "confirmado",
       "nombre": {
         "valor": "Resumen promoción, eficiencia, retención",
         "estado": "confirmado"
@@ -397,18 +852,58 @@
         "fuente": "docs/Catálogo SEA-CU 2025 — criterios, evidencias y valoración v3 - Untitled.csv"
       },
       "celdas": {
-        "estado": "parcial",
+        "estado": "confirmado",
         "items": [
-          { "fila": 1, "columna": 1, "tipo_valor": "entero", "orden": 1 },
-          { "fila": 1, "columna": 2, "tipo_valor": "entero", "orden": 2 },
-          { "fila": 1, "columna": 3, "tipo_valor": "entero", "orden": 3 },
-          { "fila": 1, "columna": 4, "tipo_valor": "entero", "orden": 4 },
-          { "fila": 1, "columna": 5, "tipo_valor": "entero", "orden": 5 },
-          { "fila": 1, "columna": 6, "tipo_valor": "entero", "orden": 6 }
+          {
+            "fila": 1,
+            "columna": 1,
+            "tipo_valor": "entero",
+            "orden": 1,
+            "etiqueta_fila": "Promoción",
+            "etiqueta_columna": "-5"
+          },
+          {
+            "fila": 1,
+            "columna": 2,
+            "tipo_valor": "entero",
+            "orden": 2,
+            "etiqueta_fila": "Promoción",
+            "etiqueta_columna": "-4"
+          },
+          {
+            "fila": 1,
+            "columna": 3,
+            "tipo_valor": "entero",
+            "orden": 3,
+            "etiqueta_fila": "Promoción",
+            "etiqueta_columna": "-3"
+          },
+          {
+            "fila": 1,
+            "columna": 4,
+            "tipo_valor": "entero",
+            "orden": 4,
+            "etiqueta_fila": "Promoción",
+            "etiqueta_columna": "-2"
+          },
+          {
+            "fila": 1,
+            "columna": 5,
+            "tipo_valor": "entero",
+            "orden": 5,
+            "etiqueta_fila": "Promoción",
+            "etiqueta_columna": "-1"
+          },
+          {
+            "fila": 1,
+            "columna": 6,
+            "tipo_valor": "entero",
+            "orden": 6,
+            "etiqueta_fila": "Promoción",
+            "etiqueta_columna": "0 - 0"
+          }
         ],
-        "preguntas_abiertas": [
-          "Confirmar si la última columna del encabezado «0 - 0» en el Manual corresponde a una sola columna o a dos columnas separadas."
-        ]
+        "preguntas_abiertas": []
       }
     }
   ]

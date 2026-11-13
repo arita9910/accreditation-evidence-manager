@@ -22,7 +22,7 @@ from .models import (
     TipoEvidencia,
     VersionNormativa,
 )
-from .servicios import ErrorCatalogo, cargar_catalogo, leer_catalogo
+from .servicios import ErrorCatalogo, _preparar_importacion, cargar_catalogo, leer_catalogo
 
 
 def crear_catalogo_completo():
@@ -177,6 +177,22 @@ class LectorCatalogoTests(TestCase):
         with self.assertRaisesRegex(ErrorCatalogo, "código numérico"):
             leer_catalogo(self.escribir_catalogo(fixture))
 
+    def test_acepta_etiquetas_de_celda_en_json_de_modelos(self):
+        fixture, datos_modelos = crear_catalogo_completo()
+        datos_modelos["modelos"][0]["celdas"]["items"][0]["etiqueta_fila"] = "Total del claustro"
+        datos_modelos["modelos"][0]["celdas"]["items"][0]["etiqueta_columna"] = "Acreditación anterior"
+
+        plan = _preparar_importacion(fixture, datos_modelos)
+
+        self.assertEqual(
+            plan["modelos"][1]["campos"][0]["etiqueta_fila"],
+            "Total del claustro",
+        )
+        self.assertEqual(
+            plan["modelos"][1]["campos"][0]["etiqueta_columna"],
+            "Acreditación anterior",
+        )
+
 
 class CargaCatalogoTests(TestCase):
     def setUp(self):
@@ -321,6 +337,27 @@ class CargaCatalogoTests(TestCase):
         self.assertEqual(resultado["asociaciones"], total_asociaciones)
         self.assertEqual(ModeloCampo.objects.count(), total_campos)
         self.assertEqual(CriterioModelo.objects.count(), total_asociaciones)
+
+    def test_carga_y_actualiza_etiquetas_de_modelo_campo(self):
+        self.datos_modelos["modelos"][0]["celdas"]["items"][0]["etiqueta_fila"] = "Docentes"
+        self.datos_modelos["modelos"][0]["celdas"]["items"][0]["etiqueta_columna"] = "Año base"
+        self._escribir_fuentes()
+
+        self.cargar()
+
+        campo = ModeloCampo.objects.get(modelo__numero=1, fila=1, columna=1)
+        self.assertEqual(campo.etiqueta_fila, "Docentes")
+        self.assertEqual(campo.etiqueta_columna, "Año base")
+
+        self.datos_modelos["modelos"][0]["celdas"]["items"][0]["etiqueta_fila"] = "Académicos"
+        self.datos_modelos["modelos"][0]["celdas"]["items"][0]["etiqueta_columna"] = "Año actual"
+        self._escribir_fuentes()
+
+        self.cargar()
+
+        campo.refresh_from_db()
+        self.assertEqual(campo.etiqueta_fila, "Académicos")
+        self.assertEqual(campo.etiqueta_columna, "Año actual")
 
 
 class CatalogoAPITests(TestCase):
