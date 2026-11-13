@@ -14,10 +14,10 @@
 
 ## 2. Servicios
 
-- [ ] 2.1 Implementar `guardar_valores_modelo(ciclo, modelo, curso, celdas, usuario)` con validación por tipo de campo, coherencia de porcentajes y total, y llamada a `exigir_ciclo_abierto(...)`; verificar casos positivos y negativos del cálculo.
-- [ ] 2.2 Implementar `guardar_valor_criterio(ciclo, criterio, ...)` para criterios cuantitativos sin modelo y rechazar el valor cuando el criterio tenga modelo o sea cualitativo; verificar las pruebas de rechazo.
-- [ ] 2.3 Implementar `rellenar_acreditacion_anterior(ciclo)`, `datos_sin_respaldo(ciclo)` y `datos_de_evidencia(evidencia)` con recorrido bidireccional de dato–evidencia; verificar que un dato sin respaldo aparece y desaparece tras vincularlo.
-- [ ] 2.4 Implementar `vincular(dato, evidencias, usuario)` y `desvincular`, integrando `puede(...)` y `registrar(...)` en la operación; verificar permisos y trazabilidad de auditoría.
+- [x] 2.1 Implementar `guardar_valores_modelo(ciclo, modelo, curso, celdas, usuario)` con validación por tipo de campo, coherencia de porcentajes y total, y llamada a `exigir_ciclo_abierto(...)`; verificar casos positivos y negativos del cálculo.
+- [x] 2.2 Implementar `guardar_valor_criterio(ciclo, criterio, ...)` para criterios cuantitativos sin modelo y rechazar el valor cuando el criterio tenga modelo o sea cualitativo; verificar las pruebas de rechazo.
+- [x] 2.3 Implementar `rellenar_acreditacion_anterior(ciclo)`, `datos_sin_respaldo(ciclo)` y `datos_de_evidencia(evidencia)` con recorrido bidireccional de dato–evidencia; verificar que un dato sin respaldo aparece y desaparece tras vincularlo.
+- [x] 2.4 Implementar `vincular(dato, evidencias, usuario)` y `desvincular`, integrando `puede(...)` y `registrar(...)` en la operación; verificar permisos y trazabilidad de auditoría.
 
 ## 3. API
 

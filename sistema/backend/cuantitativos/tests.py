@@ -1,4 +1,5 @@
 from datetime import date
+from decimal import Decimal
 
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
@@ -18,6 +19,15 @@ from estructura.models import (
 from evidencias.modelos import Evidencia
 
 from .models import ValorCriterio, ValorModelo, VinculoDato
+from .servicios import (
+    datos_de_evidencia,
+    datos_sin_respaldo,
+    desvincular,
+    guardar_valor_criterio,
+    guardar_valores_modelo,
+    rellenar_acreditacion_anterior,
+    vincular,
+)
 
 
 class CuantitativosModelosTests(TestCase):
@@ -253,3 +263,204 @@ class CuantitativosModelosTests(TestCase):
 
         with self.assertRaises(ValidationError):
             duplicado_criterio.full_clean()
+
+
+class CuantitativosServiciosTests(TestCase):
+    def setUp(self):
+        self.facultad = Facultad.objects.create(nombre="Ingeniería")
+        self.carrera = Carrera.objects.create(
+            facultad=self.facultad,
+            nombre="Ingeniería Informática",
+            activa=True,
+        )
+        self.usuario = get_user_model().objects.create_user(
+            "director-cuantitativos",
+            "clave-segura-123",
+            nombre="Director",
+            apellidos="Carrera",
+            email="director@example.com",
+            rol=get_user_model().Rol.DIRECTOR_CARRERA,
+            carrera=self.carrera,
+        )
+        self.version = VersionNormativa.objects.create(
+            nombre="SEA-CU 2025",
+            fecha_aprobacion=date(2025, 1, 1),
+            fuentes="Fuente",
+            activa=True,
+        )
+        self.dimension = Dimension.objects.create(
+            version=self.version,
+            codigo="1",
+            nombre="Pertinencia",
+            orden=1,
+        )
+        self.indicador = Indicador.objects.create(
+            dimension=self.dimension,
+            codigo="1.1",
+            texto="Indicador de prueba",
+        )
+        self.criterio = Criterio.objects.create(
+            indicador=self.indicador,
+            codigo="1.1.1",
+            codigo_guia="C-1",
+            solo_en_guia=False,
+            texto="Criterio de prueba",
+            tipo_dato=Criterio.TipoDato.CUANTITATIVO,
+            valoracion_por_categoria=False,
+        )
+        self.modelo = ModeloDefinicion.objects.create(
+            version=self.version,
+            numero=1,
+            nombre="Modelo de prueba",
+        )
+        self.campo_porcentaje = ModeloCampo.objects.create(
+            modelo=self.modelo,
+            fila=1,
+            columna=1,
+            tipo_valor=ModeloCampo.TipoValor.PORCENTAJE,
+            orden=1,
+        )
+        self.campo_entero = ModeloCampo.objects.create(
+            modelo=self.modelo,
+            fila=1,
+            columna=2,
+            tipo_valor=ModeloCampo.TipoValor.ENTERO,
+            orden=2,
+        )
+        self.tipo_evidencia = TipoEvidencia.objects.create(
+            dimension=self.dimension,
+            nombre="Documento de soporte",
+            naturaleza=TipoEvidencia.Naturaleza.DOCUMENTO,
+            soporte_exigido=TipoEvidencia.Soporte.DIGITAL,
+        )
+        self.ciclo = Ciclo.objects.create(
+            carrera=self.carrera,
+            version_normativa=self.version,
+            tipo="ordinario",
+            anio_base=2026,
+            curso_inicial=2021,
+            curso_final=2025,
+            estado=Ciclo.Estado.ABIERTO,
+            fecha_apertura=date(2026, 1, 1),
+        )
+        self.evidencia = Evidencia.objects.create(
+            ciclo=self.ciclo,
+            tipo_evidencia=self.tipo_evidencia,
+            titulo="Documentación de evidencia",
+            descripcion="Documento principal",
+            curso_academico="2025-2026",
+            periodo_desde=date(2025, 9, 1),
+            periodo_hasta=date(2026, 6, 30),
+            soporte=Evidencia.Soporte.DIGITAL,
+        )
+
+    def test_guardar_valores_modelo_valida_porcentaje_y_guarda_resultados(self):
+        registros = guardar_valores_modelo(
+            self.ciclo,
+            self.modelo,
+            2025,
+            {
+                self.campo_porcentaje.pk: {"valor": 75, "numerador": 3, "denominador": 4},
+                self.campo_entero.pk: {"valor": 12},
+            },
+            self.usuario,
+        )
+
+        self.assertEqual(len(registros), 2)
+        self.assertEqual(ValorModelo.objects.filter(ciclo=self.ciclo, curso=2025).count(), 2)
+        porcentaje = ValorModelo.objects.get(ciclo=self.ciclo, campo=self.campo_porcentaje, curso=2025)
+        self.assertEqual(porcentaje.valor, Decimal("75"))
+        self.assertEqual(porcentaje.numerador, Decimal("3"))
+        self.assertEqual(porcentaje.denominador, Decimal("4"))
+
+    def test_guardar_valor_criterio_rechaza_criterio_con_modelo_o_cualitativo(self):
+        CriterioModelo.objects.create(criterio=self.criterio, modelo=self.modelo)
+        with self.assertRaises(ValidationError):
+            guardar_valor_criterio(
+                self.ciclo,
+                self.criterio,
+                valor=50,
+                numerador=1,
+                denominador=2,
+                usuario=self.usuario,
+            )
+
+        criterio_cualitativo = Criterio.objects.create(
+            indicador=self.indicador,
+            codigo="1.1.2",
+            codigo_guia="C-2",
+            solo_en_guia=False,
+            texto="Criterio cualitativo",
+            tipo_dato=Criterio.TipoDato.CUALITATIVO,
+            valoracion_por_categoria=False,
+        )
+
+        with self.assertRaises(ValidationError):
+            guardar_valor_criterio(
+                self.ciclo,
+                criterio_cualitativo,
+                valor=1,
+                numerador=1,
+                denominador=1,
+                usuario=self.usuario,
+            )
+
+    def test_rellenar_acreditacion_anterior_copia_valores_del_ciclo_previo(self):
+        ciclo_anterior = Ciclo.objects.create(
+            carrera=self.carrera,
+            version_normativa=self.version,
+            tipo="ordinario",
+            anio_base=2025,
+            curso_inicial=2020,
+            curso_final=2024,
+            estado=Ciclo.Estado.CERRADO,
+            fecha_apertura=date(2025, 1, 1),
+            fecha_cierre=date(2025, 12, 31),
+        )
+        valor_anterior = ValorModelo.objects.create(
+            ciclo=ciclo_anterior,
+            campo=self.campo_porcentaje,
+            curso=2024,
+            valor=80,
+            numerador=4,
+            denominador=5,
+        )
+        nuevo = ValorModelo.objects.create(
+            ciclo=self.ciclo,
+            campo=self.campo_porcentaje,
+            curso=2024,
+            valor=None,
+            numerador=None,
+            denominador=None,
+        )
+
+        self.ciclo.ciclo_anterior = ciclo_anterior
+        self.ciclo.save(update_fields=["ciclo_anterior"])
+
+        actualizados = rellenar_acreditacion_anterior(self.ciclo)
+        nuevo.refresh_from_db()
+
+        self.assertIn(nuevo, actualizados)
+        self.assertEqual(nuevo.valor, valor_anterior.valor)
+
+    def test_vinculacion_y_datos_sin_respaldo_recorren_ambos_sentidos(self):
+        valor_modelo = ValorModelo.objects.create(
+            ciclo=self.ciclo,
+            campo=self.campo_porcentaje,
+            curso=2025,
+            valor=40,
+            numerador=2,
+            denominador=5,
+        )
+
+        self.assertIn(valor_modelo, datos_sin_respaldo(self.ciclo))
+        self.assertEqual(datos_de_evidencia(self.evidencia), [])
+
+        enlaces = vincular(valor_modelo, [self.evidencia], usuario=self.usuario)
+        self.assertEqual(len(enlaces), 1)
+        self.assertNotIn(valor_modelo, datos_sin_respaldo(self.ciclo))
+        self.assertEqual(datos_de_evidencia(self.evidencia)[0], valor_modelo)
+
+        desvincular(valor_modelo, [self.evidencia], usuario=self.usuario)
+        self.assertIn(valor_modelo, datos_sin_respaldo(self.ciclo))
+        self.assertEqual(datos_de_evidencia(self.evidencia), [])
