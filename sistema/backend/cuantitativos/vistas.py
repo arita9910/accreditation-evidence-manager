@@ -61,6 +61,25 @@ def _serializar_valor_modelo(obj):
     return {**datos, "valor_modelo": obj.pk, "dato": {**datos}}
 
 
+def _serializar_celda_base_modelo(campo, modelo_numero, curso=None):
+    dato = {
+        "id": None,
+        "tipo": "modelo",
+        "modelo": modelo_numero,
+        "campo": campo.pk,
+        "fila": campo.fila,
+        "columna": campo.columna,
+        "etiqueta_fila": campo.etiqueta_fila,
+        "etiqueta_columna": campo.etiqueta_columna,
+        "curso": curso,
+        "valor": None,
+        "numerador": None,
+        "denominador": None,
+        "criterio": None,
+    }
+    return {**dato, "valor_modelo": None, "dato": {**dato}}
+
+
 def _serializar_valor_criterio(obj):
     datos = ValorCriterioSerializador(obj).data
     datos = {k: _normalizar_json_number(v) for k, v in datos.items()}
@@ -110,16 +129,26 @@ class CicloValoresModeloVista(APIView):
         _validar_permiso(request, "crear_valoracion", entidad="ValorModelo", objeto=ciclo)
         modelo = self.get_modelo()
         curso = request.query_params.get("curso")
+        curso_num = int(curso) if curso not in (None, "") else None
         queryset = ValorModelo.objects.filter(ciclo=ciclo, campo__modelo=modelo).select_related("campo", "campo__modelo")
         if curso not in (None, ""):
-            queryset = queryset.filter(curso=int(curso))
+            queryset = queryset.filter(curso=curso_num)
         valores = [_serializar_valor_modelo(item) for item in queryset.order_by("campo__orden", "pk")]
+        valores_por_campo = {item["campo"]: item for item in valores}
+        celdas = []
+        for campo in modelo.campos.all().order_by("orden", "pk"):
+            celdas.append(
+                valores_por_campo.get(
+                    campo.pk,
+                    _serializar_celda_base_modelo(campo, modelo.numero, curso=curso_num),
+                )
+            )
         return Response({
             "ciclo": ciclo.pk,
             "modelo": modelo.numero,
-            "curso": int(curso) if curso not in (None, "") else None,
+            "curso": curso_num,
             "valores": valores,
-            "celdas": valores,
+            "celdas": celdas,
         })
 
     def put(self, request, pk, modelo_num):

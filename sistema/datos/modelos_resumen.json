@@ -112,7 +112,7 @@
             "columna": 2,
             "tipo_valor": "entero",
             "orden": 2,
-            "etiqueta_fila": "Artículo grupo I",
+            "etiqueta_fila": "Artículo grupo II",
             "etiqueta_columna": "4"
           },
           {
@@ -120,7 +120,7 @@
             "columna": 3,
             "tipo_valor": "entero",
             "orden": 3,
-            "etiqueta_fila": "Artículo grupo I",
+            "etiqueta_fila": "Artículo grupo III",
             "etiqueta_columna": "3"
           },
           {
@@ -128,7 +128,7 @@
             "columna": 4,
             "tipo_valor": "entero",
             "orden": 4,
-            "etiqueta_fila": "Artículo grupo I",
+            "etiqueta_fila": "Artículo grupo IV",
             "etiqueta_columna": "2"
           },
           {
@@ -136,7 +136,7 @@
             "columna": 5,
             "tipo_valor": "entero",
             "orden": 5,
-            "etiqueta_fila": "Artículo grupo I",
+            "etiqueta_fila": "Artículo sin grupo",
             "etiqueta_columna": "1"
           },
           {
@@ -144,7 +144,7 @@
             "columna": 6,
             "tipo_valor": "entero",
             "orden": 6,
-            "etiqueta_fila": "Artículo grupo I",
+            "etiqueta_fila": "Libro",
             "etiqueta_columna": "TOTAL"
           }
         ],
@@ -186,7 +186,7 @@
             "columna": 2,
             "tipo_valor": "entero",
             "orden": 2,
-            "etiqueta_fila": "Internacional",
+            "etiqueta_fila": "Nacional",
             "etiqueta_columna": "-4"
           },
           {
@@ -194,7 +194,7 @@
             "columna": 3,
             "tipo_valor": "entero",
             "orden": 3,
-            "etiqueta_fila": "Internacional",
+            "etiqueta_fila": "Provincial",
             "etiqueta_columna": "-3"
           },
           {
@@ -202,7 +202,7 @@
             "columna": 4,
             "tipo_valor": "entero",
             "orden": 4,
-            "etiqueta_fila": "Internacional",
+            "etiqueta_fila": "Municipal",
             "etiqueta_columna": "-2"
           },
           {
@@ -210,7 +210,7 @@
             "columna": 5,
             "tipo_valor": "entero",
             "orden": 5,
-            "etiqueta_fila": "Internacional",
+            "etiqueta_fila": "De base",
             "etiqueta_columna": "-1"
           },
           {
@@ -218,7 +218,7 @@
             "columna": 6,
             "tipo_valor": "entero",
             "orden": 6,
-            "etiqueta_fila": "Internacional",
+            "etiqueta_fila": "TOTAL",
             "etiqueta_columna": "TOTAL"
           }
         ],
@@ -261,7 +261,7 @@
             "columna": 2,
             "tipo_valor": "texto",
             "orden": 2,
-            "etiqueta_fila": "Proyecto",
+            "etiqueta_fila": "Proyecto de investigación",
             "etiqueta_columna": "Proyecto"
           },
           {
@@ -269,7 +269,7 @@
             "columna": 3,
             "tipo_valor": "entero",
             "orden": 3,
-            "etiqueta_fila": "Proyecto",
+            "etiqueta_fila": "Tipo de proyecto",
             "etiqueta_columna": "PAP"
           },
           {
@@ -277,7 +277,7 @@
             "columna": 4,
             "tipo_valor": "entero",
             "orden": 4,
-            "etiqueta_fila": "Proyecto",
+            "etiqueta_fila": "Tipo de proyecto",
             "etiqueta_columna": "PNAP"
           },
           {
@@ -285,7 +285,7 @@
             "columna": 5,
             "tipo_valor": "entero",
             "orden": 5,
-            "etiqueta_fila": "Proyecto",
+            "etiqueta_fila": "Tipo de proyecto",
             "etiqueta_columna": "P. Internacional"
           },
           {
@@ -293,7 +293,7 @@
             "columna": 6,
             "tipo_valor": "texto",
             "orden": 6,
-            "etiqueta_fila": "Proyecto",
+            "etiqueta_fila": "Plazo de realización",
             "etiqueta_columna": "Desde"
           },
           {
@@ -301,7 +301,7 @@
             "columna": 7,
             "tipo_valor": "texto",
             "orden": 7,
-            "etiqueta_fila": "Proyecto",
+            "etiqueta_fila": "Plazo de realización",
             "etiqueta_columna": "Hasta"
           },
           {
@@ -309,7 +309,7 @@
             "columna": 8,
             "tipo_valor": "texto",
             "orden": 8,
-            "etiqueta_fila": "Proyecto",
+            "etiqueta_fila": "Nivel de participación",
             "etiqueta_columna": "J de Proyecto"
           }
         ],
@@ -377,7 +377,7 @@
             "columna": 5,
             "tipo_valor": "entero",
             "orden": 5,
-            "etiqueta_fila": "Proyectos de investigación del claustro",
+            "etiqueta_fila": "Estudiantes investigando",
             "etiqueta_columna": "1"
           },
           {
@@ -385,7 +385,7 @@
             "columna": 6,
             "tipo_valor": "entero",
             "orden": 6,
-            "etiqueta_fila": "Proyectos de investigación del claustro",
+            "etiqueta_fila": "Estudiantes investigando",
             "etiqueta_columna": "2"
           },
           {
@@ -393,7 +393,7 @@
             "columna": 7,
             "tipo_valor": "entero",
             "orden": 7,
-            "etiqueta_fila": "Proyectos de investigación del claustro",
+            "etiqueta_fila": "Estudiantes investigando",
             "etiqueta_columna": "3"
           },
           {
@@ -401,8 +401,8 @@
             "columna": 8,
             "tipo_valor": "porcentaje",
             "orden": 8,
-            "etiqueta_fila": "Proyectos de investigación del claustro",
-            "etiqueta_columna": "TOTAL"
+            "etiqueta_fila": "Estudiantes investigando",
+            "etiqueta_columna": "%"
           }
         ],
         "preguntas_abiertas": []
@@ -484,16 +484,16 @@
             "columna": 7,
             "tipo_valor": "entero",
             "orden": 7,
-            "etiqueta_fila": "Proyectos",
-            "etiqueta_columna": "Año 1"
+            "etiqueta_fila": "Estudiantes incorporados",
+            "etiqueta_columna": "1"
           },
           {
             "fila": 1,
             "columna": 8,
             "tipo_valor": "porcentaje",
             "orden": 8,
-            "etiqueta_fila": "Proyectos",
-            "etiqueta_columna": "Año 2"
+            "etiqueta_fila": "Estudiantes incorporados",
+            "etiqueta_columna": "%"
           }
         ],
         "preguntas_abiertas": []
@@ -536,7 +536,7 @@
             "columna": 2,
             "tipo_valor": "entero",
             "orden": 2,
-            "etiqueta_fila": "Premio nacional de la ACC",
+            "etiqueta_fila": "Premio provincial de la ACC",
             "etiqueta_columna": "4"
           },
           {
@@ -544,7 +544,7 @@
             "columna": 3,
             "tipo_valor": "entero",
             "orden": 3,
-            "etiqueta_fila": "Premio nacional de la ACC",
+            "etiqueta_fila": "Premio nacional CITMA",
             "etiqueta_columna": "3"
           },
           {
@@ -552,7 +552,7 @@
             "columna": 4,
             "tipo_valor": "entero",
             "orden": 4,
-            "etiqueta_fila": "Premio nacional de la ACC",
+            "etiqueta_fila": "Premio provincial CITMA",
             "etiqueta_columna": "2"
           },
           {
@@ -560,7 +560,7 @@
             "columna": 5,
             "tipo_valor": "entero",
             "orden": 5,
-            "etiqueta_fila": "Premio nacional de la ACC",
+            "etiqueta_fila": "Premio BTJ",
             "etiqueta_columna": "1"
           },
           {
@@ -568,7 +568,7 @@
             "columna": 6,
             "tipo_valor": "entero",
             "orden": 6,
-            "etiqueta_fila": "Premio nacional de la ACC",
+            "etiqueta_fila": "Sello forjadores el futuro",
             "etiqueta_columna": "0"
           },
           {
@@ -576,7 +576,7 @@
             "columna": 7,
             "tipo_valor": "entero",
             "orden": 7,
-            "etiqueta_fila": "Premio nacional de la ACC",
+            "etiqueta_fila": "TOTAL",
             "etiqueta_columna": "TOTAL"
           }
         ],
@@ -619,7 +619,7 @@
             "columna": 2,
             "tipo_valor": "entero",
             "orden": 2,
-            "etiqueta_fila": "Cursos de postgrado",
+            "etiqueta_fila": "Diplomado",
             "etiqueta_columna": "-4"
           },
           {
@@ -627,7 +627,7 @@
             "columna": 3,
             "tipo_valor": "entero",
             "orden": 3,
-            "etiqueta_fila": "Cursos de postgrado",
+            "etiqueta_fila": "Especialidades",
             "etiqueta_columna": "-3"
           },
           {
@@ -635,7 +635,7 @@
             "columna": 4,
             "tipo_valor": "entero",
             "orden": 4,
-            "etiqueta_fila": "Cursos de postgrado",
+            "etiqueta_fila": "Maestrías",
             "etiqueta_columna": "-2"
           },
           {
@@ -643,7 +643,7 @@
             "columna": 5,
             "tipo_valor": "entero",
             "orden": 5,
-            "etiqueta_fila": "Cursos de postgrado",
+            "etiqueta_fila": "Doctorados",
             "etiqueta_columna": "-1"
           },
           {
@@ -651,7 +651,7 @@
             "columna": 6,
             "tipo_valor": "entero",
             "orden": 6,
-            "etiqueta_fila": "Cursos de postgrado",
+            "etiqueta_fila": "TOTAL",
             "etiqueta_columna": "0"
           },
           {
@@ -659,7 +659,7 @@
             "columna": 7,
             "tipo_valor": "entero",
             "orden": 7,
-            "etiqueta_fila": "Cursos de postgrado",
+            "etiqueta_fila": "TOTAL",
             "etiqueta_columna": "TOTAL"
           }
         ],
@@ -701,7 +701,7 @@
             "columna": 2,
             "tipo_valor": "entero",
             "orden": 2,
-            "etiqueta_fila": "Diplomado",
+            "etiqueta_fila": "Especialidad",
             "etiqueta_columna": "Certificado"
           },
           {
@@ -709,7 +709,7 @@
             "columna": 3,
             "tipo_valor": "entero",
             "orden": 3,
-            "etiqueta_fila": "Diplomado",
+            "etiqueta_fila": "Maestría",
             "etiqueta_columna": "Avalado"
           },
           {
@@ -717,7 +717,7 @@
             "columna": 4,
             "tipo_valor": "entero",
             "orden": 4,
-            "etiqueta_fila": "Diplomado",
+            "etiqueta_fila": "Doctorado",
             "etiqueta_columna": "Autorizado"
           },
           {
@@ -725,7 +725,7 @@
             "columna": 5,
             "tipo_valor": "entero",
             "orden": 5,
-            "etiqueta_fila": "Diplomado",
+            "etiqueta_fila": "Total Propio",
             "etiqueta_columna": "Total"
           },
           {
@@ -733,7 +733,7 @@
             "columna": 6,
             "tipo_valor": "entero",
             "orden": 6,
-            "etiqueta_fila": "Diplomado",
+            "etiqueta_fila": "Total Afin",
             "etiqueta_columna": "Total"
           }
         ],
@@ -775,7 +775,7 @@
             "columna": 2,
             "tipo_valor": "entero",
             "orden": 2,
-            "etiqueta_fila": "2do. Año",
+            "etiqueta_fila": "3er. Año",
             "etiqueta_columna": "2"
           },
           {
@@ -783,7 +783,7 @@
             "columna": 3,
             "tipo_valor": "entero",
             "orden": 3,
-            "etiqueta_fila": "2do. Año",
+            "etiqueta_fila": "4to. Año",
             "etiqueta_columna": "3"
           },
           {
@@ -791,7 +791,7 @@
             "columna": 4,
             "tipo_valor": "entero",
             "orden": 4,
-            "etiqueta_fila": "2do. Año",
+            "etiqueta_fila": "5to. Año",
             "etiqueta_columna": "4"
           },
           {
@@ -799,7 +799,7 @@
             "columna": 5,
             "tipo_valor": "entero",
             "orden": 5,
-            "etiqueta_fila": "2do. Año",
+            "etiqueta_fila": "6to. Año",
             "etiqueta_columna": "5"
           },
           {
@@ -807,7 +807,7 @@
             "columna": 6,
             "tipo_valor": "porcentaje",
             "orden": 6,
-            "etiqueta_fila": "2do. Año",
+            "etiqueta_fila": "Total",
             "etiqueta_columna": "Aprobados"
           },
           {
@@ -815,7 +815,7 @@
             "columna": 7,
             "tipo_valor": "porcentaje",
             "orden": 7,
-            "etiqueta_fila": "2do. Año",
+            "etiqueta_fila": "Total",
             "etiqueta_columna": "Con 4 o 5"
           },
           {
@@ -823,7 +823,7 @@
             "columna": 8,
             "tipo_valor": "porcentaje",
             "orden": 8,
-            "etiqueta_fila": "2do. Año",
+            "etiqueta_fila": "Total",
             "etiqueta_columna": "Evaluados"
           }
         ],
@@ -867,7 +867,7 @@
             "columna": 2,
             "tipo_valor": "entero",
             "orden": 2,
-            "etiqueta_fila": "Promoción",
+            "etiqueta_fila": "Retención",
             "etiqueta_columna": "-4"
           },
           {
@@ -875,7 +875,7 @@
             "columna": 3,
             "tipo_valor": "entero",
             "orden": 3,
-            "etiqueta_fila": "Promoción",
+            "etiqueta_fila": "Eficiencia vertical",
             "etiqueta_columna": "-3"
           },
           {
@@ -883,7 +883,7 @@
             "columna": 4,
             "tipo_valor": "entero",
             "orden": 4,
-            "etiqueta_fila": "Promoción",
+            "etiqueta_fila": "Eficiencia académica",
             "etiqueta_columna": "-2"
           },
           {
@@ -891,7 +891,7 @@
             "columna": 5,
             "tipo_valor": "entero",
             "orden": 5,
-            "etiqueta_fila": "Promoción",
+            "etiqueta_fila": "Eficiencia ciclo",
             "etiqueta_columna": "-1"
           },
           {
@@ -899,7 +899,7 @@
             "columna": 6,
             "tipo_valor": "entero",
             "orden": 6,
-            "etiqueta_fila": "Promoción",
+            "etiqueta_fila": "Total indicadores",
             "etiqueta_columna": "0 - 0"
           }
         ],

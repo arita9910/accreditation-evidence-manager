@@ -534,6 +534,8 @@ class CuantitativosApiTests(TestCase):
             columna=1,
             tipo_valor=ModeloCampo.TipoValor.PORCENTAJE,
             orden=1,
+            etiqueta_fila="Artículo grupo I",
+            etiqueta_columna="Acreditación anterior",
         )
         self.campo_entero = ModeloCampo.objects.create(
             modelo=self.modelo,
@@ -541,6 +543,8 @@ class CuantitativosApiTests(TestCase):
             columna=2,
             tipo_valor=ModeloCampo.TipoValor.ENTERO,
             orden=2,
+            etiqueta_fila="Artículo grupo II",
+            etiqueta_columna="Acreditación actual",
         )
         self.tipo_evidencia = TipoEvidencia.objects.create(
             dimension=self.dimension,
@@ -609,6 +613,23 @@ class CuantitativosApiTests(TestCase):
         self.client.force_login(self.otro_usuario)
         denied = self.client.get(f"/api/ciclos/{self.ciclo.pk}/modelos/{self.modelo.numero}/valores/?curso=2025")
         self.assertEqual(denied.status_code, 403)
+
+    def test_api_modelo_devuelve_celdas_base_sin_valores_guardados(self):
+        self.client.force_login(self.usuario)
+
+        respuesta = self.client.get(f"/api/ciclos/{self.ciclo.pk}/modelos/{self.modelo.numero}/valores/?curso=2025")
+        self.assertEqual(respuesta.status_code, 200, respuesta.content)
+
+        datos = respuesta.json()
+        self.assertEqual(datos["valores"], [])
+        self.assertEqual(len(datos["celdas"]), 2)
+
+        celda_porcentaje = next(item for item in datos["celdas"] if item["campo"] == self.campo_porcentaje.pk)
+        self.assertIsNone(celda_porcentaje["id"])
+        self.assertIsNone(celda_porcentaje["valor"])
+        self.assertEqual(celda_porcentaje["curso"], 2025)
+        self.assertEqual(celda_porcentaje["etiqueta_fila"], "Artículo grupo I")
+        self.assertEqual(celda_porcentaje["etiqueta_columna"], "Acreditación anterior")
 
     def test_api_vinculos_y_datos_sin_respaldo_comparten_informacion(self):
         valor_modelo = ValorModelo.objects.create(
