@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from datetime import date
+
 from django.core.exceptions import ValidationError
 from django.db import transaction
 
@@ -15,6 +17,28 @@ def _requerir_permiso(accion, actor, objeto=None):
         return
     if not puede(actor, accion, objeto=objeto):
         raise ValidationError("No tiene permiso para realizar esta acción.")
+
+
+def _validar_transicion(estado_actual, estado_nuevo):
+    transiciones = {
+        AccionMejora.Estado.PROPUESTA: {AccionMejora.Estado.APROBADA},
+        AccionMejora.Estado.APROBADA: {AccionMejora.Estado.EN_CURSO},
+        AccionMejora.Estado.EN_CURSO: {
+            AccionMejora.Estado.CUMPLIDA,
+            AccionMejora.Estado.NO_CUMPLIDA,
+        },
+    }
+    return estado_nuevo in transiciones.get(estado_actual, set())
+
+
+def _validar_usuario_seguimiento(accion, usuario):
+    if usuario is None:
+        raise ValidationError("Debe indicar un usuario válido.")
+    if getattr(usuario, "pk", None) == getattr(accion.responsable, "pk", None):
+        return
+    if getattr(usuario, "rol", None) in {"director_carrera", "administrador_tecnico"}:
+        return
+    raise ValidationError("Solo el responsable de la acción o un director puede registrar seguimiento.")
 
 
 def crear_plan_mejora(ciclo, usuario=None):
@@ -34,6 +58,17 @@ def crear_plan_mejora(ciclo, usuario=None):
             detalle={"id": plan.pk, "ciclo_id": ciclo.pk},
         )
     return plan
+
+
+def proponer_accion(plan, debilidad, descripcion, responsable, fecha_limite, usuario=None):
+    return crear_accion_mejora(
+        plan,
+        debilidad,
+        descripcion,
+        responsable,
+        fecha_limite,
+        usuario=usuario,
+    )
 
 
 def crear_accion_mejora(plan, debilidad, descripcion, responsable, fecha_limite, usuario=None):
@@ -77,6 +112,41 @@ def crear_accion_mejora(plan, debilidad, descripcion, responsable, fecha_limite,
     return accion
 
 
+def aprobar_accion(accion, usuario=None, nota=None):
+    if accion is None:
+        raise ValidationError("Debe indicar una acción válida.")
+    if usuario is None:
+        raise ValidationError("Debe indicar un usuario válido.")
+
+    exigir_ciclo_abierto(accion.plan.ciclo)
+    _requerir_permiso("aprobar_accion", usuario, accion.plan.ciclo)
+
+    if not _validar_transicion(accion.estado, AccionMejora.Estado.APROBADA):
+        raise ValidationError("La acción no puede pasar al estado aprobado desde su estado actual.")
+
+    with transaction.atomic():
+        accion.estado = AccionMejora.Estado.APROBADA
+        accion.save()
+        registro = SeguimientoAccion.objects.create(
+            accion=accion,
+            avance=0,
+            nota=(nota or "Aprobación de la acción de mejora."),
+            registrado_por=usuario,
+        )
+        registrar(
+            "aprobar_accion",
+            usuario=usuario,
+            entidad="AccionMejora",
+            detalle={
+                "id": accion.pk,
+                "estado_anterior": AccionMejora.Estado.PROPUESTA,
+                "estado_nuevo": AccionMejora.Estado.APROBADA,
+                "seguimiento_id": registro.pk,
+            },
+        )
+    return accion
+
+
 def registrar_seguimiento(accion, avance, nota, usuario=None):
     if accion is None:
         raise ValidationError("Debe indicar una acción válida.")
@@ -85,6 +155,7 @@ def registrar_seguimiento(accion, avance, nota, usuario=None):
 
     exigir_ciclo_abierto(accion.plan.ciclo)
     _requerir_permiso("registrar_seguimiento", usuario, accion.plan.ciclo)
+    _validar_usuario_seguimiento(accion, usuario)
 
     seguimiento = SeguimientoAccion(
         accion=accion,
@@ -131,9 +202,35 @@ def vincular_evidencia(accion, evidencia, usuario=None):
     return relacion
 
 
+def acciones_vencidas(plan):
+    if plan is None:
+        raise ValidationError("Debe indicar un plan válido.")
+    estado_final = {
+        AccionMejora.Estado.CUMPLIDA,
+        AccionMejora.Estado.NO_CUMPLIDA,
+    }
+    return AccionMejora.objects.filter(
+        plan=plan,
+        fecha_limite__lt=date.today(),
+    ).exclude(estado__in=estado_final)
+
+
+def plan_ciclo_anterior(ciclo):
+    if ciclo is None:
+        raise ValidationError("Debe indicar un ciclo válido.")
+    ciclo_anterior = getattr(ciclo, "ciclo_anterior", None)
+    if ciclo_anterior is None:
+        return None
+    return PlanMejora.objects.filter(ciclo=ciclo_anterior).select_related("ciclo").prefetch_related("acciones").first()
+
+
 __all__ = [
     "crear_plan_mejora",
+    "proponer_accion",
     "crear_accion_mejora",
+    "aprobar_accion",
     "registrar_seguimiento",
     "vincular_evidencia",
+    "acciones_vencidas",
+    "plan_ciclo_anterior",
 ]

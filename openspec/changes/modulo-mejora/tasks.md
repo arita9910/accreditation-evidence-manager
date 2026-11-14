@@ -8,9 +8,9 @@
 
 ## 2. Lógica de negocio y validación de estados
 
-- [ ] 2.1 Implementar `proponer_accion`, `aprobar_accion`, `registrar_seguimiento`, `vincular_evidencia`, `acciones_vencidas` y `plan_ciclo_anterior`, y verificar que el servicio expone el comportamiento esperado por el plan.
-- [ ] 2.2 Rechazar transiciones de estado no válidas y validar que cada acción de mejora debe tener origen en una debilidad, y verificar los casos de prueba negativos.
-- [ ] 2.3 Registrar en el historial del seguimiento los cambios de estado y los usuarios implicados, y verificar la trazabilidad con auditoría en pruebas específicas.
+- [x] 2.1 Implementar `proponer_accion`, `aprobar_accion`, `registrar_seguimiento`, `vincular_evidencia`, `acciones_vencidas` y `plan_ciclo_anterior`, y verificar que el servicio expone el comportamiento esperado por el plan.
+- [x] 2.2 Rechazar transiciones de estado no válidas y validar que cada acción de mejora debe tener origen en una debilidad, y verificar los casos de prueba negativos.
+- [x] 2.3 Registrar en el historial del seguimiento los cambios de estado y los usuarios implicados, y verificar la trazabilidad con auditoría en pruebas específicas.
 
 ## 3. API y consumo de datos
 
