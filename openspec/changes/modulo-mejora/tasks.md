@@ -2,9 +2,9 @@
 
 ## 1. Definición del módulo y contratos base
 
-- [ ] 1.1 Crear la estructura `sistema/backend/mejora/` con modelos, servicios, serializadores, vistas, URLs y pruebas del plan 10, y verificar que los archivos esperados queden presentes.
-- [ ] 1.2 Definir las entidades `PlanMejora`, `AccionMejora`, `SeguimientoAccion` y `AccionEvidencia` con la relación obligatoria a una debilidad o hallazgo de valoración, y verificar la regla de negocio con pruebas unitarias.
-- [ ] 1.3 Integrar la validación del ciclo abierto y la trazabilidad con `exigir_ciclo_abierto`, `puede(...)` y `registrar(...)`, y verificar que las pruebas de permisos y auditoría pasen.
+- [x] 1.1 Crear la estructura `sistema/backend/mejora/` con modelos, servicios, serializadores, vistas, URLs y pruebas del plan 10, y verificar que los archivos esperados queden presentes.
+- [x] 1.2 Definir las entidades `PlanMejora`, `AccionMejora`, `SeguimientoAccion` y `AccionEvidencia` con la relación obligatoria a una debilidad o hallazgo de valoración, y verificar la regla de negocio con pruebas unitarias.
+- [x] 1.3 Integrar la validación del ciclo abierto y la trazabilidad con `exigir_ciclo_abierto`, `puede(...)` y `registrar(...)`, y verificar que las pruebas de permisos y auditoría pasen.
 
 ## 2. Lógica de negocio y validación de estados
 
