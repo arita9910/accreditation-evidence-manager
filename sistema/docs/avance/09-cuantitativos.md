@@ -12,7 +12,13 @@ La planificación del cambio `cuantitativos` se ha revisado para mantener cohere
 - Pregunta abierta documentada para contrastar los 38 criterios cuantitativos con el catálogo cargado (20 criterios con 22 asociaciones `CriterioModelo`).
 - Preguntas abiertas por celdas dudosas registradas sin conjeturas en `modelos_resumen.json` y en la decisión D-09.05.
 
+## Verificación final ejecutada
+
+- La validación del backend se ejecutó sobre SQLite con la suite completa de Django: `python manage.py test` en `sistema/backend` y pasó.
+- La validación del frontend se ejecutó con la suite de Vitest en `sistema/frontend` y pasó.
+- La comprobación de lint y build del frontend también pasó (`npm run lint` y `npm run build`).
+- La verificación en PostgreSQL queda pendiente y documentada conforme a D-14; no se marca como realizada. La validación del cierre se realiza en SQLite y no se hace afirmación de PostgreSQL.
+
 ## Pendiente documental
 
-- Confirmar la verificación en PostgreSQL solo como pendiente y documentada, siguiendo D-14.
-- Completar la ejecución del plan de pruebas y verificación final en navegador antes de archivar el cambio.
+- Completar la verificación funcional en navegador antes de archivar el cambio y registrar el resultado en la evidencia final del cierre.

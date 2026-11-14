@@ -438,7 +438,7 @@ function Cuantitativos({ usuario }) {
                 <tbody>
                   {celdas.map((celda, indice) => (
                     <tr key={celda.campo}>
-                      <td>{celda.etiqueta_fila || celda.fila} - {celda.etiqueta_columna || celda.columna}</td>
+                      <td>{celda.etiqueta_fila || celda.fila},{celda.etiqueta_columna || celda.columna}</td>
                       <td>{celda.tipo_valor}</td>
                       <td>
                         <input

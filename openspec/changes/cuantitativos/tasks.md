@@ -34,7 +34,7 @@
 
 ## 5. Verificación final
 
-- [ ] 5.1 Ejecutar la suite backend y la suite de Vitest por separado; no correr la verificación de Django y la verificación frontend en paralelo con la misma tarea de cierre.
-- [ ] 5.2 Ejecutar lint y build de frontend, confirmar que pasan y registrar el resultado antes de archivar el cambio.
-- [ ] 5.3 Verificar la funcionalidad en navegador antes de archivar y documentar el avance en `system/docs/avance/09-cuantitativos.md` con la decisión de diseño en `system/docs/decisiones/09-cuantitativos.md`.
-- [ ] 5.4 Confirmar que los artefactos finales reflejan el criterio de `pruebas solo en SQLite; verificación en PostgreSQL pendiente y documentada (D-14)` y no se marca la validación de PostgreSQL como hecha.
+- [x] 5.1 Ejecutar la suite backend y la suite de Vitest por separado; no correr la verificación de Django y la verificación frontend en paralelo con la misma tarea de cierre.
+- [x] 5.2 Ejecutar lint y build de frontend, confirmar que pasan y registrar el resultado antes de archivar el cambio.
+- [x] 5.3 Verificar la funcionalidad en navegador antes de archivar y documentar el avance en `system/docs/avance/09-cuantitativos.md` con la decisión de diseño en `system/docs/decisiones/09-cuantitativos.md`.
+- [x] 5.4 Confirmar que los artefactos finales reflejan el criterio de `pruebas solo en SQLite; verificación en PostgreSQL pendiente y documentada (D-14)` y no se marca la validación de PostgreSQL como hecha.

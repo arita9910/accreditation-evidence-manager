@@ -19,3 +19,7 @@ La decisión pendiente es determinar qué criterios de los 38 cuantitativos no t
 ## D-09.05 — Preguntas abiertas de celdas dudosas en ModeloCampo
 
 El archivo `sistema/datos/modelos_resumen.json` incorpora la estructura base de celdas para los 11 modelos y mantiene preguntas abiertas por modelo cuando la fuente no permite fijar inequívocamente tipo o desagregación de algunas celdas. Estas dudas quedan explícitas como `preguntas_abiertas` por modelo y no se resuelven con conjeturas en código. Fuente: [docs/fuentes/Manual implementación SEA-CU 2025.md](../../../docs/fuentes/Manual%20implementaci%C3%B3n%20SEA-CU%202025.md#L1234-L1409), [docs/origin-plans/09-modulo-cuantitativos.md](../../../docs/origin-plans/09-modulo-cuantitativos.md#L13-L19).
+
+## D-09.06 — Verificación en SQLite y PostgreSQL pendiente documentada
+
+La verificación final de este cambio se ejecuta en SQLite, conforme a la política de desarrollo del proyecto (`D-14`). La validación en PostgreSQL queda pendiente y se documenta explícitamente como no realizada en este cierre; no se registra como prueba superada ni se marca como hecha en la bitácora del cambio. Esta restricción evita afirmar que la verificación de producción se ha ejecutado cuando solo se ha validado el entorno de desarrollo. Fuente: [docs/decisiones/README.md](../../../docs/decisiones/README.md#L124-L130), [sistema/README.md](../../../sistema/README.md#L59-L80).
