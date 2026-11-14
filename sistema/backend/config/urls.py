@@ -28,6 +28,7 @@ urlpatterns = [
     path("api/", include("ciclos.urls")),
     path("api/", include("evidencias.urls")),
     path("api/", include("cuantitativos.urls")),
+    path("api/", include("mejora.urls")),
     path("api/", include("valoracion.urls")),
     path('admin/', admin.site.urls),
 ]

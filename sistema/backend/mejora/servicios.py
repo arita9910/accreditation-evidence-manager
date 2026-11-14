@@ -112,39 +112,58 @@ def crear_accion_mejora(plan, debilidad, descripcion, responsable, fecha_limite,
     return accion
 
 
+def cambiar_estado_accion(accion, nuevo_estado, usuario=None, nota=None):
+    if accion is None:
+        raise ValidationError("Debe indicar una acción válida.")
+    if usuario is None:
+        raise ValidationError("Debe indicar un usuario válido.")
+    if nuevo_estado is None:
+        raise ValidationError("Debe indicar un estado válido.")
+    if nuevo_estado not in {estado.value for estado in AccionMejora.Estado}:
+        raise ValidationError("El estado indicado no es válido.")
+
+    exigir_ciclo_abierto(accion.plan.ciclo)
+    _requerir_permiso("aprobar_accion", usuario, accion.plan.ciclo)
+
+    if not _validar_transicion(accion.estado, nuevo_estado):
+        raise ValidationError("La acción no puede pasar al estado solicitado desde su estado actual.")
+
+    with transaction.atomic():
+        estado_anterior = accion.estado
+        accion.estado = nuevo_estado
+        accion.save()
+        registro = SeguimientoAccion.objects.create(
+            accion=accion,
+            avance=0,
+            nota=(nota or f"Cambio de estado a {nuevo_estado}."),
+            registrado_por=usuario,
+        )
+        registrar(
+            "cambiar_estado_accion",
+            usuario=usuario,
+            entidad="AccionMejora",
+            detalle={
+                "id": accion.pk,
+                "estado_anterior": estado_anterior,
+                "estado_nuevo": nuevo_estado,
+                "seguimiento_id": registro.pk,
+            },
+        )
+    return accion
+
+
 def aprobar_accion(accion, usuario=None, nota=None):
     if accion is None:
         raise ValidationError("Debe indicar una acción válida.")
     if usuario is None:
         raise ValidationError("Debe indicar un usuario válido.")
 
-    exigir_ciclo_abierto(accion.plan.ciclo)
-    _requerir_permiso("aprobar_accion", usuario, accion.plan.ciclo)
-
-    if not _validar_transicion(accion.estado, AccionMejora.Estado.APROBADA):
-        raise ValidationError("La acción no puede pasar al estado aprobado desde su estado actual.")
-
-    with transaction.atomic():
-        accion.estado = AccionMejora.Estado.APROBADA
-        accion.save()
-        registro = SeguimientoAccion.objects.create(
-            accion=accion,
-            avance=0,
-            nota=(nota or "Aprobación de la acción de mejora."),
-            registrado_por=usuario,
-        )
-        registrar(
-            "aprobar_accion",
-            usuario=usuario,
-            entidad="AccionMejora",
-            detalle={
-                "id": accion.pk,
-                "estado_anterior": AccionMejora.Estado.PROPUESTA,
-                "estado_nuevo": AccionMejora.Estado.APROBADA,
-                "seguimiento_id": registro.pk,
-            },
-        )
-    return accion
+    return cambiar_estado_accion(
+        accion,
+        AccionMejora.Estado.APROBADA,
+        usuario=usuario,
+        nota=nota or "Aprobación de la acción de mejora.",
+    )
 
 
 def registrar_seguimiento(accion, avance, nota, usuario=None):
@@ -228,6 +247,7 @@ __all__ = [
     "crear_plan_mejora",
     "proponer_accion",
     "crear_accion_mejora",
+    "cambiar_estado_accion",
     "aprobar_accion",
     "registrar_seguimiento",
     "vincular_evidencia",

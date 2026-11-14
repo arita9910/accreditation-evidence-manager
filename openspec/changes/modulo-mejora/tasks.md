@@ -14,9 +14,9 @@
 
 ## 3. API y consumo de datos
 
-- [ ] 3.1 Exponer endpoints REST para `GET/POST /api/ciclos/{id}/plan/`, `GET/POST /api/planes/{id}/acciones/`, `PATCH /api/acciones/{id}/`, `GET/POST /api/acciones/{id}/seguimientos/` y `POST /api/acciones/{id}/evidencias/`, y verificar la respuesta HTTP con permisos positivos y negativos.
-- [ ] 3.2 Añadir la consulta del plan del ciclo anterior en la API `GET /api/ciclos/{id}/plan-anterior/` y verificar la comparación de estado con el plan actual.
-- [ ] 3.3 Documentar los contratos y validaciones mínimos de la API y verificar que las pruebas de serialización y permisos pasan.
+- [x] 3.1 Exponer endpoints REST para `GET/POST /api/ciclos/{id}/plan/`, `GET/POST /api/planes/{id}/acciones/`, `PATCH /api/acciones/{id}/`, `GET/POST /api/acciones/{id}/seguimientos/` y `POST /api/acciones/{id}/evidencias/`, y verificar la respuesta HTTP con permisos positivos y negativos.
+- [x] 3.2 Añadir la consulta del plan del ciclo anterior en la API `GET /api/ciclos/{id}/plan-anterior/` y verificar la comparación de estado con el plan actual.
+- [x] 3.3 Documentar los contratos y validaciones mínimos de la API y verificar que las pruebas de serialización y permisos pasan.
 
 ## 4. Pantalla y experiencia de usuario
 
