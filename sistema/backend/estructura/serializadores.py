@@ -36,7 +36,7 @@ class RequisitoCategoriaSerializador(serializers.ModelSerializer):
 class ModeloCampoSerializador(serializers.ModelSerializer):
     class Meta:
         model = ModeloCampo
-        fields = ("fila", "columna", "tipo_valor", "orden")
+        fields = ("id", "fila", "columna", "tipo_valor", "orden", "etiqueta_fila", "etiqueta_columna")
         read_only_fields = fields
 
 

@@ -6,8 +6,10 @@ function construirUrl(url) {
   }
 
   const ruta = url.startsWith('/') ? url : `/${url}`
-  const rutaSinPrefijoApi = ruta === '/api' ? '' : (ruta.startsWith('/api/') ? ruta.slice(4) : ruta)
-  return `${API_BASE_URL}${rutaSinPrefijoApi}`
+  if (ruta === '/api' || ruta.startsWith('/api/')) {
+    return ruta
+  }
+  return `${API_BASE_URL}${ruta}`
 }
 
 async function peticion(url, opciones = {}) {

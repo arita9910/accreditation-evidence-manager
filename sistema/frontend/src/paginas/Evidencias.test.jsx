@@ -86,12 +86,25 @@ describe('Pantalla de evidencias', () => {
       if (pathname === '/api/evidencias/2/' && !opciones.method) {
         return Promise.resolve(respuesta({
           id: 2,
+          ciclo: 11,
           titulo: 'Acta física',
           soporte: 'papel',
           estado_huella: null,
           periodo_desde: '2025-01-01',
           periodo_hasta: '2025-12-31',
           ficheros: [],
+        }))
+      }
+      if (pathname === '/api/evidencias/2/datos/' && !opciones.method) {
+        return Promise.resolve(respuesta({
+          evidencia: 2,
+          datos: [{ id: 88, tipo: 'modelo', modelo: 1, valor: 15 }],
+        }))
+      }
+      if (pathname === '/api/ciclos/11/datos/sin-respaldo/' && !opciones.method) {
+        return Promise.resolve(respuesta({
+          ciclo: 11,
+          datos: [{ id: 90, tipo: 'criterio', codigo: '1.1.1', valor: 2 }],
         }))
       }
 
@@ -116,6 +129,9 @@ describe('Pantalla de evidencias', () => {
 
     expect(await screen.findByText('Acta física')).toBeTruthy()
     expect(screen.getByText('Papel', { selector: 'span.badge' })).toBeTruthy()
+    fireEvent.click(screen.getByRole('button', { name: 'Ver detalle' }))
+    expect(await screen.findByText('Modelo 1 · valor 15')).toBeTruthy()
+    expect((await screen.findAllByText('Criterio 1.1.1 · valor 2')).length).toBeGreaterThanOrEqual(1)
 
     expect(fetchMock.mock.calls.some(([url]) => String(url).includes('/api/evidencias/?q=acta&soporte=papel&dimension=1&criterio=101'))).toBe(true)
   }, 15000)
@@ -161,6 +177,7 @@ describe('Pantalla de evidencias', () => {
       if (ruta === '/api/evidencias/9/' && metodo === 'GET') {
         return Promise.resolve(respuesta({
           id: 9,
+          ciclo: 10,
           titulo: 'Informe anual',
           soporte: 'digital',
           estado_huella: 'correcta',
@@ -171,6 +188,12 @@ describe('Pantalla de evidencias', () => {
             { id: 22, version: 2, nombre_original: 'informe-v2.pdf', sha256: 'b'.repeat(64), vigente: true },
           ],
         }))
+      }
+      if (ruta === '/api/evidencias/9/datos/' && metodo === 'GET') {
+        return Promise.resolve(respuesta({ evidencia: 9, datos: [] }))
+      }
+      if (ruta === '/api/ciclos/10/datos/sin-respaldo/' && metodo === 'GET') {
+        return Promise.resolve(respuesta({ ciclo: 10, datos: [] }))
       }
 
       return Promise.resolve(respuesta({ codigo: 'not_found', mensaje: 'No encontrado.' }, false))
@@ -220,6 +243,91 @@ describe('Pantalla de evidencias', () => {
       const [, opcionesClasificacion] = llamadaClasificacion
       expect(JSON.parse(opcionesClasificacion.body)).toEqual({ criterio: '101' })
     }, 15000)
+  })
+
+  it('vincula un dato pendiente desde la ficha y refresca respaldados/pendientes', async () => {
+    const fetchMock = vi.fn((url, opciones = {}) => {
+      const ruta = rutaApi(url)
+      const metodo = (opciones.method || 'GET').toUpperCase()
+
+      if (ruta === '/api/evidencias/' && metodo === 'GET') {
+        return Promise.resolve(respuesta({
+          results: [{ id: 2, ciclo: 11, titulo: 'Acta física', curso_academico: 2025, soporte: 'digital', estado_huella: 'correcta' }],
+        }))
+      }
+      if (ruta === '/api/ciclos/' && metodo === 'GET') {
+        return Promise.resolve(respuesta({
+          results: [{ id: 11, tipo: 'ordinario', anio_base: 2026, carrera: 2 }],
+        }))
+      }
+      if (ruta === '/api/tipos-evidencia/' && metodo === 'GET') {
+        return Promise.resolve(respuesta({
+          results: [{ id: 6, nombre: 'Acta de reuniones', soporte_exigido: 'papel_firmado' }],
+        }))
+      }
+      if (ruta === '/api/catalogo/' && metodo === 'GET') {
+        return Promise.resolve(respuesta({
+          dimensiones: [{
+            id: 1,
+            codigo: '1',
+            nombre: 'Planificación',
+            indicadores: [{
+              codigo: '1.1',
+              texto: 'Indicador',
+              criterios: [{ id: 101, codigo: '1.1.1', texto: 'Criterio 1' }],
+            }],
+          }],
+        }))
+      }
+      if (ruta === '/api/evidencias/2/' && metodo === 'GET') {
+        return Promise.resolve(respuesta({
+          id: 2,
+          ciclo: 11,
+          titulo: 'Acta física',
+          soporte: 'digital',
+          estado_huella: 'correcta',
+          periodo_desde: '2025-01-01',
+          periodo_hasta: '2025-12-31',
+          ficheros: [],
+        }))
+      }
+      if (ruta === '/api/evidencias/2/datos/' && metodo === 'GET') {
+        return Promise.resolve(respuesta({
+          evidencia: 2,
+          datos: [{ id: 91, tipo: 'modelo', modelo: 1, valor: 10 }],
+        }))
+      }
+      if (ruta === '/api/ciclos/11/datos/sin-respaldo/' && metodo === 'GET') {
+        return Promise.resolve(respuesta({
+          ciclo: 11,
+          datos: [{ id: 92, tipo: 'criterio', codigo: '1.1.1', valor: 4 }],
+        }))
+      }
+      if (ruta === '/api/vinculos/' && metodo === 'POST') {
+        return Promise.resolve(respuesta({ ok: true, vinculos: [{ id: 1 }] }, true))
+      }
+
+      return Promise.resolve(respuesta({ codigo: 'not_found', mensaje: 'No encontrado.' }, false))
+    })
+    vi.stubGlobal('fetch', fetchMock)
+
+    render(
+      <MemoryRouter>
+        <Evidencias usuario={{ id: 1, rol: 'director_carrera' }} />
+      </MemoryRouter>,
+    )
+
+    expect(await screen.findByRole('heading', { name: 'Gestión de evidencias' })).toBeTruthy()
+    fireEvent.click(screen.getByRole('button', { name: 'Ver detalle' }))
+
+    expect(await screen.findByText('Modelo 1 · valor 10')).toBeTruthy()
+    expect((await screen.findAllByText('Criterio 1.1.1 · valor 4')).length).toBeGreaterThanOrEqual(1)
+
+    fireEvent.change(screen.getByLabelText('Dato pendiente'), { target: { value: 'criterio:92' } })
+    fireEvent.click(screen.getByRole('button', { name: 'Vincular dato' }))
+
+    expect(await screen.findByText('Dato cuantitativo vinculado correctamente.')).toBeTruthy()
+    expect(fetchMock.mock.calls.some(([url, opciones = {}]) => String(url).includes('/api/vinculos/') && (opciones.method || '').toUpperCase() === 'POST')).toBe(true)
   })
 
   it('rechaza archivos mayores a 10 MB en el formulario', async () => {

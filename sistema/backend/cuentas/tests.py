@@ -192,3 +192,30 @@ class CuentaApiTests(TestCase):
         delete_response = self.client.delete(f"/api/usuarios/{usuario_creado['id']}/roles/")
         self.assertEqual(delete_response.status_code, 200)
         self.assertEqual(delete_response.json()["rol"], Usuario.Rol.ADMINISTRADOR_TECNICO)
+
+    def test_director_lista_solo_usuarios_activos_de_su_carrera(self):
+        otra_carrera = Carrera.objects.create(
+            facultad=self.facultad,
+            nombre="Ingeniería Industrial",
+            activa=True,
+        )
+        otro_director = Usuario.objects.create_user(
+            "otro-director",
+            "Clave-segura-456!",
+            nombre="Otra",
+            apellidos="Carrera",
+            email="otra@example.com",
+            rol=Usuario.Rol.DIRECTOR_CARRERA,
+            carrera=otra_carrera,
+        )
+        self.client.force_login(self.director)
+
+        respuesta = self.client.get(f"/api/usuarios/?carrera={self.carrera.pk}")
+
+        self.assertEqual(respuesta.status_code, 200)
+        ids = {registro["id"] for registro in respuesta.json()}
+        self.assertIn(self.director.pk, ids)
+        self.assertNotIn(otro_director.pk, ids)
+
+        respuesta = self.client.get(f"/api/usuarios/?carrera={otra_carrera.pk}")
+        self.assertEqual(respuesta.status_code, 403)

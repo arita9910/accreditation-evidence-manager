@@ -1,7 +1,8 @@
 {
   "version": "SEA-CU 2025 v3",
-  "estado": "parcial",
+  "estado": "confirmado",
   "fuentes": [
+    "docs/fuentes/Manual implementación SEA-CU 2025.md",
     "docs/origin-plans/01-modelo-de-datos.md",
     "docs/origin-plans/03-modulo-estructura.md",
     "docs/origin-plans/09-modulo-cuantitativos.md",
@@ -11,14 +12,15 @@
     "modelos": 11,
     "identificadores_confirmados": 11,
     "nombres_pendientes": 0,
-    "celdas_pendientes": 11
+    "campos_confirmados": 74,
+    "modelos_con_preguntas_abiertas": 0
   },
-  "nota": "El Manual (Anexo 6) y la plantilla Excel vacía no están disponibles en las fuentes del repositorio. Se conservan las referencias de modelos del catálogo; los nombres, números RM36 y celdas no disponibles quedan pendientes, sin inferir valores.",
+  "nota": "Las celdas del Manual SEA-CU 2025 se registran con etiquetas exactas de fila y columna para preservar la correspondencia de la pantalla.",
   "modelos": [
     {
       "codigo": "M1",
       "numero": 1,
-      "estado": "parcial",
+      "estado": "confirmado",
       "nombre": {
         "valor": "Resumen del claustro",
         "estado": "confirmado"
@@ -36,20 +38,48 @@
         "fuente": "docs/Catálogo SEA-CU 2025 — criterios, evidencias y valoración v3 - Untitled.csv"
       },
       "celdas": {
-        "estado": "pendiente",
-        "items": [],
-        "campos_definidos_por_el_plan": [
-          "fila",
-          "columna",
-          "tipo_valor",
-          "orden"
-        ]
+        "estado": "confirmado",
+        "items": [
+          {
+            "fila": 1,
+            "columna": 1,
+            "tipo_valor": "entero",
+            "orden": 1,
+            "etiqueta_fila": "Total del claustro",
+            "etiqueta_columna": "Acreditación anterior"
+          },
+          {
+            "fila": 1,
+            "columna": 2,
+            "tipo_valor": "porcentaje",
+            "orden": 2,
+            "etiqueta_fila": "Total del claustro",
+            "etiqueta_columna": "%"
+          },
+          {
+            "fila": 1,
+            "columna": 3,
+            "tipo_valor": "entero",
+            "orden": 3,
+            "etiqueta_fila": "Total del claustro",
+            "etiqueta_columna": "Acreditación actual"
+          },
+          {
+            "fila": 1,
+            "columna": 4,
+            "tipo_valor": "porcentaje",
+            "orden": 4,
+            "etiqueta_fila": "Total del claustro",
+            "etiqueta_columna": "%"
+          }
+        ],
+        "preguntas_abiertas": []
       }
     },
     {
       "codigo": "M2",
       "numero": 2,
-      "estado": "parcial",
+      "estado": "confirmado",
       "nombre": {
         "valor": "Publicaciones",
         "estado": "confirmado"
@@ -67,20 +97,64 @@
         "fuente": "docs/Catálogo SEA-CU 2025 — criterios, evidencias y valoración v3 - Untitled.csv"
       },
       "celdas": {
-        "estado": "pendiente",
-        "items": [],
-        "campos_definidos_por_el_plan": [
-          "fila",
-          "columna",
-          "tipo_valor",
-          "orden"
-        ]
+        "estado": "confirmado",
+        "items": [
+          {
+            "fila": 1,
+            "columna": 1,
+            "tipo_valor": "entero",
+            "orden": 1,
+            "etiqueta_fila": "Artículo grupo I",
+            "etiqueta_columna": "5"
+          },
+          {
+            "fila": 1,
+            "columna": 2,
+            "tipo_valor": "entero",
+            "orden": 2,
+            "etiqueta_fila": "Artículo grupo II",
+            "etiqueta_columna": "4"
+          },
+          {
+            "fila": 1,
+            "columna": 3,
+            "tipo_valor": "entero",
+            "orden": 3,
+            "etiqueta_fila": "Artículo grupo III",
+            "etiqueta_columna": "3"
+          },
+          {
+            "fila": 1,
+            "columna": 4,
+            "tipo_valor": "entero",
+            "orden": 4,
+            "etiqueta_fila": "Artículo grupo IV",
+            "etiqueta_columna": "2"
+          },
+          {
+            "fila": 1,
+            "columna": 5,
+            "tipo_valor": "entero",
+            "orden": 5,
+            "etiqueta_fila": "Artículo sin grupo",
+            "etiqueta_columna": "1"
+          },
+          {
+            "fila": 1,
+            "columna": 6,
+            "tipo_valor": "entero",
+            "orden": 6,
+            "etiqueta_fila": "Libro",
+            "etiqueta_columna": "TOTAL"
+          }
+        ],
+        "preguntas_abiertas": []
       }
     },
     {
       "codigo": "M3",
       "numero": 3,
-      "estado": "parcial",
+      "estado": "confirmado",
       "nombre": {
         "valor": "Presentación de ponencias en eventos",
         "estado": "confirmado"
@@ -97,20 +171,64 @@
         "fuente": "docs/Catálogo SEA-CU 2025 — criterios, evidencias y valoración v3 - Untitled.csv"
       },
       "celdas": {
-        "estado": "pendiente",
-        "items": [],
-        "campos_definidos_por_el_plan": [
-          "fila",
-          "columna",
-          "tipo_valor",
-          "orden"
-        ]
+        "estado": "confirmado",
+        "items": [
+          {
+            "fila": 1,
+            "columna": 1,
+            "tipo_valor": "entero",
+            "orden": 1,
+            "etiqueta_fila": "Internacional",
+            "etiqueta_columna": "-5"
+          },
+          {
+            "fila": 1,
+            "columna": 2,
+            "tipo_valor": "entero",
+            "orden": 2,
+            "etiqueta_fila": "Nacional",
+            "etiqueta_columna": "-4"
+          },
+          {
+            "fila": 1,
+            "columna": 3,
+            "tipo_valor": "entero",
+            "orden": 3,
+            "etiqueta_fila": "Provincial",
+            "etiqueta_columna": "-3"
+          },
+          {
+            "fila": 1,
+            "columna": 4,
+            "tipo_valor": "entero",
+            "orden": 4,
+            "etiqueta_fila": "Municipal",
+            "etiqueta_columna": "-2"
+          },
+          {
+            "fila": 1,
+            "columna": 5,
+            "tipo_valor": "entero",
+            "orden": 5,
+            "etiqueta_fila": "De base",
+            "etiqueta_columna": "-1"
+          },
+          {
+            "fila": 1,
+            "columna": 6,
+            "tipo_valor": "entero",
+            "orden": 6,
+            "etiqueta_fila": "TOTAL",
+            "etiqueta_columna": "TOTAL"
+          }
+        ],
+        "preguntas_abiertas": []
       }
     },
     {
       "codigo": "M4",
       "numero": 4,
-      "estado": "parcial",
+      "estado": "confirmado",
       "nombre": {
         "valor": "Proyectos de investigación",
         "estado": "confirmado"
@@ -128,20 +246,80 @@
         "fuente": "docs/Catálogo SEA-CU 2025 — criterios, evidencias y valoración v3 - Untitled.csv"
       },
       "celdas": {
-        "estado": "pendiente",
-        "items": [],
-        "campos_definidos_por_el_plan": [
-          "fila",
-          "columna",
-          "tipo_valor",
-          "orden"
-        ]
+        "estado": "confirmado",
+        "items": [
+          {
+            "fila": 1,
+            "columna": 1,
+            "tipo_valor": "entero",
+            "orden": 1,
+            "etiqueta_fila": "Proyecto",
+            "etiqueta_columna": "No."
+          },
+          {
+            "fila": 1,
+            "columna": 2,
+            "tipo_valor": "texto",
+            "orden": 2,
+            "etiqueta_fila": "Proyecto de investigación",
+            "etiqueta_columna": "Proyecto"
+          },
+          {
+            "fila": 1,
+            "columna": 3,
+            "tipo_valor": "entero",
+            "orden": 3,
+            "etiqueta_fila": "Tipo de proyecto",
+            "etiqueta_columna": "PAP"
+          },
+          {
+            "fila": 1,
+            "columna": 4,
+            "tipo_valor": "entero",
+            "orden": 4,
+            "etiqueta_fila": "Tipo de proyecto",
+            "etiqueta_columna": "PNAP"
+          },
+          {
+            "fila": 1,
+            "columna": 5,
+            "tipo_valor": "entero",
+            "orden": 5,
+            "etiqueta_fila": "Tipo de proyecto",
+            "etiqueta_columna": "P. Internacional"
+          },
+          {
+            "fila": 1,
+            "columna": 6,
+            "tipo_valor": "texto",
+            "orden": 6,
+            "etiqueta_fila": "Plazo de realización",
+            "etiqueta_columna": "Desde"
+          },
+          {
+            "fila": 1,
+            "columna": 7,
+            "tipo_valor": "texto",
+            "orden": 7,
+            "etiqueta_fila": "Plazo de realización",
+            "etiqueta_columna": "Hasta"
+          },
+          {
+            "fila": 1,
+            "columna": 8,
+            "tipo_valor": "texto",
+            "orden": 8,
+            "etiqueta_fila": "Nivel de participación",
+            "etiqueta_columna": "J de Proyecto"
+          }
+        ],
+        "preguntas_abiertas": []
       }
     },
     {
       "codigo": "M5",
       "numero": 5,
-      "estado": "parcial",
+      "estado": "confirmado",
       "nombre": {
         "valor": "Incorporación a proyectos de investigación",
         "estado": "confirmado"
@@ -160,20 +338,80 @@
         "fuente": "docs/Catálogo SEA-CU 2025 — criterios, evidencias y valoración v3 - Untitled.csv"
       },
       "celdas": {
-        "estado": "pendiente",
-        "items": [],
-        "campos_definidos_por_el_plan": [
-          "fila",
-          "columna",
-          "tipo_valor",
-          "orden"
-        ]
+        "estado": "confirmado",
+        "items": [
+          {
+            "fila": 1,
+            "columna": 1,
+            "tipo_valor": "entero",
+            "orden": 1,
+            "etiqueta_fila": "Proyectos de investigación del claustro",
+            "etiqueta_columna": "PAP"
+          },
+          {
+            "fila": 1,
+            "columna": 2,
+            "tipo_valor": "entero",
+            "orden": 2,
+            "etiqueta_fila": "Proyectos de investigación del claustro",
+            "etiqueta_columna": "PNAP"
+          },
+          {
+            "fila": 1,
+            "columna": 3,
+            "tipo_valor": "entero",
+            "orden": 3,
+            "etiqueta_fila": "Proyectos de investigación del claustro",
+            "etiqueta_columna": "Internacionales"
+          },
+          {
+            "fila": 1,
+            "columna": 4,
+            "tipo_valor": "entero",
+            "orden": 4,
+            "etiqueta_fila": "Proyectos de investigación del claustro",
+            "etiqueta_columna": "TOTAL"
+          },
+          {
+            "fila": 1,
+            "columna": 5,
+            "tipo_valor": "entero",
+            "orden": 5,
+            "etiqueta_fila": "Estudiantes investigando",
+            "etiqueta_columna": "1"
+          },
+          {
+            "fila": 1,
+            "columna": 6,
+            "tipo_valor": "entero",
+            "orden": 6,
+            "etiqueta_fila": "Estudiantes investigando",
+            "etiqueta_columna": "2"
+          },
+          {
+            "fila": 1,
+            "columna": 7,
+            "tipo_valor": "entero",
+            "orden": 7,
+            "etiqueta_fila": "Estudiantes investigando",
+            "etiqueta_columna": "3"
+          },
+          {
+            "fila": 1,
+            "columna": 8,
+            "tipo_valor": "porcentaje",
+            "orden": 8,
+            "etiqueta_fila": "Estudiantes investigando",
+            "etiqueta_columna": "%"
+          }
+        ],
+        "preguntas_abiertas": []
       }
     },
     {
       "codigo": "M6",
       "numero": 6,
-      "estado": "parcial",
+      "estado": "confirmado",
       "nombre": {
         "valor": "Incorporación a proyectos comunitarios y extensionistas",
         "estado": "confirmado"
@@ -191,20 +429,80 @@
         "fuente": "docs/Catálogo SEA-CU 2025 — criterios, evidencias y valoración v3 - Untitled.csv"
       },
       "celdas": {
-        "estado": "pendiente",
-        "items": [],
-        "campos_definidos_por_el_plan": [
-          "fila",
-          "columna",
-          "tipo_valor",
-          "orden"
-        ]
+        "estado": "confirmado",
+        "items": [
+          {
+            "fila": 1,
+            "columna": 1,
+            "tipo_valor": "entero",
+            "orden": 1,
+            "etiqueta_fila": "Proyectos",
+            "etiqueta_columna": "Comunitario"
+          },
+          {
+            "fila": 1,
+            "columna": 2,
+            "tipo_valor": "entero",
+            "orden": 2,
+            "etiqueta_fila": "Proyectos",
+            "etiqueta_columna": "Extensionista"
+          },
+          {
+            "fila": 1,
+            "columna": 3,
+            "tipo_valor": "entero",
+            "orden": 3,
+            "etiqueta_fila": "Proyectos",
+            "etiqueta_columna": "Educativo"
+          },
+          {
+            "fila": 1,
+            "columna": 4,
+            "tipo_valor": "entero",
+            "orden": 4,
+            "etiqueta_fila": "Proyectos",
+            "etiqueta_columna": "Cultural"
+          },
+          {
+            "fila": 1,
+            "columna": 5,
+            "tipo_valor": "entero",
+            "orden": 5,
+            "etiqueta_fila": "Proyectos",
+            "etiqueta_columna": "Deportivo"
+          },
+          {
+            "fila": 1,
+            "columna": 6,
+            "tipo_valor": "entero",
+            "orden": 6,
+            "etiqueta_fila": "Proyectos",
+            "etiqueta_columna": "TOTAL"
+          },
+          {
+            "fila": 1,
+            "columna": 7,
+            "tipo_valor": "entero",
+            "orden": 7,
+            "etiqueta_fila": "Estudiantes incorporados",
+            "etiqueta_columna": "1"
+          },
+          {
+            "fila": 1,
+            "columna": 8,
+            "tipo_valor": "porcentaje",
+            "orden": 8,
+            "etiqueta_fila": "Estudiantes incorporados",
+            "etiqueta_columna": "%"
+          }
+        ],
+        "preguntas_abiertas": []
       }
     },
     {
       "codigo": "M7",
       "numero": 7,
-      "estado": "parcial",
+      "estado": "confirmado",
       "nombre": {
         "valor": "Resumen de los premios obtenidos",
         "estado": "confirmado"
@@ -223,20 +521,72 @@
         "fuente": "docs/Catálogo SEA-CU 2025 — criterios, evidencias y valoración v3 - Untitled.csv"
       },
       "celdas": {
-        "estado": "pendiente",
-        "items": [],
-        "campos_definidos_por_el_plan": [
-          "fila",
-          "columna",
-          "tipo_valor",
-          "orden"
-        ]
+        "estado": "confirmado",
+        "items": [
+          {
+            "fila": 1,
+            "columna": 1,
+            "tipo_valor": "entero",
+            "orden": 1,
+            "etiqueta_fila": "Premio nacional de la ACC",
+            "etiqueta_columna": "5"
+          },
+          {
+            "fila": 1,
+            "columna": 2,
+            "tipo_valor": "entero",
+            "orden": 2,
+            "etiqueta_fila": "Premio provincial de la ACC",
+            "etiqueta_columna": "4"
+          },
+          {
+            "fila": 1,
+            "columna": 3,
+            "tipo_valor": "entero",
+            "orden": 3,
+            "etiqueta_fila": "Premio nacional CITMA",
+            "etiqueta_columna": "3"
+          },
+          {
+            "fila": 1,
+            "columna": 4,
+            "tipo_valor": "entero",
+            "orden": 4,
+            "etiqueta_fila": "Premio provincial CITMA",
+            "etiqueta_columna": "2"
+          },
+          {
+            "fila": 1,
+            "columna": 5,
+            "tipo_valor": "entero",
+            "orden": 5,
+            "etiqueta_fila": "Premio BTJ",
+            "etiqueta_columna": "1"
+          },
+          {
+            "fila": 1,
+            "columna": 6,
+            "tipo_valor": "entero",
+            "orden": 6,
+            "etiqueta_fila": "Sello forjadores el futuro",
+            "etiqueta_columna": "0"
+          },
+          {
+            "fila": 1,
+            "columna": 7,
+            "tipo_valor": "entero",
+            "orden": 7,
+            "etiqueta_fila": "TOTAL",
+            "etiqueta_columna": "TOTAL"
+          }
+        ],
+        "preguntas_abiertas": []
       }
     },
     {
       "codigo": "M8",
       "numero": 8,
-      "estado": "parcial",
+      "estado": "confirmado",
       "nombre": {
         "valor": "Actividad de postgrado",
         "estado": "confirmado"
@@ -254,20 +604,72 @@
         "fuente": "docs/Catálogo SEA-CU 2025 — criterios, evidencias y valoración v3 - Untitled.csv"
       },
       "celdas": {
-        "estado": "pendiente",
-        "items": [],
-        "campos_definidos_por_el_plan": [
-          "fila",
-          "columna",
-          "tipo_valor",
-          "orden"
-        ]
+        "estado": "confirmado",
+        "items": [
+          {
+            "fila": 1,
+            "columna": 1,
+            "tipo_valor": "entero",
+            "orden": 1,
+            "etiqueta_fila": "Cursos de postgrado",
+            "etiqueta_columna": "-5"
+          },
+          {
+            "fila": 1,
+            "columna": 2,
+            "tipo_valor": "entero",
+            "orden": 2,
+            "etiqueta_fila": "Diplomado",
+            "etiqueta_columna": "-4"
+          },
+          {
+            "fila": 1,
+            "columna": 3,
+            "tipo_valor": "entero",
+            "orden": 3,
+            "etiqueta_fila": "Especialidades",
+            "etiqueta_columna": "-3"
+          },
+          {
+            "fila": 1,
+            "columna": 4,
+            "tipo_valor": "entero",
+            "orden": 4,
+            "etiqueta_fila": "Maestrías",
+            "etiqueta_columna": "-2"
+          },
+          {
+            "fila": 1,
+            "columna": 5,
+            "tipo_valor": "entero",
+            "orden": 5,
+            "etiqueta_fila": "Doctorados",
+            "etiqueta_columna": "-1"
+          },
+          {
+            "fila": 1,
+            "columna": 6,
+            "tipo_valor": "entero",
+            "orden": 6,
+            "etiqueta_fila": "TOTAL",
+            "etiqueta_columna": "0"
+          },
+          {
+            "fila": 1,
+            "columna": 7,
+            "tipo_valor": "entero",
+            "orden": 7,
+            "etiqueta_fila": "TOTAL",
+            "etiqueta_columna": "TOTAL"
+          }
+        ],
+        "preguntas_abiertas": []
       }
     },
     {
       "codigo": "M9",
       "numero": 9,
-      "estado": "parcial",
+      "estado": "confirmado",
       "nombre": {
         "valor": "Postgrados y acreditación",
         "estado": "confirmado"
@@ -284,20 +686,64 @@
         "fuente": "docs/Catálogo SEA-CU 2025 — criterios, evidencias y valoración v3 - Untitled.csv"
       },
       "celdas": {
-        "estado": "pendiente",
-        "items": [],
-        "campos_definidos_por_el_plan": [
-          "fila",
-          "columna",
-          "tipo_valor",
-          "orden"
-        ]
+        "estado": "confirmado",
+        "items": [
+          {
+            "fila": 1,
+            "columna": 1,
+            "tipo_valor": "entero",
+            "orden": 1,
+            "etiqueta_fila": "Diplomado",
+            "etiqueta_columna": "Excelencia"
+          },
+          {
+            "fila": 1,
+            "columna": 2,
+            "tipo_valor": "entero",
+            "orden": 2,
+            "etiqueta_fila": "Especialidad",
+            "etiqueta_columna": "Certificado"
+          },
+          {
+            "fila": 1,
+            "columna": 3,
+            "tipo_valor": "entero",
+            "orden": 3,
+            "etiqueta_fila": "Maestría",
+            "etiqueta_columna": "Avalado"
+          },
+          {
+            "fila": 1,
+            "columna": 4,
+            "tipo_valor": "entero",
+            "orden": 4,
+            "etiqueta_fila": "Doctorado",
+            "etiqueta_columna": "Autorizado"
+          },
+          {
+            "fila": 1,
+            "columna": 5,
+            "tipo_valor": "entero",
+            "orden": 5,
+            "etiqueta_fila": "Total Propio",
+            "etiqueta_columna": "Total"
+          },
+          {
+            "fila": 1,
+            "columna": 6,
+            "tipo_valor": "entero",
+            "orden": 6,
+            "etiqueta_fila": "Total Afin",
+            "etiqueta_columna": "Total"
+          }
+        ],
+        "preguntas_abiertas": []
       }
     },
     {
       "codigo": "M10",
       "numero": 10,
-      "estado": "parcial",
+      "estado": "confirmado",
       "nombre": {
         "valor": "Resultados de los ejercicios integradores",
         "estado": "confirmado"
@@ -314,20 +760,80 @@
         "fuente": "docs/Catálogo SEA-CU 2025 — criterios, evidencias y valoración v3 - Untitled.csv"
       },
       "celdas": {
-        "estado": "pendiente",
-        "items": [],
-        "campos_definidos_por_el_plan": [
-          "fila",
-          "columna",
-          "tipo_valor",
-          "orden"
-        ]
+        "estado": "confirmado",
+        "items": [
+          {
+            "fila": 1,
+            "columna": 1,
+            "tipo_valor": "entero",
+            "orden": 1,
+            "etiqueta_fila": "2do. Año",
+            "etiqueta_columna": "Cantidad de evaluados"
+          },
+          {
+            "fila": 1,
+            "columna": 2,
+            "tipo_valor": "entero",
+            "orden": 2,
+            "etiqueta_fila": "3er. Año",
+            "etiqueta_columna": "2"
+          },
+          {
+            "fila": 1,
+            "columna": 3,
+            "tipo_valor": "entero",
+            "orden": 3,
+            "etiqueta_fila": "4to. Año",
+            "etiqueta_columna": "3"
+          },
+          {
+            "fila": 1,
+            "columna": 4,
+            "tipo_valor": "entero",
+            "orden": 4,
+            "etiqueta_fila": "5to. Año",
+            "etiqueta_columna": "4"
+          },
+          {
+            "fila": 1,
+            "columna": 5,
+            "tipo_valor": "entero",
+            "orden": 5,
+            "etiqueta_fila": "6to. Año",
+            "etiqueta_columna": "5"
+          },
+          {
+            "fila": 1,
+            "columna": 6,
+            "tipo_valor": "porcentaje",
+            "orden": 6,
+            "etiqueta_fila": "Total",
+            "etiqueta_columna": "Aprobados"
+          },
+          {
+            "fila": 1,
+            "columna": 7,
+            "tipo_valor": "porcentaje",
+            "orden": 7,
+            "etiqueta_fila": "Total",
+            "etiqueta_columna": "Con 4 o 5"
+          },
+          {
+            "fila": 1,
+            "columna": 8,
+            "tipo_valor": "porcentaje",
+            "orden": 8,
+            "etiqueta_fila": "Total",
+            "etiqueta_columna": "Evaluados"
+          }
+        ],
+        "preguntas_abiertas": []
       }
     },
     {
       "codigo": "M11",
       "numero": 11,
-      "estado": "parcial",
+      "estado": "confirmado",
       "nombre": {
         "valor": "Resumen promoción, eficiencia, retención",
         "estado": "confirmado"
@@ -346,14 +852,58 @@
         "fuente": "docs/Catálogo SEA-CU 2025 — criterios, evidencias y valoración v3 - Untitled.csv"
       },
       "celdas": {
-        "estado": "pendiente",
-        "items": [],
-        "campos_definidos_por_el_plan": [
-          "fila",
-          "columna",
-          "tipo_valor",
-          "orden"
-        ]
+        "estado": "confirmado",
+        "items": [
+          {
+            "fila": 1,
+            "columna": 1,
+            "tipo_valor": "entero",
+            "orden": 1,
+            "etiqueta_fila": "Promoción",
+            "etiqueta_columna": "-5"
+          },
+          {
+            "fila": 1,
+            "columna": 2,
+            "tipo_valor": "entero",
+            "orden": 2,
+            "etiqueta_fila": "Retención",
+            "etiqueta_columna": "-4"
+          },
+          {
+            "fila": 1,
+            "columna": 3,
+            "tipo_valor": "entero",
+            "orden": 3,
+            "etiqueta_fila": "Eficiencia vertical",
+            "etiqueta_columna": "-3"
+          },
+          {
+            "fila": 1,
+            "columna": 4,
+            "tipo_valor": "entero",
+            "orden": 4,
+            "etiqueta_fila": "Eficiencia académica",
+            "etiqueta_columna": "-2"
+          },
+          {
+            "fila": 1,
+            "columna": 5,
+            "tipo_valor": "entero",
+            "orden": 5,
+            "etiqueta_fila": "Eficiencia ciclo",
+            "etiqueta_columna": "-1"
+          },
+          {
+            "fila": 1,
+            "columna": 6,
+            "tipo_valor": "entero",
+            "orden": 6,
+            "etiqueta_fila": "Total indicadores",
+            "etiqueta_columna": "0 - 0"
+          }
+        ],
+        "preguntas_abiertas": []
       }
     }
   ]
