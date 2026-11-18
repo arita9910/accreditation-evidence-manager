@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 
-import { cleanup, fireEvent, render, screen } from '@testing-library/react'
+import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import Cuantitativos from './Cuantitativos.jsx'
 
@@ -76,18 +76,25 @@ describe('Pantalla de cuantitativos', () => {
 
     render(<Cuantitativos usuario={{ id: 1, rol: 'director_carrera' }} />)
 
+    await waitFor(() => {
+      expect(fetchMock).toHaveBeenCalledWith('/api/ciclos/', expect.anything())
+    })
     expect(await screen.findByRole('heading', { name: 'Datos cuantitativos' })).toBeTruthy()
     expect(await screen.findByText('1,1')).toBeTruthy()
 
     fireEvent.change(screen.getByRole('textbox', { name: 'numerador-1-1' }), { target: { value: '2' } })
     fireEvent.change(screen.getByRole('textbox', { name: 'denominador-1-1' }), { target: { value: '5' } })
-    expect((await screen.findAllByText('40.0')).length).toBeGreaterThanOrEqual(1)
+    await waitFor(() => {
+      expect(screen.getAllByText('40.0').length).toBeGreaterThanOrEqual(1)
+    })
 
     fireEvent.change(screen.getByRole('textbox', { name: 'valor-1-1' }), { target: { value: '-1' } })
     fireEvent.click(screen.getByRole('button', { name: 'Guardar modelo' }))
 
-    expect(await screen.findByText('El campo (1,1) no puede ser negativo.')).toBeTruthy()
-    expect(fetchMock.mock.calls.some(([, opciones = {}]) => (opciones.method || '').toUpperCase() === 'PUT')).toBe(false)
+    await waitFor(() => {
+      expect(screen.getByText('El campo (1,1) no puede ser negativo.')).toBeTruthy()
+      expect(fetchMock.mock.calls.some(([, opciones = {}]) => (opciones.method || '').toUpperCase() === 'PUT')).toBe(false)
+    })
   })
 
   it('muestra referencia de guía y valida no negativos en criterio', async () => {
@@ -141,10 +148,15 @@ describe('Pantalla de cuantitativos', () => {
     render(<Cuantitativos usuario={{ id: 1, rol: 'director_carrera' }} />)
 
     expect(await screen.findByText(/Referencia de la Guía: Referencia en guía\./)).toBeTruthy()
+    await waitFor(() => {
+      expect(screen.getByLabelText('Valor')).toBeTruthy()
+    })
     fireEvent.change(screen.getByLabelText('Valor'), { target: { value: '-3' } })
     fireEvent.click(screen.getByRole('button', { name: 'Guardar criterio' }))
 
-    expect(await screen.findByText('El campo valor del criterio no puede ser negativo.')).toBeTruthy()
-    expect(fetchMock.mock.calls.some(([, opciones = {}]) => (opciones.method || '').toUpperCase() === 'PUT')).toBe(false)
+    await waitFor(() => {
+      expect(screen.getByText('El campo valor del criterio no puede ser negativo.')).toBeTruthy()
+      expect(fetchMock.mock.calls.some(([, opciones = {}]) => (opciones.method || '').toUpperCase() === 'PUT')).toBe(false)
+    })
   })
 })

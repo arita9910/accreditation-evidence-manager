@@ -220,6 +220,42 @@ class MejoraApiTests(TestCase):
         )
         self.assertEqual(respuesta.status_code, 403)
 
+    def test_post_plan_asigna_el_ciclo_de_la_url_y_devuelve_json(self):
+        self.plan.delete()
+        self.client.force_login(self.director)
+
+        respuesta = self.client.post(
+            f"/api/ciclos/{self.ciclo.pk}/plan/",
+            {},
+            content_type="application/json",
+        )
+
+        self.assertEqual(respuesta.status_code, 201)
+        self.assertEqual(respuesta.headers["Content-Type"], "application/json")
+        self.assertEqual(respuesta.json()["ciclo"], self.ciclo.pk)
+        self.assertTrue(PlanMejora.objects.filter(ciclo=self.ciclo).exists())
+
+    def test_post_plan_rechaza_ciclo_distinto_con_error_json(self):
+        otro_ciclo = Ciclo.objects.create(
+            carrera=self.otra_carrera,
+            version_normativa=self.version,
+            tipo="extraordinario",
+            anio_base=2027,
+            curso_inicial=2022,
+            curso_final=2026,
+            estado=Ciclo.Estado.ABIERTO,
+        )
+        self.client.force_login(self.director)
+
+        respuesta = self.client.post(
+            f"/api/ciclos/{self.ciclo.pk}/plan/",
+            {"ciclo": otro_ciclo.pk},
+            content_type="application/json",
+        )
+
+        self.assertEqual(respuesta.status_code, 400)
+        self.assertTrue(respuesta.headers["Content-Type"].startswith("application/json"))
+
     def test_api_permite_seguimiento_y_plan_anterior(self):
         self.client.force_login(self.director)
         respuesta = self.client.post(
@@ -271,3 +307,67 @@ class MejoraApiTests(TestCase):
         self.assertEqual(respuesta.status_code, 200)
         self.assertIn("plan", respuesta.json())
         self.assertIn("acciones", respuesta.json())
+
+    def test_api_acciones_devuelve_nombre_responsable(self):
+        self.client.force_login(self.director)
+
+        respuesta = self.client.get(f"/api/planes/{self.plan.pk}/acciones/")
+        self.assertEqual(respuesta.status_code, 200)
+
+        acciones = respuesta.json()
+        self.assertGreaterEqual(len(acciones), 1)
+        self.assertEqual(acciones[0]["responsable"], self.director.pk)
+        self.assertEqual(acciones[0]["responsable_nombre"], "Director Carrera")
+
+    def test_api_permite_editar_y_eliminar_accion_con_auditoria(self):
+        self.client.force_login(self.director)
+
+        respuesta = self.client.patch(
+            f"/api/acciones/{self.accion.pk}/",
+            {
+                "descripcion": "Definir el plan de mejora actualizado.",
+                "responsable": self.director.pk,
+                "fecha_limite": (date.today() + timedelta(days=20)).isoformat(),
+            },
+            content_type="application/json",
+        )
+        self.assertEqual(respuesta.status_code, 200)
+        self.accion.refresh_from_db()
+        self.assertEqual(self.accion.descripcion, "Definir el plan de mejora actualizado.")
+
+        respuesta = self.client.delete(f"/api/acciones/{self.accion.pk}/")
+        self.assertEqual(respuesta.status_code, 204)
+        self.assertFalse(AccionMejora.objects.filter(pk=self.accion.pk).exists())
+
+        registros = obtener_registros()
+        self.assertTrue(any(registro["accion"] == "actualizar_accion_mejora" for registro in registros))
+        self.assertTrue(any(registro["accion"] == "eliminar_accion_mejora" for registro in registros))
+
+    def test_api_rechaza_edicion_accion_si_ciclo_esta_cerrado(self):
+        self.client.force_login(self.director)
+        self.ciclo.estado = Ciclo.Estado.CERRADO
+        self.ciclo.fecha_cierre = date.today()
+        self.ciclo.save()
+
+        respuesta = self.client.patch(
+            f"/api/acciones/{self.accion.pk}/",
+            {"descripcion": "No debe permitir edición con ciclo cerrado."},
+            content_type="application/json",
+        )
+        self.assertEqual(respuesta.status_code, 400)
+
+    def test_api_permite_editar_plan_en_ciclo_abierto(self):
+        self.client.force_login(self.director)
+
+        respuesta = self.client.patch(
+            f"/api/planes/{self.plan.pk}/",
+            {"estado": PlanMejora.Estado.APROBADO},
+            content_type="application/json",
+        )
+        self.assertEqual(respuesta.status_code, 200)
+        self.plan.refresh_from_db()
+        self.assertEqual(self.plan.estado, PlanMejora.Estado.APROBADO)
+        self.assertEqual(self.plan.aprobado_por_id, self.director.pk)
+
+        registros = obtener_registros()
+        self.assertTrue(any(registro["accion"] == "actualizar_plan_mejora" for registro in registros))

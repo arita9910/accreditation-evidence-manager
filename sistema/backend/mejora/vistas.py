@@ -13,12 +13,13 @@ from .serializers import (
     AccionMejoraActualizarSerializer,
     AccionMejoraCrearSerializer,
     AccionMejoraSerializer,
+    PlanMejoraActualizarSerializer,
     PlanMejoraCrearSerializer,
     PlanMejoraSerializer,
     SeguimientoAccionCrearSerializer,
     SeguimientoAccionSerializer,
 )
-from .servicios import plan_ciclo_anterior
+from .servicios import eliminar_accion_mejora, plan_ciclo_anterior
 
 
 def _puede_operar(request, accion, *, objeto=None):
@@ -58,6 +59,26 @@ class CicloPlanVista(generics.GenericAPIView):
         serializer.is_valid(raise_exception=True)
         plan = serializer.save()
         return Response(PlanMejoraSerializer(plan).data, status=status.HTTP_201_CREATED)
+
+
+class PlanDetalleVista(generics.GenericAPIView):
+    permission_classes = (AllowAny,)
+    serializer_class = PlanMejoraSerializer
+
+    def get_object(self):
+        return get_object_or_404(PlanMejora.objects.select_related("ciclo", "aprobado_por"), pk=self.kwargs["pk"])
+
+    def patch(self, request, *args, **kwargs):
+        plan = self.get_object()
+        _validar_permiso(request, "crear_plan_mejora", entidad="PlanMejora", objeto=plan.ciclo)
+        serializer = PlanMejoraActualizarSerializer(
+            data=request.data,
+            context={"request": request, "plan": plan, "usuario": request.user},
+            partial=True,
+        )
+        serializer.is_valid(raise_exception=True)
+        plan = serializer.save()
+        return Response(PlanMejoraSerializer(plan).data)
 
 
 class PlanAccionesVista(generics.GenericAPIView):
@@ -112,11 +133,20 @@ class AccionDetalleVista(generics.GenericAPIView):
         accion = serializer.save()
         return Response(AccionMejoraSerializer(accion).data)
 
+    def put(self, request, *args, **kwargs):
+        return self.patch(request, *args, **kwargs)
+
     def get(self, request, *args, **kwargs):
         accion = self.get_object()
         if not _puede_operar(request, "proponer_accion", objeto=accion.plan.ciclo):
             raise PermisoSistema("No tiene permiso para consultar esta acción.", accion="proponer_accion", entidad="AccionMejora")
         return Response(AccionMejoraSerializer(accion).data)
+
+    def delete(self, request, *args, **kwargs):
+        accion = self.get_object()
+        _validar_permiso(request, "proponer_accion", entidad="AccionMejora", objeto=accion.plan.ciclo)
+        eliminar_accion_mejora(accion, usuario=request.user)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class AccionEstadoVista(generics.GenericAPIView):
@@ -207,6 +237,7 @@ class CicloPlanAnteriorVista(generics.GenericAPIView):
 
 __all__ = [
     "CicloPlanVista",
+    "PlanDetalleVista",
     "PlanAccionesVista",
     "AccionDetalleVista",
     "AccionEstadoVista",

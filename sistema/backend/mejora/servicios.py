@@ -60,6 +60,38 @@ def crear_plan_mejora(ciclo, usuario=None):
     return plan
 
 
+def actualizar_plan_mejora(plan, *, estado=None, usuario=None):
+    if plan is None:
+        raise ValidationError("Debe indicar un plan válido.")
+
+    exigir_ciclo_abierto(plan.ciclo)
+    _requerir_permiso("crear_plan_mejora", usuario, plan.ciclo)
+
+    with transaction.atomic():
+        cambios = {}
+        if estado is not None and estado != plan.estado:
+            cambios["estado_anterior"] = plan.estado
+            cambios["estado_nuevo"] = estado
+            plan.estado = estado
+            if estado == PlanMejora.Estado.APROBADO:
+                plan.aprobado_por = usuario
+            elif estado == PlanMejora.Estado.BORRADOR:
+                plan.aprobado_por = None
+        plan.full_clean()
+        plan.save()
+        registrar(
+            "actualizar_plan_mejora",
+            usuario=usuario,
+            entidad="PlanMejora",
+            detalle={
+                "id": plan.pk,
+                "ciclo_id": plan.ciclo_id,
+                **cambios,
+            },
+        )
+    return plan
+
+
 def proponer_accion(plan, debilidad, descripcion, responsable, fecha_limite, usuario=None):
     return crear_accion_mejora(
         plan,
@@ -110,6 +142,81 @@ def crear_accion_mejora(plan, debilidad, descripcion, responsable, fecha_limite,
             },
         )
     return accion
+
+
+def actualizar_accion_mejora(
+    accion,
+    *,
+    descripcion=None,
+    responsable=None,
+    fecha_limite=None,
+    valoracion_resultado=None,
+    usuario=None,
+):
+    if accion is None:
+        raise ValidationError("Debe indicar una acción válida.")
+    if usuario is None:
+        raise ValidationError("Debe indicar un usuario válido.")
+
+    exigir_ciclo_abierto(accion.plan.ciclo)
+    _requerir_permiso("proponer_accion", usuario, accion.plan.ciclo)
+
+    with transaction.atomic():
+        cambios = {}
+        if descripcion is not None and descripcion != accion.descripcion:
+            cambios["descripcion_anterior"] = accion.descripcion
+            cambios["descripcion_nueva"] = descripcion
+            accion.descripcion = descripcion
+        if responsable is not None and getattr(responsable, "pk", None) != getattr(accion.responsable, "pk", None):
+            cambios["responsable_anterior_id"] = accion.responsable_id
+            cambios["responsable_nuevo_id"] = responsable.pk
+            accion.responsable = responsable
+        if fecha_limite is not None and fecha_limite != accion.fecha_limite:
+            cambios["fecha_limite_anterior"] = str(accion.fecha_limite)
+            cambios["fecha_limite_nueva"] = str(fecha_limite)
+            accion.fecha_limite = fecha_limite
+        if valoracion_resultado is not None and valoracion_resultado != accion.valoracion_resultado:
+            cambios["valoracion_resultado_anterior"] = accion.valoracion_resultado
+            cambios["valoracion_resultado_nueva"] = valoracion_resultado
+            accion.valoracion_resultado = valoracion_resultado
+
+        accion.full_clean()
+        accion.save()
+        registrar(
+            "actualizar_accion_mejora",
+            usuario=usuario,
+            entidad="AccionMejora",
+            detalle={
+                "id": accion.pk,
+                "plan_id": accion.plan_id,
+                **cambios,
+            },
+        )
+    return accion
+
+
+def eliminar_accion_mejora(accion, *, usuario=None):
+    if accion is None:
+        raise ValidationError("Debe indicar una acción válida.")
+    if usuario is None:
+        raise ValidationError("Debe indicar un usuario válido.")
+
+    exigir_ciclo_abierto(accion.plan.ciclo)
+    _requerir_permiso("proponer_accion", usuario, accion.plan.ciclo)
+
+    with transaction.atomic():
+        detalle = {
+            "id": accion.pk,
+            "plan_id": accion.plan_id,
+            "debilidad_id": accion.debilidad_id,
+        }
+        accion.delete()
+        registrar(
+            "eliminar_accion_mejora",
+            usuario=usuario,
+            entidad="AccionMejora",
+            detalle=detalle,
+        )
 
 
 def cambiar_estado_accion(accion, nuevo_estado, usuario=None, nota=None):
@@ -245,8 +352,11 @@ def plan_ciclo_anterior(ciclo):
 
 __all__ = [
     "crear_plan_mejora",
+    "actualizar_plan_mejora",
     "proponer_accion",
     "crear_accion_mejora",
+    "actualizar_accion_mejora",
+    "eliminar_accion_mejora",
     "cambiar_estado_accion",
     "aprobar_accion",
     "registrar_seguimiento",

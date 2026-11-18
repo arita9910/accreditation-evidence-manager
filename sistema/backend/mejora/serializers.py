@@ -9,6 +9,8 @@ from evidencias.modelos import Evidencia
 from .models import AccionEvidencia, AccionMejora, PlanMejora, SeguimientoAccion
 from .servicios import (
     aprobar_accion,
+    actualizar_accion_mejora,
+    actualizar_plan_mejora,
     cambiar_estado_accion,
     crear_accion_mejora,
     crear_plan_mejora,
@@ -26,9 +28,21 @@ def _detalle_validacion(error):
 
 
 class PlanMejoraSerializer(serializers.ModelSerializer):
+    aprobado_por_nombre = serializers.SerializerMethodField()
+
+    def get_aprobado_por_nombre(self, obj):
+        if obj.aprobado_por is None:
+            return ""
+        nombre = " ".join(
+            parte
+            for parte in [obj.aprobado_por.nombre, obj.aprobado_por.apellidos]
+            if parte
+        ).strip()
+        return nombre or obj.aprobado_por.username
+
     class Meta:
         model = PlanMejora
-        fields = ("id", "ciclo", "estado", "aprobado_por")
+        fields = ("id", "ciclo", "estado", "aprobado_por", "aprobado_por_nombre")
         read_only_fields = fields
 
 
@@ -46,14 +60,45 @@ class PlanMejoraCrearSerializer(serializers.Serializer):
     def save(self, **kwargs):
         request = self.context.get("request")
         usuario = self.context.get("usuario") or getattr(request, "user", None)
-        ciclo = self.validated_data.get("ciclo") or self.context.get("ciclo")
+        ciclo = self.context.get("ciclo")
+        if ciclo is None:
+            raise serializers.ValidationError("Debe indicar un ciclo válido.")
         try:
             return crear_plan_mejora(ciclo, usuario=usuario)
         except DjangoValidationError as error:
             raise serializers.ValidationError(_detalle_validacion(error)) from error
 
 
+class PlanMejoraActualizarSerializer(serializers.Serializer):
+    estado = serializers.ChoiceField(choices=PlanMejora.Estado.choices, required=False)
+
+    def save(self, **kwargs):
+        request = self.context.get("request")
+        usuario = self.context.get("usuario") or getattr(request, "user", None)
+        plan = self.context["plan"]
+        try:
+            return actualizar_plan_mejora(
+                plan,
+                estado=self.validated_data.get("estado"),
+                usuario=usuario,
+            )
+        except DjangoValidationError as error:
+            raise serializers.ValidationError(_detalle_validacion(error)) from error
+
+
 class AccionMejoraSerializer(serializers.ModelSerializer):
+    responsable_nombre = serializers.SerializerMethodField()
+
+    def get_responsable_nombre(self, obj):
+        if obj.responsable is None:
+            return ""
+        nombre = " ".join(
+            parte
+            for parte in [obj.responsable.nombre, obj.responsable.apellidos]
+            if parte
+        ).strip()
+        return nombre or obj.responsable.username
+
     class Meta:
         model = AccionMejora
         fields = (
@@ -62,6 +107,7 @@ class AccionMejoraSerializer(serializers.ModelSerializer):
             "debilidad",
             "descripcion",
             "responsable",
+            "responsable_nombre",
             "fecha_limite",
             "estado",
             "valoracion_resultado",
@@ -126,8 +172,14 @@ class AccionMejoraActualizarSerializer(serializers.Serializer):
                 else:
                     accion = cambiar_estado_accion(accion, nuevo_estado, usuario=usuario, nota=nota)
             else:
-                accion.full_clean()
-                accion.save()
+                accion = actualizar_accion_mejora(
+                    accion,
+                    descripcion=accion.descripcion,
+                    responsable=accion.responsable,
+                    fecha_limite=accion.fecha_limite,
+                    valoracion_resultado=accion.valoracion_resultado,
+                    usuario=usuario,
+                )
             return accion
         except DjangoValidationError as error:
             raise serializers.ValidationError(_detalle_validacion(error)) from error
@@ -182,6 +234,7 @@ class AccionEvidenciaCrearSerializer(serializers.Serializer):
 __all__ = [
     "PlanMejoraSerializer",
     "PlanMejoraCrearSerializer",
+    "PlanMejoraActualizarSerializer",
     "AccionMejoraSerializer",
     "AccionMejoraCrearSerializer",
     "AccionMejoraActualizarSerializer",

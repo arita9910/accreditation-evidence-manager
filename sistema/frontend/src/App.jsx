@@ -8,6 +8,7 @@ import Ciclos from './paginas/Ciclos.jsx'
 import Evidencias from './paginas/Evidencias.jsx'
 import FichaCriterio from './paginas/FichaCriterio.jsx'
 import Login from './paginas/Login.jsx'
+import Mejora from './paginas/Mejora.jsx'
 import MiPerfil from './paginas/MiPerfil.jsx'
 import Cuantitativos from './paginas/Cuantitativos.jsx'
 import Usuarios from './paginas/Usuarios.jsx'
@@ -99,6 +100,7 @@ function App() {
           <Route path="/evidencias" element={<RutaProtegida autenticado={Boolean(usuario)}><Evidencias usuario={usuario} /></RutaProtegida>} />
           <Route path="/cuantitativos" element={<RutaProtegida autenticado={Boolean(usuario)}><Cuantitativos usuario={usuario} /></RutaProtegida>} />
           <Route path="/valoraciones" element={<RutaProtegida autenticado={Boolean(usuario)}><Valoraciones usuario={usuario} /></RutaProtegida>} />
+          <Route path="/mejora" element={<RutaProtegida autenticado={Boolean(usuario)}><Mejora usuario={usuario} /></RutaProtegida>} />
           <Route path="/auditoria" element={<Auditoria />} />
           <Route path="/criterios/:codigo" element={<FichaCriterio />} />
           <Route path="/protegido" element={<RutaProtegida autenticado={Boolean(usuario)}><Cargando texto="Cargando panel" /></RutaProtegida>} />

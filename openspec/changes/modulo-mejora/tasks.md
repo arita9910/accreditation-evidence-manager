@@ -20,14 +20,14 @@
 
 ## 4. Pantalla y experiencia de usuario
 
-- [ ] 4.1 Implementar la vista del plan del ciclo con acciones y vencidas resaltadas, y verificar la renderización de la UI con pruebas Vitest.
-- [ ] 4.2 Permitir proponer una acción desde una debilidad seleccionada, y verificar que la UI evita crear una acción sin elegir debilidad.
-- [ ] 4.3 Añadir el historial de seguimiento y la vista del plan anterior junto al nuevo, y verificar la interacción con el usuario y la comparación de planes.
+- [x] 4.1 Implementar la vista del plan del ciclo con acciones y vencidas resaltadas, y verificar la renderización de la UI con pruebas Vitest.
+- [x] 4.2 Permitir proponer una acción desde una debilidad seleccionada, y verificar que la UI evita crear una acción sin elegir debilidad.
+- [x] 4.3 Añadir el historial de seguimiento y la vista del plan anterior junto al nuevo, y verificar la interacción con el usuario y la comparación de planes.
 
 ## 5. Integración final y verificación
 
-- [ ] 5.1 Ejecutar la batería de pruebas del módulo de mejora y verificar que el flujo debilidad → acción → seguimiento → cumplimiento quede en verde.
-- [ ] 5.2 Actualizar la documentación de avance en `docs/avance/10-mejora.md` y verificar que el documento refleja el estado real del módulo.
+- [x] 5.1 Ejecutar la batería de pruebas del módulo de mejora y verificar que el flujo debilidad → acción → seguimiento → cumplimiento quede en verde.
+- [x] 5.2 Actualizar la documentación de avance en `docs/avance/10-mejora.md` y verificar que el documento refleja el estado real del módulo.
 
 ## Workflow follow-up
 

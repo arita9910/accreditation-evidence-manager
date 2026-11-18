@@ -6,6 +6,7 @@ app_name = "mejora"
 
 urlpatterns = [
     path("ciclos/<int:pk>/plan/", vistas.CicloPlanVista.as_view(), name="ciclo-plan"),
+    path("planes/<int:pk>/", vistas.PlanDetalleVista.as_view(), name="plan-detalle"),
     path("planes/<int:pk>/acciones/", vistas.PlanAccionesVista.as_view(), name="plan-acciones"),
     path("acciones/<int:pk>/", vistas.AccionDetalleVista.as_view(), name="accion-detalle"),
     path("acciones/<int:pk>/estado/", vistas.AccionEstadoVista.as_view(), name="accion-estado"),

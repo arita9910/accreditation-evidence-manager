@@ -196,11 +196,26 @@ class ListaUsuariosVista(APIView):
     permission_classes = (AllowAny,)
 
     def get(self, request):
-        if not PermisoAdministradorTecnico().has_permission(request, self):
+        usuario = getattr(request, "user", None)
+        if usuario is None or not getattr(usuario, "is_authenticated", False):
             request.accion_denegada = "listar_usuarios"
             request.entidad_denegada = "Usuario"
             raise PermissionDenied("No tiene permiso para listar usuarios.")
-        queryset = Usuario.objects.select_related("carrera").order_by("username")
+
+        es_admin = bool(puede(usuario, "gestionar_usuarios"))
+        if not es_admin and not puede(usuario, "proponer_accion"):
+            request.accion_denegada = "listar_usuarios"
+            request.entidad_denegada = "Usuario"
+            raise PermissionDenied("No tiene permiso para listar usuarios.")
+
+        carrera_id = request.query_params.get("carrera")
+        queryset = Usuario.objects.filter(activo=True).select_related("carrera").order_by("nombre", "apellidos", "username")
+        if carrera_id:
+            if not es_admin and str(usuario.carrera_id) != str(carrera_id):
+                raise PermissionDenied("No tiene permiso para listar usuarios de otra carrera.")
+            queryset = queryset.filter(carrera_id=carrera_id)
+        elif not es_admin:
+            queryset = queryset.filter(carrera_id=usuario.carrera_id)
         serializer = UsuarioSerializer(queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
