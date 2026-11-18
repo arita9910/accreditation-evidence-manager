@@ -2,8 +2,8 @@
 
 ## 1. Modelos
 
-- [ ] 1.1 Confirmar que `analisis` no introduce tablas ni migraciones y reutiliza los modelos existentes; verificar con `python manage.py makemigrations --check --dry-run` y que `analisis` esté registrado en `INSTALLED_APPS`
-- [ ] 1.2 Definir estructuras en memoria para estado, completitud y comparación, sin calcular ni devolver categoría de acreditación; verificar con pruebas unitarias de payload
+- [x] 1.1 Confirmar que `analisis` no introduce tablas ni migraciones y reutiliza los modelos existentes; verificar con `python manage.py makemigrations --check --dry-run` y que `analisis` esté registrado en `INSTALLED_APPS`
+- [x] 1.2 Definir estructuras en memoria para estado, completitud y comparación, sin calcular ni devolver categoría de acreditación; verificar con pruebas unitarias de payload
 
 ## 2. Servicios
 
