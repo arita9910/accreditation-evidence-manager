@@ -4,6 +4,7 @@ from rest_framework import serializers
 class CriterioEstadoSerializador(serializers.Serializer):
     id = serializers.IntegerField()
     codigo = serializers.CharField()
+    codigo_manual = serializers.CharField(allow_null=True, allow_blank=True, required=False)
     nombre = serializers.CharField()
     evidencias_clasificadas = serializers.IntegerField()
     datos_cuantitativos = serializers.BooleanField()

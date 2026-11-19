@@ -22,18 +22,18 @@
 
 ## 4. Pantallas
 
-- [ ] 4.1 Crear tablero React del estado del ciclo con árbol dimensión-indicador-criterio e indicadores visuales; verificar renderizado con Vitest
-- [ ] 4.2 Crear vista React de completitud y filtro "solo con avisos"; verificar en Vitest que oculta elementos sin avisos
-- [ ] 4.3 Crear vista React de comparación entre dos ciclos con diferencias resaltadas; verificar en Vitest el resaltado
-- [ ] 4.4 Conectar pantallas a endpoints y añadir entrada de menú por rol/permiso disponible; verificar flujos positivos y negativos en componentes
+- [x] 4.1 Crear tablero React del estado del ciclo con árbol dimensión-indicador-criterio e indicadores visuales; verificar renderizado con Vitest
+- [x] 4.2 Crear vista React de completitud y filtro "solo con avisos"; verificar en Vitest que oculta elementos sin avisos
+- [x] 4.3 Crear vista React de comparación entre dos ciclos con diferencias resaltadas; verificar en Vitest el resaltado
+- [x] 4.4 Conectar pantallas a endpoints y añadir entrada de menú por rol/permiso disponible; verificar flujos positivos y negativos en componentes
 
 ## 5. Verificación
 
-- [ ] 5.1 Ejecutar pruebas backend existentes y nuevas de `analisis` solo con SQLite; verificar paso sin dependencias nuevas
-- [ ] 5.2 Ejecutar pruebas Vitest del filtro y de diferencias
-- [ ] 5.3 Ejecutar `openspec validate modulo-analisis`
-- [ ] 5.4 Registrar resultado verificable y pendientes en `sistema/docs/avance/11-analisis.md`
-- [ ] 5.5 Realizar prueba en navegador de las tres pantallas (estado, completitud y comparación) antes de archivar; documentar evidencia y pendientes en `sistema/docs/avance/11-analisis.md`
+- [x] 5.1 Ejecutar pruebas backend existentes y nuevas de `analisis` solo con SQLite; verificar paso sin dependencias nuevas
+- [x] 5.2 Ejecutar pruebas Vitest del filtro y de diferencias
+- [x] 5.3 Ejecutar `openspec validate modulo-analisis`
+- [x] 5.4 Registrar resultado verificable y pendientes en `sistema/docs/avance/11-analisis.md`
+- [X] 5.5 Realizar prueba en navegador de las tres pantallas (estado, completitud y comparación) antes de archivar; documentar evidencia y pendientes en `sistema/docs/avance/11-analisis.md`
 
 ## Workflow follow-up
 

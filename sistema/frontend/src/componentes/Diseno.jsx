@@ -2,6 +2,7 @@ import { NavLink } from 'react-router-dom'
 
 function Diseno({ children, onLogout, usuario }) {
   const esAdmin = usuario?.rol === 'administrador_tecnico'
+  const puedeAnalizar = esAdmin || usuario?.rol === 'director_carrera'
   const autenticado = Boolean(usuario)
 
   return (
@@ -27,6 +28,11 @@ function Diseno({ children, onLogout, usuario }) {
           <li className="nav-item">
             <NavLink className="nav-link" to="/mejora">Mejora</NavLink>
           </li>
+          {puedeAnalizar ? (
+            <li className="nav-item">
+              <NavLink className="nav-link" to="/analisis">Análisis</NavLink>
+            </li>
+          ) : null}
           <li className="nav-item">
             <NavLink className="nav-link" to="/auditoria">Auditoría</NavLink>
           </li>

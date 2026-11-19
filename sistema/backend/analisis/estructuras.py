@@ -7,6 +7,7 @@ class CriterioEstado:
     id: int
     codigo: str
     nombre: str
+    codigo_manual: str | None = None
     evidencias_clasificadas: int = 0
     datos_cuantitativos: bool = False
     dato_con_respaldo: bool = False
@@ -17,6 +18,7 @@ class CriterioEstado:
         return {
             "id": self.id,
             "codigo": self.codigo,
+            "codigo_manual": self.codigo_manual,
             "nombre": self.nombre,
             "evidencias_clasificadas": self.evidencias_clasificadas,
             "datos_cuantitativos": self.datos_cuantitativos,

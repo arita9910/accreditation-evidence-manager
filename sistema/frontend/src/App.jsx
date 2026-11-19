@@ -13,6 +13,7 @@ import MiPerfil from './paginas/MiPerfil.jsx'
 import Cuantitativos from './paginas/Cuantitativos.jsx'
 import Usuarios from './paginas/Usuarios.jsx'
 import Valoraciones from './paginas/Valoraciones.jsx'
+import Analisis from './paginas/Analisis.jsx'
 
 const CLAVE_USUARIO = 'acuenta.usuario'
 
@@ -101,6 +102,7 @@ function App() {
           <Route path="/cuantitativos" element={<RutaProtegida autenticado={Boolean(usuario)}><Cuantitativos usuario={usuario} /></RutaProtegida>} />
           <Route path="/valoraciones" element={<RutaProtegida autenticado={Boolean(usuario)}><Valoraciones usuario={usuario} /></RutaProtegida>} />
           <Route path="/mejora" element={<RutaProtegida autenticado={Boolean(usuario)}><Mejora usuario={usuario} /></RutaProtegida>} />
+          <Route path="/analisis" element={<RutaProtegida autenticado={Boolean(usuario)}><Analisis usuario={usuario} /></RutaProtegida>} />
           <Route path="/auditoria" element={<Auditoria />} />
           <Route path="/criterios/:codigo" element={<FichaCriterio />} />
           <Route path="/protegido" element={<RutaProtegida autenticado={Boolean(usuario)}><Cargando texto="Cargando panel" /></RutaProtegida>} />

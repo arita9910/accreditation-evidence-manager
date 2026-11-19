@@ -8,6 +8,7 @@ from rest_framework.test import APIClient
 
 from auditoria.modelos import RegistroAuditoria
 from ciclos.modelos import Carrera, Ciclo, Facultad
+from mejora.modelos import AccionMejora, PlanMejora
 from cuantitativos.models import ValorModelo
 from estructura.models import (
     Criterio,
@@ -18,6 +19,7 @@ from estructura.models import (
     ModeloDefinicion,
     VersionNormativa,
 )
+from valoracion.models import Valoracion, ValoracionCriterio
 
 from .estructuras import (
     ComparacionPayload,
@@ -173,6 +175,81 @@ class ServiciosAnalisisTests(TestCase):
                 "debilidades_sin_accion",
             },
         )
+
+    def test_completitud_excluye_dimension_con_valoracion_por_criterio(self):
+        otra_dimension = Dimension.objects.create(
+            version=self.version,
+            codigo="2",
+            nombre="Impacto",
+            orden=2,
+        )
+        otro_indicador = Indicador.objects.create(
+            dimension=otra_dimension,
+            codigo="2.1",
+            texto="Indicador 2",
+        )
+        Criterio.objects.create(
+            indicador=otro_indicador,
+            codigo="2.1.1",
+            codigo_guia="C-2",
+            solo_en_guia=False,
+            texto="Otro criterio",
+            tipo_dato=Criterio.TipoDato.CUALITATIVO,
+            valoracion_por_categoria=False,
+        )
+        valoracion = Valoracion.objects.create(
+            ciclo=self.ciclo_b,
+            dimension=self.dimension,
+            tipo=Valoracion.Tipo.FORTALEZA,
+            texto="Fortaleza validada",
+            redactada_por=self.director,
+        )
+        ValoracionCriterio.objects.create(
+            valoracion=valoracion,
+            criterio=self.criterio,
+        )
+
+        payload = completitud(self.ciclo_b).to_dict()
+
+        self.assertNotIn(self.dimension.pk, payload["dimensiones_sin_valoracion"])
+        self.assertIn(otra_dimension.pk, payload["dimensiones_sin_valoracion"])
+
+    def test_completitud_detecta_debilidades_sin_accion(self):
+        debilidad_sin_accion = Valoracion.objects.create(
+            ciclo=self.ciclo_b,
+            dimension=self.dimension,
+            tipo=Valoracion.Tipo.DEBILIDAD,
+            texto="Debilidad sin plan",
+            redactada_por=self.director,
+        )
+        ValoracionCriterio.objects.create(
+            valoracion=debilidad_sin_accion,
+            criterio=self.criterio,
+        )
+        debilidad_con_accion = Valoracion.objects.create(
+            ciclo=self.ciclo_b,
+            dimension=self.dimension,
+            tipo=Valoracion.Tipo.DEBILIDAD,
+            texto="Debilidad con acción",
+            redactada_por=self.director,
+        )
+        ValoracionCriterio.objects.create(
+            valoracion=debilidad_con_accion,
+            criterio=self.criterio,
+        )
+        plan = PlanMejora.objects.create(ciclo=self.ciclo_b)
+        AccionMejora.objects.create(
+            plan=plan,
+            debilidad=debilidad_con_accion,
+            descripcion="Atender debilidad",
+            responsable=self.director,
+            fecha_limite=date(2032, 6, 1),
+        )
+
+        payload = completitud(self.ciclo_b).to_dict()
+
+        self.assertIn(debilidad_sin_accion.pk, payload["debilidades_sin_accion"])
+        self.assertNotIn(debilidad_con_accion.pk, payload["debilidades_sin_accion"])
 
     def test_comparar_usa_posicion_relativa_y_registra_comparacion(self):
         ValorModelo.objects.create(

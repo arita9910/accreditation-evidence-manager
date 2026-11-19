@@ -9,9 +9,10 @@ from estructura.models import (
     Criterio,
     Dimension,
     ModeloCampo,
+    ModeloDefinicion,
 )
 from evidencias.modelos import Clasificacion
-from valoracion.models import Valoracion
+from valoracion.models import Valoracion, ValoracionCriterio
 
 from .estructuras import (
     ComparacionPayload,
@@ -170,6 +171,7 @@ def estado_ciclo(ciclo, usuario=_SIN_USUARIO):
                         id=criterio.pk,
                         codigo=criterio.codigo,
                         nombre=criterio.texto,
+                        codigo_manual=criterio.codigo_manual,
                         evidencias_clasificadas=evidencias_por_criterio.get(criterio.pk, 0),
                         datos_cuantitativos=datos_cuantitativos,
                         dato_con_respaldo=dato_con_respaldo,
@@ -231,6 +233,13 @@ def completitud(ciclo, usuario=_SIN_USUARIO):
         for valor in ValorCriterio.objects.filter(ciclo=ciclo)
     }
     campos_por_modelo = {}
+    modelos_por_id = {
+        modelo.pk: {
+            "numero_modelo": modelo.numero,
+            "nombre_modelo": modelo.nombre,
+        }
+        for modelo in ModeloDefinicion.objects.filter(version=ciclo.version_normativa)
+    }
     for campo in ModeloCampo.objects.filter(
         modelo__version=ciclo.version_normativa
     ).order_by("modelo_id", "fila", "columna", "pk"):
@@ -263,6 +272,7 @@ def completitud(ciclo, usuario=_SIN_USUARIO):
                         modelos_incompletos.append(
                             {
                                 "modelo_id": modelo_id,
+                                **modelos_por_id.get(modelo_id, {}),
                                 "curso": curso,
                                 "posicion_relativa": posicion,
                                 "campos_esperados": len(campos),
@@ -305,8 +315,12 @@ def completitud(ciclo, usuario=_SIN_USUARIO):
         .prefetch_related("criterios", "acciones_mejora")
     )
     dimensiones_con_valoracion = set(
-        valoracion.dimension_id
-        for valoracion in valoraciones
+        ValoracionCriterio.objects.filter(
+            valoracion__ciclo=ciclo,
+            criterio__indicador__dimension__version=ciclo.version_normativa,
+        )
+        .values_list("criterio__indicador__dimension_id", flat=True)
+        .distinct()
     )
     dimensiones_sin_valoracion = [
         dimension.pk
@@ -316,13 +330,16 @@ def completitud(ciclo, usuario=_SIN_USUARIO):
         if dimension.pk not in dimensiones_con_valoracion
     ]
 
-    debilidades_sin_accion = []
-    for valoracion in valoraciones:
-        if (
-            valoracion.tipo == Valoracion.Tipo.DEBILIDAD
-            and not valoracion.acciones_mejora.exists()
-        ):
-            debilidades_sin_accion.append(valoracion.pk)
+    debilidades_sin_accion = list(
+        ValoracionCriterio.objects.filter(
+            valoracion__ciclo=ciclo,
+            valoracion__tipo=Valoracion.Tipo.DEBILIDAD,
+            valoracion__acciones_mejora__isnull=True,
+        )
+        .values_list("valoracion_id", flat=True)
+        .distinct()
+        .order_by("valoracion_id")
+    )
 
     return CompletitudPayload(
         ciclo_id=ciclo.pk,
