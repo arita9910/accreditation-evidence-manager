@@ -15,10 +15,10 @@
 
 ## 3. API
 
-- [ ] 3.1 Crear serializadores de estado, completitud y comparación con formato de error estándar (`codigo`, `mensaje`, `detalle`); verificar serialización de datos completos y vacíos
-- [ ] 3.2 Implementar `GET /api/ciclos/{id}/estado/` y `GET /api/ciclos/{id}/completitud/`; verificar autenticación, ámbito y consulta de ciclo cerrado
-- [ ] 3.3 Implementar `GET /api/comparaciones/?a=&b=`; verificar casos: válido, carrera distinta (400), `a`/`b` ausentes (400), `a==b` (400), ciclo inexistente (404), sin sesión y permisos de director (su carrera) + administrador técnico según comportamiento real de `puede(...)`; dejar decano, rector, miembro y par evaluador como pregunta abierta
-- [ ] 3.4 Registrar en rutas `/api/` y probar CSRF/sesión según patrón existente; verificar que los 403 queden auditados por middleware sin duplicación
+- [x] 3.1 Crear serializadores de estado, completitud y comparación con formato de error estándar (`codigo`, `mensaje`, `detalle`); verificar serialización de datos completos y vacíos
+- [x] 3.2 Implementar `GET /api/ciclos/{id}/estado/` y `GET /api/ciclos/{id}/completitud/`; verificar autenticación, ámbito y consulta de ciclo cerrado
+- [x] 3.3 Implementar `GET /api/comparaciones/?a=&b=`; verificar casos: válido, carrera distinta (400), `a`/`b` ausentes (400), `a==b` (400), ciclo inexistente (404), sin sesión y permisos de director (su carrera) + administrador técnico según comportamiento real de `puede(...)`; dejar decano, rector, miembro y par evaluador como pregunta abierta
+- [x] 3.4 Registrar en rutas `/api/` y probar CSRF/sesión según patrón existente; verificar que los 403 queden auditados por middleware sin duplicación
 
 ## 4. Pantallas
 

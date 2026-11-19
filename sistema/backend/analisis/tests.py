@@ -4,6 +4,7 @@ from decimal import Decimal
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.test import SimpleTestCase, TestCase
+from rest_framework.test import APIClient
 
 from auditoria.modelos import RegistroAuditoria
 from ciclos.modelos import Carrera, Ciclo, Facultad
@@ -277,3 +278,161 @@ class ServiciosAnalisisTests(TestCase):
         )
         self.assertNotIn("categoria", payload)
         self.assertNotIn("categoria_acreditacion", payload)
+
+
+class ApiAnalisisTests(TestCase):
+    def setUp(self):
+        self.client_api = APIClient()
+        self.facultad = Facultad.objects.create(nombre="Ingeniería")
+        self.carrera = Carrera.objects.create(facultad=self.facultad, nombre="Sistemas")
+        self.otra_carrera = Carrera.objects.create(facultad=self.facultad, nombre="Civil")
+        self.version = VersionNormativa.objects.create(
+            nombre="SEA-CU API",
+            fecha_aprobacion=date(2026, 1, 1),
+            fuentes="Fuentes",
+            activa=True,
+        )
+        self.ciclo_a = Ciclo.objects.create(
+            carrera=self.carrera,
+            version_normativa=self.version,
+            tipo="ordinario",
+            anio_base=2026,
+            curso_inicial=2021,
+            curso_final=2025,
+            estado=Ciclo.Estado.CERRADO,
+            fecha_apertura=date(2021, 9, 1),
+            fecha_cierre=date(2026, 6, 30),
+        )
+        self.ciclo_b = Ciclo.objects.create(
+            carrera=self.carrera,
+            version_normativa=self.version,
+            tipo="ordinario",
+            anio_base=2031,
+            curso_inicial=2031,
+            curso_final=2035,
+            estado=Ciclo.Estado.ABIERTO,
+            fecha_apertura=date(2031, 9, 1),
+        )
+        self.ciclo_otra = Ciclo.objects.create(
+            carrera=self.otra_carrera,
+            version_normativa=self.version,
+            tipo="ordinario",
+            anio_base=2026,
+            curso_inicial=2021,
+            curso_final=2025,
+            estado=Ciclo.Estado.CERRADO,
+            fecha_apertura=date(2021, 9, 1),
+            fecha_cierre=date(2026, 6, 30),
+        )
+        self.admin = get_user_model().objects.create_user(
+            "admin-api-analisis",
+            "clave-segura-123",
+            nombre="Administrador",
+            apellidos="Técnico",
+            email="admin-api-analisis@example.com",
+            rol=get_user_model().Rol.ADMINISTRADOR_TECNICO,
+        )
+        self.director = get_user_model().objects.create_user(
+            "director-api-analisis",
+            "clave-segura-123",
+            nombre="Director",
+            apellidos="Carrera",
+            email="director-api-analisis@example.com",
+            rol=get_user_model().Rol.DIRECTOR_CARRERA,
+            carrera=self.carrera,
+        )
+
+    def test_estado_y_completitud_aceptan_ciclo_cerrado_autenticado(self):
+        self.client_api.force_authenticate(user=self.admin)
+
+        estado = self.client_api.get(f"/api/ciclos/{self.ciclo_a.pk}/estado/")
+        completitud = self.client_api.get(
+            f"/api/ciclos/{self.ciclo_a.pk}/completitud/"
+        )
+
+        self.assertEqual(estado.status_code, 200)
+        self.assertEqual(completitud.status_code, 200)
+        self.assertIn("dimensiones", estado.json())
+        self.assertIn("criterios_sin_evidencia", completitud.json())
+
+    def test_sesion_django_puede_consultar_estado(self):
+        self.client_api.force_login(self.admin)
+
+        respuesta = self.client_api.get(
+            f"/api/ciclos/{self.ciclo_a.pk}/estado/"
+        )
+
+        self.assertEqual(respuesta.status_code, 200)
+
+    def test_apis_rechazan_sesion_ausente_con_formato_estandar(self):
+        estado = self.client_api.get(f"/api/ciclos/{self.ciclo_a.pk}/estado/")
+        comparacion = self.client_api.get(
+            f"/api/comparaciones/?a={self.ciclo_a.pk}&b={self.ciclo_b.pk}"
+        )
+
+        self.assertEqual(estado.status_code, 403)
+        self.assertEqual(comparacion.status_code, 403)
+        for respuesta in (estado, comparacion):
+            payload = respuesta.json()
+            self.assertEqual(
+                set(payload),
+                {"codigo", "mensaje", "detalle"},
+            )
+            self.assertEqual(payload["codigo"], "autenticacion_requerida")
+
+    def test_comparacion_valida_y_rechazos_basicos(self):
+        self.client_api.force_authenticate(user=self.director)
+
+        valida = self.client_api.get(
+            f"/api/comparaciones/?a={self.ciclo_a.pk}&b={self.ciclo_b.pk}"
+        )
+        faltantes = self.client_api.get("/api/comparaciones/?a=")
+        mismo = self.client_api.get(
+            f"/api/comparaciones/?a={self.ciclo_a.pk}&b={self.ciclo_a.pk}"
+        )
+        carreras_distintas = self.client_api.get(
+            f"/api/comparaciones/?a={self.ciclo_a.pk}&b={self.ciclo_otra.pk}"
+        )
+        inexistente = self.client_api.get(
+            f"/api/comparaciones/?a=999999&b={self.ciclo_b.pk}"
+        )
+
+        self.assertEqual(valida.status_code, 200)
+        self.assertEqual(faltantes.status_code, 400)
+        self.assertEqual(faltantes.json()["codigo"], "parametros_invalidos")
+        self.assertEqual(mismo.status_code, 400)
+        self.assertEqual(mismo.json()["codigo"], "comparacion_invalida")
+        self.assertEqual(carreras_distintas.status_code, 400)
+        self.assertEqual(carreras_distintas.json()["codigo"], "carreras_distintas")
+        self.assertEqual(inexistente.status_code, 404)
+        self.assertEqual(inexistente.json()["codigo"], "ciclo_no_encontrado")
+
+    def test_director_fuera_de_carrera_recibe_403_sin_registro_duplicado(self):
+        otra_director = get_user_model().objects.create_user(
+            "director-api-civil",
+            "clave-segura-123",
+            nombre="Director",
+            apellidos="Civil",
+            email="director-api-civil@example.com",
+            rol=get_user_model().Rol.DIRECTOR_CARRERA,
+            carrera=self.otra_carrera,
+        )
+        self.client_api.force_authenticate(user=otra_director)
+
+        antes = RegistroAuditoria.objects.filter(
+            accion="acceso.denegado",
+            usuario=otra_director,
+        ).count()
+        respuesta = self.client_api.get(
+            f"/api/comparaciones/?a={self.ciclo_a.pk}&b={self.ciclo_b.pk}"
+        )
+
+        self.assertEqual(respuesta.status_code, 403)
+        self.assertEqual(respuesta.json()["codigo"], "permiso_denegado")
+        self.assertEqual(
+            RegistroAuditoria.objects.filter(
+                accion="acceso.denegado",
+                usuario=otra_director,
+            ).count(),
+            antes + 1,
+        )
