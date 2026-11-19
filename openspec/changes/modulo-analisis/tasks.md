@@ -7,11 +7,11 @@
 
 ## 2. Servicios
 
-- [ ] 2.1 Implementar `estado_ciclo(ciclo)` con carga anticipada de dimensiones, indicadores, criterios, clasificaciones, valores, vínculos, valoraciones y acciones; construir aquí mismo los límites de `assertNumQueries` para recorrer árbol completo sin N+1
-- [ ] 2.2 Implementar `completitud(ciclo)` para seis **tipos de aviso** (`criterios_sin_evidencia`, `criterios_cuantitativos_sin_dato`, `datos_sin_respaldo`, `modelos_incompletos`, `dimensiones_sin_valoracion`, `debilidades_sin_accion`) reusando la consulta `datos_sin_respaldo(ciclo)` del módulo cuantitativos
-- [ ] 2.3 Implementar `comparar(ciclo_a, ciclo_b)` con validación de misma carrera y diferencias de modelos, criterios y estados de acciones; incluir propuesta provisional de emparejamiento por posición relativa del curso y `ValorCriterio` por criterio
-- [ ] 2.4 Integrar `puede(...)` y `registrar(...)` en autorización y auditoría de comparación autorizada; **no** invocar `exigir_ciclo_abierto` en endpoints de análisis por ser de solo lectura
-- [ ] 2.5 Documentar y probar discrepancias entre matriz objetivo y comportamiento real de `puede(...)` para comparación, incluyendo caso sin sesión
+- [x] 2.1 Implementar `estado_ciclo(ciclo)` con carga anticipada de dimensiones, indicadores, criterios, clasificaciones, valores, vínculos, valoraciones y acciones; construir aquí mismo los límites de `assertNumQueries` para recorrer árbol completo sin N+1
+- [x] 2.2 Implementar `completitud(ciclo)` para seis **tipos de aviso** (`criterios_sin_evidencia`, `criterios_cuantitativos_sin_dato`, `datos_sin_respaldo`, `modelos_incompletos`, `dimensiones_sin_valoracion`, `debilidades_sin_accion`) reusando la consulta `datos_sin_respaldo(ciclo)` del módulo cuantitativos
+- [x] 2.3 Implementar `comparar(ciclo_a, ciclo_b)` con validación de misma carrera y diferencias de modelos, criterios y estados de acciones; incluir propuesta provisional de emparejamiento por posición relativa del curso y `ValorCriterio` por criterio
+- [x] 2.4 Integrar `puede(...)` y `registrar(...)` en autorización y auditoría de comparación autorizada; **no** invocar `exigir_ciclo_abierto` en endpoints de análisis por ser de solo lectura
+- [x] 2.5 Documentar y probar discrepancias entre matriz objetivo y comportamiento real de `puede(...)` para comparación, incluyendo caso sin sesión
 
 ## 3. API
 

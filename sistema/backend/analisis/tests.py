@@ -1,4 +1,22 @@
-from django.test import SimpleTestCase
+from datetime import date
+from decimal import Decimal
+
+from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
+from django.test import SimpleTestCase, TestCase
+
+from auditoria.modelos import RegistroAuditoria
+from ciclos.modelos import Carrera, Ciclo, Facultad
+from cuantitativos.models import ValorModelo
+from estructura.models import (
+    Criterio,
+    CriterioModelo,
+    Dimension,
+    Indicador,
+    ModeloCampo,
+    ModeloDefinicion,
+    VersionNormativa,
+)
 
 from .estructuras import (
     ComparacionPayload,
@@ -8,6 +26,7 @@ from .estructuras import (
     EstadoCicloPayload,
     IndicadorEstado,
 )
+from .servicios import comparar, completitud, estado_ciclo
 
 
 class PayloadsAnalisisTests(SimpleTestCase):
@@ -41,6 +60,167 @@ class PayloadsAnalisisTests(SimpleTestCase):
         self.assertEqual(payload["dimensiones"][0]["indicadores"][0]["criterios"][0]["id"], 1)
         self.assertNotIn("categoria", payload)
         self.assertNotIn("categoria_acreditacion", payload)
+
+
+class ServiciosAnalisisTests(TestCase):
+    def setUp(self):
+        self.facultad = Facultad.objects.create(nombre="Ingeniería")
+        self.carrera = Carrera.objects.create(
+            facultad=self.facultad,
+            nombre="Sistemas",
+        )
+        self.otra_carrera = Carrera.objects.create(
+            facultad=self.facultad,
+            nombre="Civil",
+        )
+        self.version = VersionNormativa.objects.create(
+            nombre="SEA-CU 2025",
+            fecha_aprobacion=date(2025, 1, 1),
+            fuentes="Fuentes",
+            activa=True,
+        )
+        self.dimension = Dimension.objects.create(
+            version=self.version,
+            codigo="1",
+            nombre="Pertinencia",
+            orden=1,
+        )
+        self.indicador = Indicador.objects.create(
+            dimension=self.dimension,
+            codigo="1.1",
+            texto="Indicador",
+        )
+        self.criterio = Criterio.objects.create(
+            indicador=self.indicador,
+            codigo="1.1.1",
+            codigo_guia="C-1",
+            solo_en_guia=False,
+            texto="Criterio",
+            tipo_dato=Criterio.TipoDato.CUANTITATIVO,
+            valoracion_por_categoria=False,
+        )
+        self.modelo = ModeloDefinicion.objects.create(
+            version=self.version,
+            numero=1,
+            nombre="Modelo",
+        )
+        self.campo = ModeloCampo.objects.create(
+            modelo=self.modelo,
+            fila=1,
+            columna=1,
+            tipo_valor=ModeloCampo.TipoValor.PORCENTAJE,
+            orden=1,
+        )
+        CriterioModelo.objects.create(
+            criterio=self.criterio,
+            modelo=self.modelo,
+        )
+        self.ciclo_a = Ciclo.objects.create(
+            carrera=self.carrera,
+            version_normativa=self.version,
+            tipo="ordinario",
+            anio_base=2026,
+            curso_inicial=2021,
+            curso_final=2025,
+            estado=Ciclo.Estado.CERRADO,
+            fecha_apertura=date(2021, 9, 1),
+            fecha_cierre=date(2026, 6, 30),
+        )
+        self.ciclo_b = Ciclo.objects.create(
+            carrera=self.carrera,
+            version_normativa=self.version,
+            tipo="ordinario",
+            anio_base=2031,
+            curso_inicial=2031,
+            curso_final=2035,
+            estado=Ciclo.Estado.ABIERTO,
+            fecha_apertura=date(2031, 9, 1),
+        )
+        self.director = get_user_model().objects.create_user(
+            "director-analisis",
+            "clave-segura-123",
+            nombre="Director",
+            apellidos="Análisis",
+            email="director-analisis@example.com",
+            rol=get_user_model().Rol.DIRECTOR_CARRERA,
+            carrera=self.carrera,
+        )
+
+    def test_estado_ciclo_cerrado_recorre_arbol_sin_calcular_categoria(self):
+        payload = estado_ciclo(self.ciclo_a).to_dict()
+
+        self.assertEqual(payload["ciclo_id"], self.ciclo_a.pk)
+        self.assertEqual(payload["dimensiones"][0]["indicadores"][0]["criterios"][0]["id"], self.criterio.pk)
+        self.assertNotIn("categoria", payload)
+
+    def test_completitud_devuelve_los_seis_tipos_de_aviso_y_modelo_incompleto(self):
+        payload = completitud(self.ciclo_a).to_dict()
+
+        self.assertIn(self.criterio.pk, payload["criterios_sin_evidencia"])
+        self.assertIn(self.criterio.pk, payload["criterios_cuantitativos_sin_dato"])
+        self.assertIn(self.dimension.pk, payload["dimensiones_sin_valoracion"])
+        self.assertEqual(len(payload["modelos_incompletos"]), 5)
+        self.assertEqual(
+            set(payload),
+            {
+                "ciclo_id",
+                "criterios_sin_evidencia",
+                "criterios_cuantitativos_sin_dato",
+                "datos_sin_respaldo",
+                "modelos_incompletos",
+                "dimensiones_sin_valoracion",
+                "debilidades_sin_accion",
+            },
+        )
+
+    def test_comparar_usa_posicion_relativa_y_registra_comparacion(self):
+        ValorModelo.objects.create(
+            ciclo=self.ciclo_a,
+            campo=self.campo,
+            curso=2021,
+            valor=Decimal("50"),
+        )
+        ValorModelo.objects.create(
+            ciclo=self.ciclo_b,
+            campo=self.campo,
+            curso=2031,
+            valor=Decimal("75"),
+        )
+
+        payload = comparar(
+            self.ciclo_a,
+            self.ciclo_b,
+            usuario=self.director,
+        ).to_dict()
+
+        self.assertEqual(len(payload["diferencias_modelos"]), 1)
+        diferencia = payload["diferencias_modelos"][0]
+        self.assertEqual(diferencia["posicion_relativa"], 0)
+        self.assertEqual(diferencia["curso_a"], 2021)
+        self.assertEqual(diferencia["curso_b"], 2031)
+        self.assertTrue(
+            RegistroAuditoria.objects.filter(
+                accion="comparar_ciclos",
+                usuario=self.director,
+            ).exists()
+        )
+
+    def test_comparar_rechaza_sesion_ausente_y_carreras_distintas(self):
+        with self.assertRaises(ValidationError):
+            comparar(self.ciclo_a, self.ciclo_b, usuario=None)
+
+        ciclo_otra = Ciclo.objects.create(
+            carrera=self.otra_carrera,
+            version_normativa=self.version,
+            tipo="ordinario",
+            anio_base=2026,
+            curso_inicial=2021,
+            curso_final=2025,
+            estado=Ciclo.Estado.ABIERTO,
+            fecha_apertura=date(2026, 1, 1),
+        )
+        with self.assertRaises(ValidationError):
+            comparar(self.ciclo_a, ciclo_otra)
 
     def test_estado_payload_vacio_tiene_lista_de_dimensiones(self):
         payload = EstadoCicloPayload(ciclo_id=7).to_dict()
