@@ -10,7 +10,7 @@ Define la composición, generación, versionado y descarga autorizada del inform
 El sistema SHALL permitir guardar textos cualitativos por sección a usuarios autorizados y SHALL rechazar la edición de ciclos cerrados.
 
 #### Scenario: Director guarda caracterización con ciclo abierto
-- **WHEN** el director de carrera o miembro autorizado envía contenido para una sección válida
+- **WHEN** un usuario con rol implementado y autorizado envía contenido para una sección válida
 - **THEN** el sistema exige que el ciclo esté abierto y persiste el texto asociado al usuario editor
 
 #### Scenario: Se intenta editar un ciclo cerrado
@@ -60,5 +60,9 @@ El sistema SHALL autorizar la descarga de versiones con una decisión centraliza
 #### Scenario: Usuario no autorizado intenta descargar
 - **WHEN** un usuario sin rol o ámbito autorizado solicita una versión
 - **THEN** el sistema deniega la operación y registra el intento
+
+#### Scenario: Regla provisional de versión final para par evaluador
+- **WHEN** el sistema evalúa qué versión puede descargar el par evaluador
+- **THEN** considera provisionalmente como final la versión con mayor `numero` del ciclo hasta que exista una marca explícita
 
 Fuentes: Plan 12, objetivo, requisitos y tareas T2-T5 en `docs/origin-plans/12-modulo-informes.md:3-18` y `docs/origin-plans/12-modulo-informes.md:28-42`; Manual 2025 en `docs/fuentes/Manual implementación SEA-CU 2025.md:176-205` y lineas sobre cuantificación en `docs/fuentes/Manual implementación SEA-CU 2025.md:1145-1145`; Resolución No.36/2024 SEA-CU en `docs/fuentes/Resolución No.36-2024 SEA-CU.md:22-27` y `docs/fuentes/Resolución No.36-2024 SEA-CU.md:68-107`.

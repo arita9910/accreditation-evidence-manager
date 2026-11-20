@@ -20,7 +20,7 @@ El sistema SHALL generar el informe real de autoevaluación como archivo DOCX ed
 ### Requirement: Aplicar formato base al prototipo
 El informe SHALL aplicar Arial de 12 puntos e interlineado sencillo al cuerpo y SHALL conservar tablas legibles y el formato de porcentajes con su relación de origen.
 
-#### Scenario: Verificación del formato del informe
+#### Scenario: Formato del informe real
 - **WHEN** se inspecciona el DOCX generado
 - **THEN** el cuerpo usa Arial de 12 puntos, interlineado sencillo y tablas legibles
 

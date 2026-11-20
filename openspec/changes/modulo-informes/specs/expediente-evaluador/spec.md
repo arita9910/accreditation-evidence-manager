@@ -6,6 +6,17 @@ Permite al par evaluador externo consultar en modo solo lectura el expediente as
 
 ## ADDED Requirements
 
+### Requirement: Conceder acceso temporal de par evaluador por ciclo
+El sistema SHALL requerir una asignación explícita del par evaluador al ciclo con `vigente_desde` y `vigente_hasta`, y SHALL usar ese intervalo para autorizar consultas y descargas del expediente.
+
+#### Scenario: Asignación vigente
+- **WHEN** existe una asignación activa para el par en el ciclo solicitado
+- **THEN** el sistema habilita el acceso de lectura y descarga dentro del alcance de ese ciclo
+
+#### Scenario: Asignación fuera de vigencia
+- **WHEN** no existe asignación o el acceso ocurre fuera del intervalo vigente
+- **THEN** el sistema rechaza el acceso y conserva trazabilidad del rechazo por la política de auditoría de denegados
+
 ### Requirement: Consultar el expediente del ciclo asignado
 El sistema SHALL entregar al par evaluador el árbol del ciclo con evidencias clasificadas, datos y vínculos únicamente para el ciclo con asignación vigente.
 
@@ -28,6 +39,10 @@ El sistema SHALL permitir la descarga de ficheros del expediente solo al par eva
 - **WHEN** `vigente_hasta` ya pasó y el par intenta consultar o descargar
 - **THEN** el sistema rechaza el acceso y registra el rechazo
 
+#### Scenario: Descarga por endpoint dedicado
+- **WHEN** el par evaluador descarga un fichero del expediente desde el endpoint de descarga
+- **THEN** el sistema valida vigencia y ámbito del ciclo antes de entregar el archivo
+
 ### Requirement: Mantener el expediente como solo lectura
 El sistema SHALL impedir cualquier operación de escritura del par evaluador y SHALL no ofrecer acciones de modificación en la interfaz de expediente.
 
@@ -48,6 +63,6 @@ El sistema SHALL registrar las consultas y descargas realizadas por el par evalu
 
 #### Scenario: Consulta o descarga rechazada
 - **WHEN** el acceso falla por asignación inexistente, caducidad o alcance incorrecto
-- **THEN** se registra el rechazo sin exponer contenido sensible
+- **THEN** el rechazo queda registrado por el mecanismo central de denegación sin exponer contenido sensible
 
 Fuentes: Plan 12, CU-19 y aceptaciones en `docs/origin-plans/12-modulo-informes.md:13-18` y `docs/origin-plans/12-modulo-informes.md:42-47`; Manual 2025 sobre función y confidencialidad de los pares evaluadores en `docs/fuentes/Manual implementación SEA-CU 2025.md:107-118`.
