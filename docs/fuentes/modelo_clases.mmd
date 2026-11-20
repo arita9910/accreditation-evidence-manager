@@ -1,0 +1,70 @@
+classDiagram
+  direction LR
+  class VersionNormativa { +nombre +fecha_aprobacion +fuentes +activa }
+  class Dimension { +codigo +nombre +orden }
+  class Indicador { +codigo +texto }
+  class Criterio { +codigo +codigo_manual +codigo_guia +solo_en_guia +texto +tipo_dato +valoracion_por_categoria +nota_normativa }
+  class EvidenciaSugerida { +texto +es_verificacion_externa }
+  class RequisitoCategoria { +categoria +texto }
+  class TipoEvidencia { +nombre +naturaleza +soporte_exigido }
+  class ModeloDefinicion { +numero +numero_rm36 +nombre }
+  class ModeloCampo { +fila +columna +tipo_valor +orden }
+  class Facultad { +nombre }
+  class Carrera { +nombre +activa }
+  class Ciclo { +tipo +anio_base +curso_inicial +curso_final +estado +categoria_obtenida +vigencia_anios +abrir() +cerrar() }
+  class Usuario { +username +nombre +email +activo }
+  class AsignacionRol { +rol +ambito +vigente_desde +vigente_hasta }
+  class AsignacionDimension { }
+  class Evidencia { +titulo +descripcion +curso_academico +soporte +custodia_original }
+  class FicheroEvidencia { +version +nombre_original +nombre_interno +tamano +tipo_mime +sha256 +vigente }
+  class Clasificacion { +clasificada_por +fecha }
+  class Valoracion { +tipo +texto }
+  class ValorModelo { +curso +valor +numerador +denominador }
+  class ValorCriterio { +curso +valor +numerador +denominador +unidad }
+  class VinculoDato { }
+  class PlanMejora { +estado +aprobado_por }
+  class AccionMejora { +descripcion +fecha_limite +estado +resultado }
+  class SeguimientoAccion { +fecha +avance +nota }
+  class TextoInforme { +seccion +contenido }
+  class VersionInforme { +numero +sha256 +paginas +metodo_conteo }
+  class RegistroAuditoria { +fecha_hora +accion +objeto_tipo +objeto_id +detalle +ip +resultado }
+  VersionNormativa "1" --> "*" Dimension
+  Dimension "1" --> "*" Indicador
+  Indicador "1" --> "*" Criterio
+  Criterio "1" --> "*" EvidenciaSugerida
+  Criterio "1" --> "*" RequisitoCategoria
+  Dimension "1" --> "*" TipoEvidencia
+  VersionNormativa "1" --> "*" ModeloDefinicion
+  ModeloDefinicion "1" --> "*" ModeloCampo
+  Criterio "*" -- "*" ModeloDefinicion
+  Facultad "1" --> "*" Carrera
+  Carrera "1" --> "*" Ciclo
+  Ciclo "0..1" --> "1" Ciclo : anterior
+  Usuario "1" --> "*" AsignacionRol
+  Usuario "1" --> "*" AsignacionDimension
+  Ciclo "1" --> "*" AsignacionDimension
+  Dimension "1" --> "*" AsignacionDimension
+  Ciclo "1" --> "*" Evidencia
+  TipoEvidencia "1" --> "*" Evidencia
+  Evidencia "1" --> "*" FicheroEvidencia
+  Evidencia "*" -- "*" Criterio : Clasificacion
+  Ciclo "1" --> "*" Valoracion
+  Dimension "1" --> "*" Valoracion
+  Valoracion "*" -- "*" Criterio
+  Valoracion "*" -- "*" Evidencia
+  Ciclo "1" --> "*" ValorModelo
+  ModeloCampo "1" --> "*" ValorModelo
+  Ciclo "1" --> "*" ValorCriterio
+  Criterio "1" --> "*" ValorCriterio
+  ValorModelo "1" --> "*" VinculoDato
+  ValorCriterio "1" --> "*" VinculoDato
+  Evidencia "1" --> "*" VinculoDato
+  Ciclo "1" --> "0..1" PlanMejora
+  PlanMejora "1" --> "*" AccionMejora
+  Valoracion "1" --> "*" AccionMejora : origina
+  Usuario "1" --> "*" AccionMejora : responsable
+  AccionMejora "1" --> "*" SeguimientoAccion
+  AccionMejora "*" -- "*" Evidencia
+  Ciclo "1" --> "*" TextoInforme
+  Ciclo "1" --> "*" VersionInforme
+  Usuario "1" --> "*" RegistroAuditoria
