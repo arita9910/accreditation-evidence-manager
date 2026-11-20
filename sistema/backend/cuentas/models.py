@@ -1,3 +1,3 @@
-﻿from .modelos import Usuario, UsuarioManager
+from .modelos import AsignacionParEvaluador, Usuario, UsuarioManager
 
-__all__ = ["Usuario", "UsuarioManager"]
+__all__ = ["Usuario", "UsuarioManager", "AsignacionParEvaluador"]

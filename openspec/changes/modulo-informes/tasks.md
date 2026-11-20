@@ -2,12 +2,12 @@
 
 ## 1. Modelos/Servicios
 
-- [ ] 1.1 Crear `TextoInforme` y `VersionInforme` con migraciones, relaciones al ciclo, editor y metadatos de versión, y verificar las migraciones y modelos bajo SQLite.
-- [ ] 1.2 Implementar la constante documentada de secciones y `guardar_texto(ciclo, seccion, contenido, usuario)` con autorización, `exigir_ciclo_abierto(ciclo)`, `puede(...)` y `registrar(...)`; verificar pruebas positivas y negativas.
-- [ ] 1.3 Extender cuentas con rol `par_evaluador` y entidad de asignación por ciclo (`vigente_desde`, `vigente_hasta`), actualizando `puede(...)`; verificar permisos y vigencia con pruebas unitarias.
-- [ ] 1.4 Implementar `generar_version(ciclo, usuario)` en transacción: ejecutar `completitud`, persistir avisos JSON sin bloquear, generar DOCX, numerar versión con `unique(ciclo, numero)`, registrar SHA-256 y método de conteo; verificar con pruebas de concurrencia básica.
-- [ ] 1.5 Implementar el almacenamiento de versiones y el cálculo de SHA-256 mediante `nucleo.almacenamiento`; verificar persistencia y huella con una versión de prueba.
-- [ ] 1.6 Implementar conteo por LibreOffice y estimación por caracteres para “cuerpo sin anexos”, incluyendo `metodo_conteo='estimado'` y advertencia de más de 50 páginas; verificar ambos métodos bajo SQLite.
+- [x] 1.1 Crear `TextoInforme` y `VersionInforme` con migraciones, relaciones al ciclo, editor y metadatos de versión, y verificar las migraciones y modelos bajo SQLite.
+- [x] 1.2 Implementar la constante documentada de secciones y `guardar_texto(ciclo, seccion, contenido, usuario)` con autorización, `exigir_ciclo_abierto(ciclo)`, `puede(...)` y `registrar(...)`; verificar pruebas positivas y negativas.
+- [x] 1.3 Extender cuentas con rol `par_evaluador` y entidad de asignación por ciclo (`vigente_desde`, `vigente_hasta`), actualizando `puede(...)`; verificar permisos y vigencia con pruebas unitarias.
+- [x] 1.4 Implementar `generar_version(ciclo, usuario)` en transacción: ejecutar `completitud`, persistir avisos JSON sin bloquear, generar DOCX, numerar versión con `unique(ciclo, numero)`, registrar SHA-256 y método de conteo; verificar con pruebas de concurrencia básica.
+- [x] 1.5 Implementar el almacenamiento de versiones y el cálculo de SHA-256 mediante `nucleo.almacenamiento`; verificar persistencia y huella con una versión de prueba.
+- [x] 1.6 Implementar conteo por LibreOffice y estimación por caracteres para “cuerpo sin anexos”, incluyendo `metodo_conteo='estimado'` y advertencia de más de 50 páginas; verificar ambos métodos bajo SQLite.
 
 ## 2. Generación DOCX
 
