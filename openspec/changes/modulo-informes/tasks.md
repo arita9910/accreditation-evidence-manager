@@ -11,10 +11,10 @@
 
 ## 2. Generación DOCX
 
-- [ ] 2.1 Implementar `generar_docx(ciclo) -> ruta` con portada, datos del ciclo, caracterización, análisis por dimensión, plan de mejora, sostenibilidad y plan anterior valorado cuando exista.
-- [ ] 2.2 Agregar fortalezas y debilidades por dimensión con criterios y referencias a evidencias por título y código; verificar títulos y referencias en el DOCX.
-- [ ] 2.3 Incorporar los 11 modelos anexos con datos del ciclo y reutilizar `valoracion.servicios.formatear_porcentaje`; verificar los modelos y las relaciones numéricas.
-- [ ] 2.4 Aplicar Arial 12 e interlineado sencillo, tablas legibles y estructura DOCX editable; abrir el resultado en Word o LibreOffice y verificar la revisión manual.
+- [x] 2.1 Implementar `generar_docx(ciclo) -> ruta` con portada, datos del ciclo, caracterización, análisis por dimensión, plan de mejora, sostenibilidad y plan anterior valorado cuando exista.
+- [x] 2.2 Agregar fortalezas y debilidades por dimensión con criterios y referencias a evidencias por título y código; verificar títulos y referencias en el DOCX.
+- [x] 2.3 Incorporar los 11 modelos anexos con datos del ciclo y reutilizar `valoracion.servicios.formatear_porcentaje`; verificar los modelos y las relaciones numéricas.
+- [x] 2.4 Aplicar Arial 12 e interlineado sencillo, tablas legibles y estructura DOCX editable; abrir el resultado en Word o LibreOffice y verificar la revisión manual.
 
 ## 3. API
 

@@ -1,5 +1,6 @@
 from tempfile import TemporaryDirectory
 from pathlib import Path
+from decimal import Decimal
 
 from docx import Document
 from docx.shared import Pt, RGBColor
@@ -10,13 +11,24 @@ from django.test import SimpleTestCase, TestCase
 from django.utils import timezone
 
 from .prototipo_docx import crear_prototipo_docx
-from .generador import CARACTERES_POR_PAGINA_ESTIMADA, contar_paginas
+from .generador import CARACTERES_POR_PAGINA_ESTIMADA, contar_paginas, generar_docx
 from .modelos import SECCIONES_INFORME_DOCUMENTADAS, TextoInforme, VersionInforme
 from .servicios import guardar_texto, generar_version
 from cuentas.modelos import AsignacionParEvaluador, Usuario
 from cuentas.permisos import puede
 from ciclos.modelos import Carrera, Ciclo, Facultad
-from estructura.modelos import VersionNormativa
+from cuantitativos.models import ValorModelo
+from estructura.modelos import (
+    Criterio,
+    Dimension,
+    Indicador,
+    ModeloCampo,
+    ModeloDefinicion,
+    TipoEvidencia,
+    VersionNormativa,
+)
+from evidencias.modelos import Evidencia
+from valoracion.models import Valoracion, ValoracionCriterio, ValoracionEvidencia
 from nucleo import almacenamiento
 
 
@@ -181,3 +193,179 @@ class ServiciosInformesTests(TestCase):
             )
         self.assertEqual(paginas, 51)
         self.assertEqual(metodo, "estimado")
+
+    def test_generar_docx_incluye_bloque_obligatorio_modelos_estilo_y_porcentaje(self):
+        guardar_texto(
+            self.ciclo,
+            "caracterizacion",
+            "Caracterización editable.",
+            self.director,
+        )
+        guardar_texto(
+            self.ciclo,
+            "plan_mejora",
+            "Plan cualitativo.",
+            self.director,
+        )
+        guardar_texto(
+            self.ciclo,
+            "estrategia_sostenibilidad",
+            "Sostenibilidad editable.",
+            self.director,
+        )
+
+        for numero in range(1, 12):
+            modelo = ModeloDefinicion.objects.create(
+                version=self.version_normativa,
+                numero=numero,
+                nombre=f"Modelo de prueba {numero}",
+            )
+            campo = ModeloCampo.objects.create(
+                modelo=modelo,
+                fila=1,
+                columna=1,
+                tipo_valor=(
+                    ModeloCampo.TipoValor.PORCENTAJE
+                    if numero == 1
+                    else ModeloCampo.TipoValor.ENTERO
+                ),
+                orden=1,
+                etiqueta_fila="Indicador",
+                etiqueta_columna="Dato",
+            )
+            ValorModelo.objects.create(
+                ciclo=self.ciclo,
+                campo=campo,
+                curso=2021,
+                valor=Decimal("86.3636") if numero == 1 else Decimal("3"),
+                numerador=Decimal("19") if numero == 1 else None,
+                denominador=Decimal("22") if numero == 1 else None,
+            )
+
+        ruta = generar_docx(self.ciclo)
+        self.assertTrue(ruta.is_file())
+
+        documento = Document(ruta)
+        titulos = [parrafo.text for parrafo in documento.paragraphs]
+        for texto in (
+            "Informe de autoevaluación",
+            "Datos del ciclo",
+            "Caracterización",
+            "Análisis por dimensión",
+            "Plan de mejora",
+            "Sostenibilidad",
+            "Modelos anexos",
+        ):
+            self.assertIn(texto, titulos)
+        for numero in range(1, 12):
+            self.assertTrue(
+                any(texto.startswith(f"Modelo {numero}:") for texto in titulos),
+            )
+
+        texto_celdas = [
+            parrafo.text
+            for tabla in documento.tables
+            for fila in tabla.rows
+            for celda in fila.cells
+            for parrafo in celda.paragraphs
+        ]
+        self.assertIn("86,4 % (19/22)", texto_celdas)
+        for encabezado in (
+            "MODELO 4. PROYECTOS DE INVESTIGACIÓN",
+            "Tipo de proyecto",
+            "Modelo 7.1 premios estudiantiles",
+            "ESTADÍSTICA DE LOS PREMIOS DEL CLAUSTRO",
+            "Excelencia",
+            "MODELO 11. RESUMEN PROMOCIÓN, EFICIENCIA, RETENCIÓN",
+        ):
+            self.assertIn(encabezado, texto_celdas)
+
+        parrafos = list(documento.paragraphs)
+        parrafos.extend(
+            parrafo
+            for tabla in documento.tables
+            for fila in tabla.rows
+            for celda in fila.cells
+            for parrafo in celda.paragraphs
+        )
+        for parrafo in parrafos:
+            self.assertEqual(parrafo.paragraph_format.line_spacing, 1.0)
+            for run in parrafo.runs:
+                self.assertEqual(run.font.name, "Arial")
+                self.assertEqual(run.font.size, Pt(12))
+
+    def test_generar_docx_incluye_fortalezas_debilidades_criterios_y_evidencias(self):
+        dimension = Dimension.objects.create(
+            version=self.version_normativa,
+            codigo="D1",
+            nombre="Dimensión de prueba",
+            orden=1,
+        )
+        indicador = Indicador.objects.create(
+            dimension=dimension,
+            codigo="I1",
+            texto="Indicador de prueba",
+        )
+        criterio = Criterio.objects.create(
+            indicador=indicador,
+            codigo="D1-I1-C1",
+            codigo_guia="D1-I1-C1-G",
+            solo_en_guia=False,
+            texto="Criterio de prueba",
+            tipo_dato=Criterio.TipoDato.CUALITATIVO,
+            valoracion_por_categoria=False,
+        )
+        tipo_evidencia = TipoEvidencia.objects.create(
+            dimension=dimension,
+            nombre="Documento",
+            naturaleza=TipoEvidencia.Naturaleza.DOCUMENTO,
+            soporte_exigido=TipoEvidencia.Soporte.DIGITAL,
+        )
+        evidencia = Evidencia.objects.create(
+            ciclo=self.ciclo,
+            tipo_evidencia=tipo_evidencia,
+            titulo="Acta de prueba",
+            periodo_desde=date(2021, 1, 1),
+            periodo_hasta=date(2025, 12, 31),
+            soporte=Evidencia.Soporte.DIGITAL,
+        )
+        fortaleza = Valoracion.objects.create(
+            ciclo=self.ciclo,
+            dimension=dimension,
+            tipo=Valoracion.Tipo.FORTALEZA,
+            texto="Fortaleza verificable.",
+            redactada_por=self.director,
+        )
+        debilidad = Valoracion.objects.create(
+            ciclo=self.ciclo,
+            dimension=dimension,
+            tipo=Valoracion.Tipo.DEBILIDAD,
+            texto="Debilidad verificable.",
+            redactada_por=self.director,
+        )
+        ValoracionCriterio.objects.create(
+            valoracion=fortaleza,
+            criterio=criterio,
+        )
+        ValoracionCriterio.objects.create(
+            valoracion=debilidad,
+            criterio=criterio,
+        )
+        ValoracionEvidencia.objects.create(
+            valoracion=fortaleza,
+            evidencia=evidencia,
+        )
+        ValoracionEvidencia.objects.create(
+            valoracion=debilidad,
+            evidencia=evidencia,
+        )
+
+        ruta = generar_docx(self.ciclo)
+        documento = Document(ruta)
+        textos = [parrafo.text for parrafo in documento.paragraphs]
+        contenido = "\n".join(textos)
+
+        self.assertIn("Fortaleza verificable.", contenido)
+        self.assertIn("Debilidad verificable.", contenido)
+        self.assertIn("D1-I1-C1", contenido)
+        self.assertIn("Acta de prueba", contenido)
