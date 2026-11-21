@@ -3,6 +3,8 @@ import { NavLink } from 'react-router-dom'
 function Diseno({ children, onLogout, usuario }) {
   const esAdmin = usuario?.rol === 'administrador_tecnico'
   const puedeAnalizar = esAdmin || usuario?.rol === 'director_carrera'
+  const puedeInformes = esAdmin || usuario?.rol === 'director_carrera'
+  const esParEvaluador = usuario?.rol === 'par_evaluador'
   const autenticado = Boolean(usuario)
 
   return (
@@ -31,6 +33,21 @@ function Diseno({ children, onLogout, usuario }) {
           {puedeAnalizar ? (
             <li className="nav-item">
               <NavLink className="nav-link" to="/analisis">Análisis</NavLink>
+            </li>
+          ) : null}
+          {puedeInformes ? (
+            <>
+              <li className="nav-item">
+                <NavLink className="nav-link" to="/informes/textos">Textos</NavLink>
+              </li>
+              <li className="nav-item">
+                <NavLink className="nav-link" to="/informes/generacion">Informes</NavLink>
+              </li>
+            </>
+          ) : null}
+          {esParEvaluador ? (
+            <li className="nav-item">
+              <NavLink className="nav-link" to="/expediente">Expediente</NavLink>
             </li>
           ) : null}
           <li className="nav-item">

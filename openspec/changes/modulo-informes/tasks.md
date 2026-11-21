@@ -26,11 +26,11 @@
 
 ## 4. Pantalla
 
-- [ ] 4.1 Crear el editor React de textos cualitativos y verificar carga, guardado y mensajes de ciclo cerrado.
-- [ ] 4.2 Crear la página de generación con avisos de completitud, historial de versiones y descarga; verificar que los avisos no bloquean el botón de generar con Vitest.
-- [ ] 4.3 Crear la vista React del expediente del par evaluador reutilizando el árbol del catálogo y evidencias; verificar que no aparecen acciones de escritura con Vitest.
+- [x] 4.1 Crear el editor React de textos cualitativos y verificar carga, guardado y mensajes de ciclo cerrado.
+- [x] 4.2 Crear la página de generación con avisos de completitud, historial de versiones y descarga; verificar que los avisos no bloquean el botón de generar con Vitest.
+- [x] 4.3 Crear la vista React del expediente del par evaluador reutilizando el árbol del catálogo y evidencias; verificar que no aparecen acciones de escritura con Vitest.
 - [ ] 4.4 Definir provisoriamente la gestión de asignación del par evaluador (Django Admin si no entra pantalla de director en este bloque) y verificar el flujo extremo a extremo.
-- [ ] 4.5 Ejecutar las pruebas Vitest enfocadas en las pantallas nuevas con `npm run test:run -- --pool=vmThreads --maxWorkers=1`.
+- [x] 4.5 Ejecutar las pruebas Vitest enfocadas en las pantallas nuevas con `npm run test:run -- --pool=vmThreads --maxWorkers=1`.
 
 ## 5. Verificación
 
