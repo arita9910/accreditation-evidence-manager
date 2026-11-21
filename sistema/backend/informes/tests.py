@@ -1,6 +1,9 @@
 from tempfile import TemporaryDirectory
 from pathlib import Path
 from decimal import Decimal
+from uuid import uuid4
+
+from django.conf import settings
 
 from docx import Document
 from docx.shared import Pt, RGBColor
@@ -27,9 +30,10 @@ from estructura.modelos import (
     TipoEvidencia,
     VersionNormativa,
 )
-from evidencias.modelos import Evidencia
+from evidencias.modelos import Evidencia, FicheroEvidencia
 from valoracion.models import Valoracion, ValoracionCriterio, ValoracionEvidencia
 from nucleo import almacenamiento
+from auditoria.modelos import RegistroAuditoria
 
 
 class PrototipoDocxTests(SimpleTestCase):
@@ -369,3 +373,173 @@ class ServiciosInformesTests(TestCase):
         self.assertIn("Debilidad verificable.", contenido)
         self.assertIn("D1-I1-C1", contenido)
         self.assertIn("Acta de prueba", contenido)
+
+
+class ApiInformesTests(TestCase):
+    def setUp(self):
+        facultad = Facultad.objects.create(nombre="Facultad API")
+        carrera = Carrera.objects.create(facultad=facultad, nombre="Carrera API")
+        version = VersionNormativa.objects.create(
+            nombre="SEA-CU API",
+            fecha_aprobacion=date(2025, 1, 1),
+            fuentes="Fuentes API",
+            activa=True,
+        )
+        self.ciclo = Ciclo.objects.create(
+            carrera=carrera,
+            version_normativa=version,
+            tipo="ordinario",
+            anio_base=2026,
+            curso_inicial=2021,
+            curso_final=2025,
+            estado=Ciclo.Estado.ABIERTO,
+            fecha_apertura=date(2026, 1, 1),
+        )
+        self.director = Usuario.objects.create_user(
+            "director-api-informes",
+            "Clave-segura-123!",
+            nombre="Director",
+            apellidos="API",
+            email="director-api-informes@example.com",
+            rol=Usuario.Rol.DIRECTOR_CARRERA,
+            carrera=carrera,
+        )
+        self.par = Usuario.objects.create_user(
+            "par-api-informes",
+            "Clave-segura-123!",
+            nombre="Par",
+            apellidos="API",
+            email="par-api-informes@example.com",
+            rol=Usuario.Rol.PAR_EVALUADOR,
+        )
+
+    def test_textos_y_versiones_requieren_permisos_y_registran_expediente(self):
+        self.client.force_login(self.director)
+        put = self.client.put(
+            f"/api/ciclos/{self.ciclo.pk}/informe/textos/caracterizacion/",
+            data={"contenido": "Texto desde API"},
+            content_type="application/json",
+        )
+        self.assertEqual(put.status_code, 200)
+
+        lista = self.client.get(
+            f"/api/ciclos/{self.ciclo.pk}/informe/textos/"
+        )
+        self.assertEqual(lista.status_code, 200)
+
+        hoy = timezone.localdate()
+        AsignacionParEvaluador.objects.create(
+            usuario=self.par,
+            ciclo=self.ciclo,
+            vigente_desde=hoy - timedelta(days=1),
+            vigente_hasta=hoy + timedelta(days=1),
+        )
+        dimension = Dimension.objects.create(
+            version=self.ciclo.version_normativa,
+            codigo="D1-API",
+            nombre="Dimensión API",
+            orden=1,
+        )
+        tipo = TipoEvidencia.objects.create(
+            dimension=dimension,
+            nombre="Documento API",
+            naturaleza=TipoEvidencia.Naturaleza.DOCUMENTO,
+            soporte_exigido=TipoEvidencia.Soporte.DIGITAL,
+        )
+        evidencia = Evidencia.objects.create(
+            ciclo=self.ciclo,
+            tipo_evidencia=tipo,
+            titulo="Evidencia API",
+            periodo_desde=date(2021, 1, 1),
+            periodo_hasta=date(2025, 12, 31),
+            soporte=Evidencia.Soporte.DIGITAL,
+        )
+        nombre_interno = uuid4()
+        fichero = FicheroEvidencia.objects.create(
+            evidencia=evidencia,
+            version=1,
+            nombre_original="prueba.txt",
+            nombre_interno=nombre_interno,
+            tamano=4,
+            tipo_mime="text/plain",
+            sha256="0" * 64,
+            vigente=True,
+            subido_por=self.director,
+        )
+        ruta_fichero = (
+            Path(settings.EVIDENCIAS_ROOT)
+            / "ciclos"
+            / str(evidencia.pk)
+            / "evidencias"
+        )
+        ruta_fichero.mkdir(parents=True, exist_ok=True)
+        (ruta_fichero / f"{nombre_interno}.txt").write_text(
+            "API",
+            encoding="utf-8",
+        )
+        generada = self.client.post(
+            f"/api/ciclos/{self.ciclo.pk}/informe/generar/",
+        )
+        self.assertEqual(generada.status_code, 201)
+        version_id = generada.json()["id"]
+        self.client.force_login(self.par)
+        versiones = self.client.get(
+            f"/api/ciclos/{self.ciclo.pk}/informe/versiones/"
+        )
+        self.assertEqual(versiones.status_code, 200)
+        self.assertEqual(
+            len(versiones.json()["versiones"]),
+            1,
+        )
+        self.assertEqual(
+            versiones.json()["versiones"][0]["id"],
+            version_id,
+        )
+
+        descarga_informe = self.client.get(
+            f"/api/informes/versiones/{version_id}/descarga/"
+        )
+        self.assertEqual(descarga_informe.status_code, 200)
+
+        expediente = self.client.get(
+            f"/api/ciclos/{self.ciclo.pk}/expediente/"
+        )
+        self.assertEqual(expediente.status_code, 200)
+        descarga_expediente = self.client.get(
+            f"/api/ciclos/{self.ciclo.pk}/expediente/ficheros/{fichero.pk}/descarga/"
+        )
+        self.assertEqual(descarga_expediente.status_code, 200)
+        self.assertTrue(
+            RegistroAuditoria.objects.filter(
+                accion="consultar_expediente",
+                usuario=self.par,
+            ).exists()
+        )
+
+    def test_caducidad_impide_expediente_y_usuario_sin_permiso_recibe_403(self):
+        hoy = timezone.localdate()
+        AsignacionParEvaluador.objects.create(
+            usuario=self.par,
+            ciclo=self.ciclo,
+            vigente_desde=hoy - timedelta(days=3),
+            vigente_hasta=hoy - timedelta(days=1),
+        )
+        self.client.force_login(self.par)
+        respuesta = self.client.get(
+            f"/api/ciclos/{self.ciclo.pk}/expediente/"
+        )
+        self.assertEqual(respuesta.status_code, 403)
+
+        otro = Usuario.objects.create_user(
+            "otro-api-informes",
+            "Clave-segura-123!",
+            nombre="Otro",
+            apellidos="API",
+            email="otro-api-informes@example.com",
+            rol=Usuario.Rol.PAR_EVALUADOR,
+        )
+        self.client.force_login(otro)
+        respuesta = self.client.post(
+            f"/api/ciclos/{self.ciclo.pk}/informe/generar/",
+        )
+        self.assertEqual(respuesta.status_code, 403)

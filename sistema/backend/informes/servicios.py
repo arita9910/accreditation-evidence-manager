@@ -48,6 +48,7 @@ def guardar_texto(ciclo, seccion, contenido, usuario):
 def generar_version(ciclo, usuario):
     if usuario is None or not puede(usuario, "generar_informe", objeto=ciclo):
         raise ValidationError("No tiene permiso para generar el informe.")
+    exigir_ciclo_abierto(ciclo)
 
     with transaction.atomic():
         ciclo_bloqueado = (

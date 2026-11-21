@@ -18,11 +18,11 @@
 
 ## 3. API
 
-- [ ] 3.1 Implementar `POST /api/ciclos/{id}/informe/generar/`, autorizando solo al director y exigiendo ciclo abierto; verificar permisos positivos y negativos.
-- [ ] 3.2 Implementar `GET /api/ciclos/{id}/informe/textos/` y `GET/PUT /api/ciclos/{id}/informe/textos/{seccion}/`; verificar sesión, CSRF, permisos y ciclo abierto bajo SQLite.
-- [ ] 3.3 Implementar `GET /api/ciclos/{id}/informe/versiones/` y `GET /api/informes/versiones/{id}/descarga/` para roles vigentes y regla provisional de versión final (máximo `numero`) para par evaluador; verificar permisos positivos y negativos.
-- [ ] 3.4 Implementar `GET /api/ciclos/{id}/expediente/` y `GET /api/ciclos/{id}/expediente/ficheros/{fichero_id}/descarga/` para el par evaluador con asignación vigente, sin endpoints de escritura accesibles; verificar aislamiento por ciclo y caducidad de `vigente_hasta`.
-- [ ] 3.5 Auditar explícitamente generación, descargas autorizadas y consulta exitosa del expediente con `registrar(...)`, evitando duplicar registros de denegación 403 del middleware; verificar trazabilidad.
+- [x] 3.1 Implementar `POST /api/ciclos/{id}/informe/generar/`, autorizando solo al director y exigiendo ciclo abierto; verificar permisos positivos y negativos.
+- [x] 3.2 Implementar `GET /api/ciclos/{id}/informe/textos/` y `GET/PUT /api/ciclos/{id}/informe/textos/{seccion}/`; verificar sesión, CSRF, permisos y ciclo abierto bajo SQLite.
+- [x] 3.3 Implementar `GET /api/ciclos/{id}/informe/versiones/` y `GET /api/informes/versiones/{id}/descarga/` para roles vigentes y regla provisional de versión final (máximo `numero`) para par evaluador; verificar permisos positivos y negativos.
+- [x] 3.4 Implementar `GET /api/ciclos/{id}/expediente/` y `GET /api/ciclos/{id}/expediente/ficheros/{fichero_id}/descarga/` para el par evaluador con asignación vigente, sin endpoints de escritura accesibles; verificar aislamiento por ciclo y caducidad de `vigente_hasta`.
+- [x] 3.5 Auditar explícitamente generación, descargas autorizadas y consulta exitosa del expediente con `registrar(...)`, evitando duplicar registros de denegación 403 del middleware; verificar trazabilidad.
 
 ## 4. Pantalla
 
