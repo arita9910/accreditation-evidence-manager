@@ -1,30 +1,21 @@
 # Avance del incremento 12: módulo de informes
 
-## Revisión del expediente del par evaluador
+## Resumen de implementación
 
-- Se completó la corrección del expediente para incluir el árbol vigente de dimensiones, indicadores y criterios.
-- Cada criterio incluye las fortalezas y debilidades asociadas al ciclo actual.
-- La interfaz React renderiza estos textos debajo de cada criterio y mantiene la vista sin acciones de escritura.
-- Django Admin mantiene registrada la asignación temporal del par evaluador por ciclo.
+- Se implementó la generación del informe de autoevaluación en DOCX editable con secciones obligatorias, modelos anexos y formato base.
+- Se incorporó el versionado del informe por ciclo con numeración, almacenamiento, huella SHA-256, avisos de completitud y método de conteo de páginas.
+- Se habilitaron endpoints para generar, consultar textos, listar versiones y descargar informes bajo control de permisos por rol y ciclo.
+- Se incorporó el acceso del par evaluador al expediente en modo solo lectura, limitado a asignación vigente por ciclo y sin operaciones de escritura.
+- Se ajustó la interfaz React para edición cualitativa, generación con avisos, historial de versiones y consulta del expediente del par evaluador.
 
-## Corrección visual de generación de informes
+## Verificaciones registradas del cambio
 
-- Los avisos estructurados de completitud muestran datos sin respaldo con texto legible y evitan el valor `[object Object]`.
-- La ausencia de `debilidades_sin_accion` muestra el mensaje «No hay debilidades pendientes por resolver» cuando aplica.
-- Criterios, dimensiones y debilidades pendientes se muestran como listas completas de números separados por comas.
-- La sección `modelos_incompletos` no se renderiza en generación ni en análisis, aunque esté presente en la respuesta de completitud.
-- Los avisos se presentan en una lista simple tanto en generación como en análisis de completitud.
-
-## Verificación ejecutada
-
-- Vitest: 10 archivos y 45 pruebas aprobadas con `npm run test:run -- --pool=vmThreads --maxWorkers=1`.
-- Django: 9 pruebas aprobadas en `informes.tests` bajo SQLite.
-- Django: migraciones aplicadas y verificadas con `migrate` y `showmigrations`; no quedaron migraciones pendientes.
-- Git: la ruta `media/informes/*.docx` queda ignorada por `media/`.
-- La API de expediente fue verificada con asignación vigente, caducidad y textos asociados a criterios.
+- Migraciones del bloque aplicadas y comprobadas en SQLite.
+- Pruebas backend de informes/permisos/expediente ejecutadas en SQLite.
+- Pruebas frontend (Vitest) de pantallas nuevas ejecutadas con `npm run test:run -- --pool=vmThreads --maxWorkers=1`.
+- Verificación de salida DOCX fuera de control de versiones (`git check-ignore` sobre la ruta de informes).
+- Revisión manual de DOCX de prueba largo reportada en la tarea 5.4 del cambio.
 
 ## Pendientes
 
-- Abrir manualmente un DOCX de prueba largo en Word o LibreOffice y registrar observaciones visuales.
-- Completar la validación extrema a extremo de asignación desde Django Admin.
-- Ejecutar la validación específica de PostgreSQL; no se declara probada.
+- Validación en PostgreSQL pendiente y documentada (D-14). No se declara como ejecutada en este incremento.
