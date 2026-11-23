@@ -13,6 +13,10 @@ import MiPerfil from './paginas/MiPerfil.jsx'
 import Cuantitativos from './paginas/Cuantitativos.jsx'
 import Usuarios from './paginas/Usuarios.jsx'
 import Valoraciones from './paginas/Valoraciones.jsx'
+import Analisis from './paginas/Analisis.jsx'
+import InformeTextos from './paginas/InformeTextos.jsx'
+import InformeGeneracion from './paginas/InformeGeneracion.jsx'
+import ExpedienteEvaluador from './paginas/ExpedienteEvaluador.jsx'
 
 const CLAVE_USUARIO = 'acuenta.usuario'
 
@@ -101,6 +105,10 @@ function App() {
           <Route path="/cuantitativos" element={<RutaProtegida autenticado={Boolean(usuario)}><Cuantitativos usuario={usuario} /></RutaProtegida>} />
           <Route path="/valoraciones" element={<RutaProtegida autenticado={Boolean(usuario)}><Valoraciones usuario={usuario} /></RutaProtegida>} />
           <Route path="/mejora" element={<RutaProtegida autenticado={Boolean(usuario)}><Mejora usuario={usuario} /></RutaProtegida>} />
+          <Route path="/analisis" element={<RutaProtegida autenticado={Boolean(usuario)}><Analisis usuario={usuario} /></RutaProtegida>} />
+          <Route path="/informes/textos" element={<RutaProtegida autenticado={Boolean(usuario)}><InformeTextos usuario={usuario} /></RutaProtegida>} />
+          <Route path="/informes/generacion" element={<RutaProtegida autenticado={Boolean(usuario)}><InformeGeneracion usuario={usuario} /></RutaProtegida>} />
+          <Route path="/expediente" element={<RutaProtegida autenticado={Boolean(usuario)}><ExpedienteEvaluador usuario={usuario} /></RutaProtegida>} />
           <Route path="/auditoria" element={<Auditoria />} />
           <Route path="/criterios/:codigo" element={<FichaCriterio />} />
           <Route path="/protegido" element={<RutaProtegida autenticado={Boolean(usuario)}><Cargando texto="Cargando panel" /></RutaProtegida>} />

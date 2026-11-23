@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
 from django.contrib.auth.forms import UserChangeForm, UserCreationForm
 
-from .modelos import Usuario
+from .modelos import AsignacionParEvaluador, Usuario
 
 
 class UsuarioCreationForm(UserCreationForm):
@@ -67,3 +67,10 @@ class UsuarioAdmin(DjangoUserAdmin):
             },
         ),
     )
+
+
+@admin.register(AsignacionParEvaluador)
+class AsignacionParEvaluadorAdmin(admin.ModelAdmin):
+    list_display = ("usuario", "ciclo", "vigente_desde", "vigente_hasta")
+    list_filter = ("vigente_desde", "vigente_hasta")
+    search_fields = ("usuario__username", "ciclo__tipo")

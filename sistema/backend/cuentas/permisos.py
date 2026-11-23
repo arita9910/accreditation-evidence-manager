@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from collections.abc import Iterable
 
+from django.db import models
 from rest_framework.exceptions import PermissionDenied
 
 
@@ -54,6 +55,12 @@ _PERMISOS_POR_ACCION = {
     "eliminar_valoracion": {"director_carrera", "administrador_tecnico"},
     "ver_perfil": {"administrador_tecnico", "director_carrera"},
     "cambiar_clave": {"administrador_tecnico", "director_carrera"},
+    "guardar_texto_informe": {"director_carrera"},
+    "generar_informe": {"director_carrera"},
+    "consultar_informe": {"director_carrera", "par_evaluador"},
+    "descargar_informe": {"director_carrera", "par_evaluador"},
+    "consultar_expediente": {"par_evaluador"},
+    "descargar_expediente": {"par_evaluador"},
 }
 
 
@@ -226,6 +233,30 @@ def puede(actor, accion, objeto=None, *, recurso=None, contexto=None):
     roles = set(_iterar_roles(actor))
     if "administrador_tecnico" in roles:
         return True
+
+    if "par_evaluador" in roles:
+        if nombre_accion not in {"consultar_informe", "descargar_informe", "consultar_expediente", "descargar_expediente"}:
+            return False
+        if objeto is None:
+            return False
+        ciclo_id = getattr(objeto, "pk", None)
+        if ciclo_id is None:
+            ciclo_id = getattr(objeto, "ciclo_id", None)
+        if ciclo_id is None and isinstance(objeto, int):
+            ciclo_id = objeto
+        if ciclo_id is None:
+            return False
+        from django.utils import timezone
+        from .modelos import AsignacionParEvaluador
+
+        hoy = timezone.localdate()
+        return AsignacionParEvaluador.objects.filter(
+            usuario=actor,
+            ciclo_id=ciclo_id,
+            vigente_desde__lte=hoy,
+        ).filter(
+            models.Q(vigente_hasta__isnull=True) | models.Q(vigente_hasta__gte=hoy)
+        ).exists()
 
     if "director_carrera" not in roles:
         return False
