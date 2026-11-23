@@ -55,7 +55,7 @@ afterEach(() => {
 })
 
 describe('Pantalla de análisis', () => {
-  it('renderiza el árbol dimensión-indicador-criterio con indicadores visuales', async () => {
+  it('renderiza el árbol dimensión-indicador-criterio en formato simple', async () => {
     vi.stubGlobal('fetch', vi.fn((url) => {
       const ruta = rutaApi(url)
       if (ruta === '/api/ciclos/') {
@@ -71,7 +71,7 @@ describe('Pantalla de análisis', () => {
     expect(await screen.findByText(/D1/)).toBeTruthy()
     expect(screen.getByText(/D1/)).toBeTruthy()
     expect(screen.getByText(/C1/)).toBeTruthy()
-    expect(screen.getByText('Evidencias: 2')).toBeTruthy()
+    expect(screen.getByText(/Evidencias:\s*2,/)).toBeTruthy()
   })
 
   it('oculta tipos de aviso vacíos al activar "solo con avisos"', async () => {
@@ -85,15 +85,70 @@ describe('Pantalla de análisis', () => {
 
     render(<Analisis usuario={{ rol: 'director_carrera', carrera: 1 }} />)
     fireEvent.click(await screen.findByRole('button', { name: 'Completitud' }))
-    expect(await screen.findByText('Criterios sin evidencia')).toBeTruthy()
-    expect(screen.getByText('M-1 · Plan aprobado')).toBeTruthy()
-    expect(screen.getByText('Gestión')).toBeTruthy()
-    expect(screen.getByText('Modelo 4 - Curso 2024: Faltan 3 campos')).toBeTruthy()
-    expect(screen.getByText('Dato del modelo 6 - Curso 2024 sin evidencia')).toBeTruthy()
+    expect(await screen.findByText(/criterios_sin_evidencia:/)).toBeTruthy()
+    expect(screen.getByText('3')).toBeTruthy()
+    expect(screen.getByText('4')).toBeTruthy()
+    expect(screen.queryByText(/modelos_incompletos:/)).toBeNull()
+    expect(screen.getByText(/Dato del modelo 6 - Curso 2024 sin evidencia/)).toBeTruthy()
 
     fireEvent.click(screen.getByLabelText('Solo con avisos'))
-    expect(screen.queryByText('Criterios cuantitativos sin dato')).toBeNull()
-    expect(screen.getByText('Datos sin respaldo')).toBeTruthy()
+    expect(screen.queryByText(/criterios_cuantitativos_sin_dato:/)).toBeNull()
+    expect(screen.getByText(/datos_sin_respaldo:/)).toBeTruthy()
+  })
+
+  it('muestra mensajes legibles para datos sin respaldo y debilidades sin acción vacías', async () => {
+    const completitudConMensajes = {
+      ...completitud,
+      datos_sin_respaldo: [{ descripcion: 'Dato del modelo 8 - Curso 2025 sin evidencia' }],
+      debilidades_sin_accion: [],
+    }
+
+    vi.stubGlobal('fetch', vi.fn((url) => {
+      const ruta = rutaApi(url)
+      if (ruta === '/api/ciclos/') return Promise.resolve(respuesta([{ id: 10, tipo: 'ordinario', anio_base: 2026, carrera: 1 }]))
+      if (ruta === '/api/ciclos/10/estado/') return Promise.resolve(respuesta(estado))
+      if (ruta === '/api/ciclos/10/completitud/') return Promise.resolve(respuesta(completitudConMensajes))
+      return Promise.resolve(respuesta({}, false))
+    }))
+
+    render(<Analisis usuario={{ rol: 'director_carrera', carrera: 1 }} />)
+    fireEvent.click(await screen.findByRole('button', { name: 'Completitud' }))
+
+    expect(await screen.findByText('Dato del modelo 8 - Curso 2025 sin evidencia')).toBeTruthy()
+    expect(screen.getByText('No hay debilidades pendientes por resolver')).toBeTruthy()
+  })
+
+  it('muestra los avisos extensos en formato simple', async () => {
+    const completitudExtensa = {
+      ...completitud,
+      criterios_sin_evidencia: Array.from({ length: 60 }, (_, indice) => indice + 1),
+      criterios_cuantitativos_sin_dato: Array.from({ length: 8 }, (_, indice) => indice + 1),
+      modelos_incompletos: Array.from({ length: 4 }, (_, indice) => ({
+        modelo_id: indice + 1,
+        campos_esperados: 8,
+        campos_presentes: 5,
+      })),
+      dimensiones_sin_valoracion: [1, 2, 3],
+      debilidades_sin_accion: [4, 5, 6],
+    }
+
+    vi.stubGlobal('fetch', vi.fn((url) => {
+      const ruta = rutaApi(url)
+      if (ruta === '/api/ciclos/') return Promise.resolve(respuesta([{ id: 10, tipo: 'ordinario', anio_base: 2026, carrera: 1 }]))
+      if (ruta === '/api/ciclos/10/estado/') return Promise.resolve(respuesta(estado))
+      if (ruta === '/api/ciclos/10/completitud/') return Promise.resolve(respuesta(completitudExtensa))
+      return Promise.resolve(respuesta({}, false))
+    }))
+
+    render(<Analisis usuario={{ rol: 'director_carrera', carrera: 1 }} />)
+    fireEvent.click(await screen.findByRole('button', { name: 'Completitud' }))
+
+    expect((await screen.findByText(/criterios_sin_evidencia:/)).closest('p').textContent).toBe(`criterios_sin_evidencia: ${Array.from({ length: 60 }, (_, indice) => indice + 1).join(', ')}`)
+    expect(screen.getByText(/criterios_cuantitativos_sin_dato:/).closest('p').textContent).toBe(`criterios_cuantitativos_sin_dato: ${Array.from({ length: 8 }, (_, indice) => indice + 1).join(', ')}`)
+    expect(screen.getByText(/dimensiones_sin_valoracion:/).closest('p').textContent).toBe('dimensiones_sin_valoracion: 1, 2, 3')
+    expect(screen.getByText(/debilidades_sin_accion:/).closest('p').textContent).toBe('debilidades_sin_accion: 4, 5, 6')
+    expect(screen.queryByText(/modelos_incompletos:/)).toBeNull()
+    expect(screen.queryByText('... y 57 más')).toBeNull()
   })
 
   it('conecta la comparación y resalta las diferencias devueltas por el endpoint', async () => {

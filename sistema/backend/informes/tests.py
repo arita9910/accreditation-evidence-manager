@@ -454,6 +454,42 @@ class ApiInformesTests(TestCase):
             periodo_hasta=date(2025, 12, 31),
             soporte=Evidencia.Soporte.DIGITAL,
         )
+        indicador = Indicador.objects.create(
+            dimension=dimension,
+            codigo="I1-API",
+            texto="Indicador API",
+        )
+        criterio = Criterio.objects.create(
+            indicador=indicador,
+            codigo="D1-I1-C1-API",
+            codigo_guia="D1-I1-C1-G-API",
+            solo_en_guia=False,
+            texto="Criterio API",
+            tipo_dato=Criterio.TipoDato.CUALITATIVO,
+            valoracion_por_categoria=False,
+        )
+        fortaleza = Valoracion.objects.create(
+            ciclo=self.ciclo,
+            dimension=dimension,
+            tipo=Valoracion.Tipo.FORTALEZA,
+            texto="Fortaleza API verificable.",
+            redactada_por=self.director,
+        )
+        debilidad = Valoracion.objects.create(
+            ciclo=self.ciclo,
+            dimension=dimension,
+            tipo=Valoracion.Tipo.DEBILIDAD,
+            texto="Debilidad API verificable.",
+            redactada_por=self.director,
+        )
+        ValoracionCriterio.objects.create(
+            valoracion=fortaleza,
+            criterio=criterio,
+        )
+        ValoracionCriterio.objects.create(
+            valoracion=debilidad,
+            criterio=criterio,
+        )
         nombre_interno = uuid4()
         fichero = FicheroEvidencia.objects.create(
             evidencia=evidencia,
@@ -505,6 +541,29 @@ class ApiInformesTests(TestCase):
             f"/api/ciclos/{self.ciclo.pk}/expediente/"
         )
         self.assertEqual(expediente.status_code, 200)
+        criterio_expediente = expediente.json()["dimensiones"][0]["indicadores"][0]["criterios"][0]
+        self.assertEqual(criterio_expediente["codigo"], "D1-I1-C1-API")
+        self.assertEqual(
+            criterio_expediente["fortalezas"],
+            ["Fortaleza API verificable."],
+        )
+        self.assertEqual(
+            criterio_expediente["debilidades"],
+            ["Debilidad API verificable."],
+        )
+        self.assertEqual(
+            criterio_expediente["valoraciones"],
+            [
+                {
+                    "tipo": "debilidad",
+                    "texto": "Debilidad API verificable.",
+                },
+                {
+                    "tipo": "fortaleza",
+                    "texto": "Fortaleza API verificable.",
+                },
+            ],
+        )
         descarga_expediente = self.client.get(
             f"/api/ciclos/{self.ciclo.pk}/expediente/ficheros/{fichero.pk}/descarga/"
         )

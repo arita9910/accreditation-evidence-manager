@@ -65,4 +65,19 @@ El sistema SHALL autorizar la descarga de versiones con una decisión centraliza
 - **WHEN** el sistema evalúa qué versión puede descargar el par evaluador
 - **THEN** considera provisionalmente como final la versión con mayor `numero` del ciclo hasta que exista una marca explícita
 
+### Requirement: Presentar avisos de completitud en lista simple
+La interfaz SHALL mostrar los avisos en formato clave-valor directo y SHALL listar los elementos de cada arreglo separados por comas o por saltos de línea, sin badges ni textos de truncamiento como "... y X más".
+
+#### Scenario: Generación con muchos avisos
+- **WHEN** la pantalla de generación recibe listas extensas de avisos
+- **THEN** muestra la lista completa en formato simple por clave, sin ocultar elementos ni resumir cantidades
+
+#### Scenario: Consulta de completitud
+- **WHEN** la pantalla de análisis muestra avisos de completitud
+- **THEN** aplica el mismo formato de lista simple por clave y conserva el contenido completo de cada arreglo
+
+#### Scenario: Exclusión de modelos incompletos
+- **WHEN** la respuesta de completitud contiene `modelos_incompletos`
+- **THEN** las pantallas de generación y análisis no renderizan esa clave ni su lista
+
 Fuentes: Plan 12, objetivo, requisitos y tareas T2-T5 en `docs/origin-plans/12-modulo-informes.md:3-18` y `docs/origin-plans/12-modulo-informes.md:28-42`; Manual 2025 en `docs/fuentes/Manual implementación SEA-CU 2025.md:176-205` y lineas sobre cuantificación en `docs/fuentes/Manual implementación SEA-CU 2025.md:1145-1145`; Resolución No.36/2024 SEA-CU en `docs/fuentes/Resolución No.36-2024 SEA-CU.md:22-27` y `docs/fuentes/Resolución No.36-2024 SEA-CU.md:68-107`.

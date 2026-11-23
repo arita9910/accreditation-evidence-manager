@@ -8,6 +8,20 @@ function extraerLista(respuesta) {
   return []
 }
 
+function normalizarValoraciones(criterio) {
+  if (Array.isArray(criterio?.valoraciones) && criterio.valoraciones.length > 0) {
+    return criterio.valoraciones
+      .filter((valoracion) => valoracion?.texto)
+      .map((valoracion) => ({
+        tipo: valoracion.tipo,
+        texto: valoracion.texto,
+      }))
+  }
+  const fortalezas = (criterio?.fortalezas ?? []).map((texto) => ({ tipo: 'fortaleza', texto }))
+  const debilidades = (criterio?.debilidades ?? []).map((texto) => ({ tipo: 'debilidad', texto }))
+  return [...fortalezas, ...debilidades]
+}
+
 function ExpedienteEvaluador({ usuario }) {
   const autorizado = usuario?.rol === 'par_evaluador'
   const [ciclos, setCiclos] = useState([])
@@ -50,6 +64,18 @@ function ExpedienteEvaluador({ usuario }) {
   }, [cicloId])
 
   const evidencias = useMemo(() => expediente?.evidencias ?? [], [expediente])
+  const dimensiones = useMemo(() => expediente?.dimensiones ?? [], [expediente])
+
+  const evidenciasPorCriterio = useMemo(() => {
+    const agrupadas = {}
+    evidencias.forEach((evidencia) => {
+      evidencia.clasificaciones?.forEach((clasificacion) => {
+        const criterioId = clasificacion.criterio
+        agrupadas[criterioId] = [...(agrupadas[criterioId] ?? []), evidencia]
+      })
+    })
+    return agrupadas
+  }, [evidencias])
 
   if (!autorizado) {
     return <Mensaje tipo="error" titulo="Acceso denegado">Solo el par evaluador puede consultar este expediente.</Mensaje>
@@ -71,37 +97,73 @@ function ExpedienteEvaluador({ usuario }) {
         </select>
       </div>
       {expediente ? (
-        evidencias.length === 0 ? <Mensaje tipo="info">El expediente no contiene evidencias.</Mensaje> : (
-          <div aria-label="Árbol del expediente" className="d-grid gap-2">
-            {evidencias.map((evidencia) => (
-              <details className="border rounded p-3" key={evidencia.id}>
-                <summary>
-                  <strong>{evidencia.titulo}</strong>
-                  <span className="badge text-bg-light ms-2">Tipo {evidencia.tipo_evidencia}</span>
-                </summary>
-                {evidencia.descripcion ? <p className="mt-3 mb-2">{evidencia.descripcion}</p> : null}
-                {evidencia.clasificaciones?.length ? (
-                  <ul>
-                    {evidencia.clasificaciones.map((clasificacion) => (
-                      <li key={clasificacion.id}>Criterio {clasificacion.criterio}</li>
+        <>
+          {dimensiones.length > 0 ? (
+            <div aria-label="Árbol del catálogo y expediente" className="d-grid gap-3">
+              {dimensiones.map((dimension) => (
+                <details className="border rounded p-3" key={dimension.id} open>
+                  <summary><strong>{dimension.codigo} · {dimension.nombre}</strong></summary>
+                  <div className="mt-3 d-grid gap-3">
+                    {dimension.indicadores.map((indicador) => (
+                      <section key={indicador.id}>
+                        <h2 className="h6">{indicador.codigo} · {indicador.texto}</h2>
+                        <div className="d-grid gap-2">
+                          {indicador.criterios.map((criterio) => {
+                            const valoraciones = normalizarValoraciones(criterio)
+                            return (
+                              <article className="border-start border-3 ps-3" key={criterio.id}>
+                                <strong>{criterio.codigo}</strong> — {criterio.texto}
+                                {valoraciones.length ? (
+                                  <div className="mt-2 d-grid gap-2">
+                                    {valoraciones.map((valoracion, indice) => (
+                                      <div
+                                        className={`rounded px-2 py-1 ${
+                                          valoracion.tipo === 'fortaleza'
+                                            ? 'bg-success-subtle border border-success-subtle'
+                                            : 'bg-warning-subtle border border-warning-subtle'
+                                        }`}
+                                        key={`${valoracion.tipo}-${indice}`}
+                                      >
+                                        <strong>{valoracion.tipo === 'fortaleza' ? 'Fortaleza' : 'Debilidad'}:</strong> {valoracion.texto}
+                                      </div>
+                                    ))}
+                                  </div>
+                                ) : null}
+                                {evidenciasPorCriterio[criterio.id]?.length ? (
+                                  <div className="mt-2">
+                                    <strong>Evidencias</strong>
+                                    <ul>
+                                      {evidenciasPorCriterio[criterio.id].map((evidencia) => (
+                                        <li key={evidencia.id}>
+                                          {evidencia.titulo}
+                                          {evidencia.ficheros?.map((fichero) => (
+                                            <a
+                                              className="ms-2"
+                                              key={fichero.id}
+                                              href={`/api/ciclos/${cicloId}/expediente/ficheros/${fichero.id}/descarga/`}
+                                            >
+                                              {fichero.nombre_original}
+                                            </a>
+                                          ))}
+                                        </li>
+                                      ))}
+                                    </ul>
+                                  </div>
+                                ) : null}
+                              </article>
+                            )
+                          })}
+                        </div>
+                      </section>
                     ))}
-                  </ul>
-                ) : null}
-                {evidencia.ficheros?.length ? (
-                  <ul>
-                    {evidencia.ficheros.map((fichero) => (
-                      <li key={fichero.id}>
-                        <a href={`/api/ciclos/${cicloId}/expediente/ficheros/${fichero.id}/descarga/`}>
-                          {fichero.nombre_original}
-                        </a>
-                      </li>
-                    ))}
-                  </ul>
-                ) : null}
-              </details>
-            ))}
-          </div>
-        )
+                  </div>
+                </details>
+              ))}
+            </div>
+          ) : evidencias.length === 0 ? (
+            <Mensaje tipo="info">El expediente no contiene evidencias ni valoraciones.</Mensaje>
+          ) : null}
+        </>
       ) : null}
     </section>
   )

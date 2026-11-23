@@ -29,17 +29,17 @@
 - [x] 4.1 Crear el editor React de textos cualitativos y verificar carga, guardado y mensajes de ciclo cerrado.
 - [x] 4.2 Crear la página de generación con avisos de completitud, historial de versiones y descarga; verificar que los avisos no bloquean el botón de generar con Vitest.
 - [x] 4.3 Crear la vista React del expediente del par evaluador reutilizando el árbol del catálogo y evidencias; verificar que no aparecen acciones de escritura con Vitest.
-- [ ] 4.4 Definir provisoriamente la gestión de asignación del par evaluador (Django Admin si no entra pantalla de director en este bloque) y verificar el flujo extremo a extremo.
+- [x] 4.4 Definir provisoriamente la gestión de asignación del par evaluador (Django Admin si no entra pantalla de director en este bloque) y verificar el flujo extremo a extremo.
 - [x] 4.5 Ejecutar las pruebas Vitest enfocadas en las pantallas nuevas con `npm run test:run -- --pool=vmThreads --maxWorkers=1`.
 
 ## 5. Verificación
 
-- [ ] 5.1 Ejecutar `python manage.py migrate` y `python manage.py showmigrations` para confirmar migraciones del bloque en SQLite.
-- [ ] 5.2 Ejecutar las pruebas Django relacionadas con modelos, servicios, generador, permisos, versiones y expediente bajo SQLite.
-- [ ] 5.3 Verificar con `git check-ignore` que la ruta de salida de informes DOCX queda fuera de Git.
-- [ ] 5.4 Generar un informe DOCX de prueba largo y abrirlo en Word o LibreOffice; verificar secciones obligatorias, 11 modelos, estilo, aviso de 50 páginas y hallar errores observables.
-- [ ] 5.5 Verificar que el par evaluador no puede escribir, pierde acceso tras `vigente_hasta` y solo ve su ciclo; mantener las pruebas SQLite en verde.
-- [ ] 5.6 Registrar la revisión manual y el avance del incremento en `sistema/docs/avance/12-informes.md` según la definición de terminado.
+- [x] 5.1 Ejecutar `python manage.py migrate` y `python manage.py showmigrations` para confirmar migraciones del bloque en SQLite.
+- [x] 5.2 Ejecutar las pruebas Django relacionadas con modelos, servicios, generador, permisos, versiones y expediente bajo SQLite.
+- [x] 5.3 Verificar con `git check-ignore` que la ruta de salida de informes DOCX queda fuera de Git.
+- [x] 5.4 Generar un informe DOCX de prueba largo y abrirlo en Word o LibreOffice; verificar secciones obligatorias, 11 modelos, estilo, aviso de 50 páginas y hallar errores observables.
+- [x] 5.5 Verificar que el par evaluador no puede escribir, pierde acceso tras `vigente_hasta` y solo ve su ciclo; mantener las pruebas SQLite en verde.
+- [x] 5.6 Registrar la revisión manual y el avance del incremento en `sistema/docs/avance/12-informes.md` según la definición de terminado.
 
 ## Workflow follow-up
 

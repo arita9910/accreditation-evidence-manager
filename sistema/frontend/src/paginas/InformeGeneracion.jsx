@@ -2,10 +2,85 @@ import { useEffect, useMemo, useState } from 'react'
 import { Cargando, Mensaje } from '../componentes'
 import peticion from '../api/cliente'
 
+const AVISOS = [
+  ['criterios_sin_evidencia', 'Criterios sin evidencia'],
+  ['criterios_cuantitativos_sin_dato', 'Criterios cuantitativos sin dato'],
+  ['datos_sin_respaldo', 'Datos sin respaldo'],
+  ['dimensiones_sin_valoracion', 'Dimensiones sin valoración'],
+  ['debilidades_sin_accion', 'Debilidades sin acción'],
+]
+
 function extraerLista(respuesta) {
   if (Array.isArray(respuesta)) return respuesta
   if (Array.isArray(respuesta?.results)) return respuesta.results
   return []
+}
+
+function formatearDatoSinRespaldo(elemento) {
+  if (!elemento || typeof elemento !== 'object') {
+    return `Dato sin respaldo #${elemento}`
+  }
+
+  if (typeof elemento.descripcion === 'string' && elemento.descripcion.trim()) {
+    return elemento.descripcion.trim()
+  }
+
+  if (typeof elemento.mensaje === 'string' && elemento.mensaje.trim()) {
+    return elemento.mensaje.trim()
+  }
+
+  if (elemento.tipo === 'valor_modelo') {
+    const modeloId = elemento.numero_modelo ?? elemento.modelo_id ?? 'N/D'
+    const curso = elemento.curso ?? 'N/D'
+    return `Dato del modelo ${modeloId} - Curso ${curso} sin evidencia`
+  }
+
+  if (elemento.tipo === 'valor_criterio') {
+    const curso = elemento.curso ?? 'N/D'
+    return `Dato del criterio ${elemento.criterio_id ?? 'N/D'} - Curso ${curso} sin evidencia`
+  }
+
+  const modeloId = elemento.numero_modelo ?? elemento.modelo_id
+  if (modeloId) return `Dato del modelo ${modeloId} sin evidencia`
+  if (elemento.criterio_id) return `Dato del criterio ${elemento.criterio_id} sin evidencia`
+  return 'Dato sin respaldo sin detalle legible'
+}
+
+function formatearAviso(clave, valor) {
+  if (typeof valor === 'string') return valor
+  if (typeof valor === 'number') return String(valor)
+  if (!valor || typeof valor !== 'object') return String(valor)
+
+  if (clave === 'datos_sin_respaldo') return formatearDatoSinRespaldo(valor)
+  if (typeof valor.descripcion === 'string' && valor.descripcion.trim()) return valor.descripcion.trim()
+  if (typeof valor.mensaje === 'string' && valor.mensaje.trim()) return valor.mensaje.trim()
+  return JSON.stringify(valor)
+}
+
+function avisosCompletitud(completitud) {
+  if (!completitud) return []
+
+  if (Array.isArray(completitud.avisos)) {
+    return [{ clave: 'avisos', elementos: completitud.avisos.map((valor) => formatearAviso('Aviso', valor)) }]
+  }
+  if (Array.isArray(completitud.mensajes)) {
+    return [{ clave: 'mensajes', elementos: completitud.mensajes.map((valor) => formatearAviso('Mensaje', valor)) }]
+  }
+
+  return AVISOS.flatMap(([clave]) => {
+    const valor = completitud[clave]
+    if (!Array.isArray(valor)) {
+      return valor ? [{ clave, elementos: [formatearAviso(clave, valor)] }] : []
+    }
+    if (valor.length === 0 && clave === 'debilidades_sin_accion') {
+      return [{ clave, elementos: ['No hay debilidades pendientes por resolver'] }]
+    }
+    if (valor.length === 0) return []
+    return [{
+      clave,
+      elementos: valor.map((elemento) => formatearAviso(clave, elemento)),
+    }]
+  })
 }
 
 function InformeGeneracion({ usuario }) {
@@ -58,12 +133,7 @@ function InformeGeneracion({ usuario }) {
   }, [cicloId])
 
   const avisos = useMemo(() => {
-    if (!completitud) return []
-    if (Array.isArray(completitud.avisos)) return completitud.avisos
-    if (Array.isArray(completitud.mensajes)) return completitud.mensajes
-    return Object.entries(completitud)
-      .filter(([clave, valor]) => /aviso|faltante|sin_/i.test(clave) && Boolean(valor))
-      .map(([clave, valor]) => Array.isArray(valor) ? `${clave}: ${valor.join(', ')}` : `${clave}: ${valor}`)
+    return avisosCompletitud(completitud)
   }, [completitud])
 
   const generar = async () => {
@@ -108,7 +178,11 @@ function InformeGeneracion({ usuario }) {
       {avisos.length > 0 ? (
         <Mensaje tipo="warning" titulo="Avisos de completitud">
           <ul className="mb-0">
-            {avisos.map((aviso, indice) => <li key={`${indice}-${String(aviso)}`}>{String(aviso)}</li>)}
+            {avisos.map((grupo) => (
+              <li key={grupo.clave}>
+                <strong>{grupo.clave}:</strong> {grupo.elementos.join(', ')}
+              </li>
+            ))}
           </ul>
         </Mensaje>
       ) : null}

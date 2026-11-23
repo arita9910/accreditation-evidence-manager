@@ -12,9 +12,11 @@ from rest_framework.views import APIView
 from auditoria.servicios import registrar
 from ciclos.modelos import Ciclo
 from cuentas.permisos import PermisoSistema, puede
+from estructura.modelos import Dimension
 from evidencias.modelos import Evidencia, FicheroEvidencia
 from evidencias.serializadores import EvidenciaSerializador
 from nucleo import almacenamiento
+from valoracion.models import Valoracion, ValoracionCriterio
 
 from .modelos import (
     SECCIONES_INFORME_DOCUMENTADAS,
@@ -226,6 +228,71 @@ class ExpedienteCicloVista(APIView):
             entidad="Expediente",
             objeto=ciclo,
         )
+        valoraciones_por_criterio = {}
+        valoraciones_criterio = (
+            ValoracionCriterio.objects.filter(valoracion__ciclo=ciclo)
+            .select_related("valoracion")
+            .order_by("valoracion__tipo", "valoracion_id", "pk")
+        )
+        for relacion in valoraciones_criterio:
+            valoracion = relacion.valoracion
+            valoraciones_por_criterio.setdefault(relacion.criterio_id, []).append(
+                {
+                    "tipo": valoracion.tipo,
+                    "texto": valoracion.texto,
+                }
+            )
+
+        dimensiones = []
+        catalogo = (
+            Dimension.objects.filter(version=ciclo.version_normativa)
+            .prefetch_related("indicadores__criterios")
+            .order_by("orden", "codigo")
+        )
+        for dimension in catalogo:
+            indicadores = []
+            for indicador in dimension.indicadores.all().order_by("codigo"):
+                criterios = []
+                for criterio in indicador.criterios.all().order_by("codigo"):
+                    criterios_valoraciones = valoraciones_por_criterio.get(
+                        criterio.pk,
+                        [],
+                    )
+                    criterios.append(
+                        {
+                            "id": criterio.pk,
+                            "codigo": criterio.codigo,
+                            "texto": criterio.texto,
+                            "valoraciones": criterios_valoraciones,
+                            "fortalezas": [
+                                valoracion["texto"]
+                                for valoracion in criterios_valoraciones
+                                if valoracion["tipo"] == Valoracion.Tipo.FORTALEZA
+                            ],
+                            "debilidades": [
+                                valoracion["texto"]
+                                for valoracion in criterios_valoraciones
+                                if valoracion["tipo"] == Valoracion.Tipo.DEBILIDAD
+                            ],
+                        }
+                    )
+                indicadores.append(
+                    {
+                        "id": indicador.pk,
+                        "codigo": indicador.codigo,
+                        "texto": indicador.texto,
+                        "criterios": criterios,
+                    }
+                )
+            dimensiones.append(
+                {
+                    "id": dimension.pk,
+                    "codigo": dimension.codigo,
+                    "nombre": dimension.nombre,
+                    "indicadores": indicadores,
+                }
+            )
+
         evidencias = (
             Evidencia.objects.filter(ciclo=ciclo)
             .select_related("tipo_evidencia")
@@ -242,6 +309,7 @@ class ExpedienteCicloVista(APIView):
         return Response(
             {
                 "ciclo": ciclo.pk,
+                "dimensiones": dimensiones,
                 "evidencias": EvidenciaSerializador(evidencias, many=True).data,
             }
         )

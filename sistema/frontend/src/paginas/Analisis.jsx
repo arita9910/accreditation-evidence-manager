@@ -6,7 +6,6 @@ const AVISOS = [
   ['criterios_sin_evidencia', 'Criterios sin evidencia'],
   ['criterios_cuantitativos_sin_dato', 'Criterios cuantitativos sin dato'],
   ['datos_sin_respaldo', 'Datos sin respaldo'],
-  ['modelos_incompletos', 'Modelos incompletos'],
   ['dimensiones_sin_valoracion', 'Dimensiones sin valoración'],
   ['debilidades_sin_accion', 'Debilidades sin acción'],
 ]
@@ -17,12 +16,40 @@ function extraerLista(respuesta) {
   return []
 }
 
-function nombreAviso(clave) {
-  return AVISOS.find(([valor]) => valor === clave)?.[1] ?? clave
-}
+function formatearDatoSinRespaldo(elemento) {
+  if (!elemento || typeof elemento !== 'object') {
+    return `Dato sin respaldo #${elemento}`
+  }
 
-function codigoCriterioVisible(criterio) {
-  return criterio?.codigo_manual || criterio?.codigo || null
+  if (typeof elemento.descripcion === 'string' && elemento.descripcion.trim()) {
+    return elemento.descripcion.trim()
+  }
+
+  if (typeof elemento.mensaje === 'string' && elemento.mensaje.trim()) {
+    return elemento.mensaje.trim()
+  }
+
+  if (elemento.tipo === 'valor_modelo') {
+    const modeloId = elemento.numero_modelo ?? elemento.modelo_id ?? 'N/D'
+    const curso = elemento.curso ?? 'N/D'
+    return `Dato del modelo ${modeloId} - Curso ${curso} sin evidencia`
+  }
+
+  if (elemento.tipo === 'valor_criterio') {
+    const curso = elemento.curso ?? 'N/D'
+    return `Dato del criterio ${elemento.criterio_id ?? 'N/D'} - Curso ${curso} sin evidencia`
+  }
+
+  const modeloId = elemento.numero_modelo ?? elemento.modelo_id
+  if (modeloId) {
+    return `Dato del modelo ${modeloId} sin evidencia`
+  }
+
+  if (elemento.criterio_id) {
+    return `Dato del criterio ${elemento.criterio_id} sin evidencia`
+  }
+
+  return 'Dato sin respaldo sin detalle legible'
 }
 
 function Analisis({ usuario }) {
@@ -90,63 +117,17 @@ function Analisis({ usuario }) {
     return ciclos.filter((ciclo) => String(ciclo.carrera) === String(usuario.carrera))
   }, [ciclos, usuario])
 
-  const criteriosPorId = useMemo(() => {
-    const criterios = new Map()
-    for (const dimension of estado?.dimensiones ?? []) {
-      for (const indicador of dimension.indicadores ?? []) {
-        for (const criterio of indicador.criterios ?? []) {
-          criterios.set(Number(criterio.id), criterio)
-        }
-      }
-    }
-    return criterios
-  }, [estado])
-
-  const dimensionesPorId = useMemo(() => {
-    const dimensiones = new Map()
-    for (const dimension of estado?.dimensiones ?? []) {
-      dimensiones.set(Number(dimension.id), dimension)
-    }
-    return dimensiones
-  }, [estado])
-
   const formatearElementoAviso = (clave, elemento) => {
-    if (clave === 'modelos_incompletos' && elemento && typeof elemento === 'object') {
-      const faltantes = Math.max(0, Number(elemento.campos_esperados ?? 0) - Number(elemento.campos_presentes ?? 0))
-      const numeroModelo = elemento.numero_modelo ?? elemento.modelo_id
-      return `Modelo ${numeroModelo} - Curso ${elemento.curso}: Faltan ${faltantes} campos`
-    }
-
-    if (
-      (clave === 'criterios_sin_evidencia' || clave === 'criterios_cuantitativos_sin_dato')
-      && (typeof elemento === 'number' || typeof elemento === 'string')
-    ) {
-      const criterio = criteriosPorId.get(Number(elemento))
-      if (!criterio) return `Criterio #${elemento}`
-      const codigo = codigoCriterioVisible(criterio)
-      return codigo ? `${codigo} · ${criterio.nombre}` : criterio.nombre
-    }
-
-    if (clave === 'dimensiones_sin_valoracion' && (typeof elemento === 'number' || typeof elemento === 'string')) {
-      const dimension = dimensionesPorId.get(Number(elemento))
-      if (!dimension) return `Dimensión #${elemento}`
-      return dimension.nombre
-    }
-
     if (clave === 'datos_sin_respaldo' && elemento && typeof elemento === 'object') {
-      if (elemento.tipo === 'valor_modelo') {
-        const modeloId = elemento.numero_modelo ?? elemento.modelo_id ?? 'N/D'
-        const curso = elemento.curso ?? 'N/D'
-        return `Dato del modelo ${modeloId} - Curso ${curso} sin evidencia`
-      }
-      if (elemento.tipo === 'valor_criterio') {
-        const curso = elemento.curso ?? 'N/D'
-        return `Dato del criterio ${elemento.criterio_id ?? 'N/D'} - Curso ${curso} sin evidencia`
-      }
+      return formatearDatoSinRespaldo(elemento)
     }
 
-    if (typeof elemento === 'object') return JSON.stringify(elemento)
-    return `${nombreAviso(clave)} #${elemento}`
+    if (typeof elemento === 'object') {
+      if (typeof elemento.descripcion === 'string' && elemento.descripcion.trim()) return elemento.descripcion.trim()
+      if (typeof elemento.mensaje === 'string' && elemento.mensaje.trim()) return elemento.mensaje.trim()
+      return JSON.stringify(elemento)
+    }
+    return String(elemento)
   }
 
   const comparar = async (evento) => {
@@ -221,12 +202,8 @@ function Analisis({ usuario }) {
                       {indicador.criterios.map((criterio) => (
                         <div key={criterio.id} className="list-group-item">
                           <strong>{criterio.codigo}</strong> · {criterio.nombre}
-                          <div className="d-flex flex-wrap gap-2 mt-2">
-                            <span className={`badge ${criterio.evidencias_clasificadas > 0 ? 'text-bg-success' : 'text-bg-warning'}`}>Evidencias: {criterio.evidencias_clasificadas}</span>
-                            <span className={`badge ${criterio.datos_cuantitativos ? 'text-bg-success' : 'text-bg-secondary'}`}>Datos: {criterio.datos_cuantitativos ? 'Sí' : 'No'}</span>
-                            <span className={`badge ${criterio.dato_con_respaldo ? 'text-bg-success' : 'text-bg-warning'}`}>Respaldo: {criterio.dato_con_respaldo ? 'Sí' : 'No'}</span>
-                            <span className={`badge ${criterio.tiene_valoracion ? 'text-bg-success' : 'text-bg-secondary'}`}>Valoración: {criterio.tiene_valoracion ? 'Sí' : 'No'}</span>
-                            <span className={`badge ${criterio.tiene_accion ? 'text-bg-success' : 'text-bg-secondary'}`}>Acción: {criterio.tiene_accion ? 'Sí' : 'No'}</span>
+                          <div className="mt-2">
+                            Evidencias: {criterio.evidencias_clasificadas}, Datos: {criterio.datos_cuantitativos ? 'Sí' : 'No'}, Respaldo: {criterio.dato_con_respaldo ? 'Sí' : 'No'}, Valoración: {criterio.tiene_valoracion ? 'Sí' : 'No'}, Acción: {criterio.tiene_accion ? 'Sí' : 'No'}
                           </div>
                         </div>
                       ))}
@@ -246,27 +223,16 @@ function Analisis({ usuario }) {
             <label className="form-check-label" htmlFor="solo-avisos">Solo con avisos</label>
           </div>
           <h2 className="h5">Completitud del ciclo #{completitud.ciclo_id}</h2>
-          {AVISOS.map(([clave, titulo]) => {
+          {AVISOS.map(([clave]) => {
             const elementos = completitud[clave] ?? []
             if (soloAvisos && elementos.length === 0) return null
             return (
-              <section key={clave} className="card mb-3">
-                <div className="card-header d-flex justify-content-between">
-                  <strong>{titulo}</strong>
-                  <span className={`badge ${elementos.length ? 'text-bg-warning' : 'text-bg-success'}`}>{elementos.length}</span>
-                </div>
-                <div className="card-body">
-                  {elementos.length === 0 ? <span>Sin avisos</span> : (
-                    <ul className="mb-0">
-                      {elementos.map((elemento, indice) => (
-                        <li key={`${clave}-${indice}`} data-testid={`aviso-${clave}`}>
-                          {formatearElementoAviso(clave, elemento)}
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </div>
-              </section>
+              <p key={clave} className="mb-2">
+                <strong>{clave}:</strong>{' '}
+                {elementos.length === 0
+                  ? (clave === 'debilidades_sin_accion' ? 'No hay debilidades pendientes por resolver' : 'Sin avisos')
+                  : elementos.map((elemento) => formatearElementoAviso(clave, elemento)).join(', ')}
+              </p>
             )
           })}
         </div>
